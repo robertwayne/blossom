@@ -1,0 +1,189 @@
+{
+  "db": "PostgreSQL",
+  "3d9776d21eb1b83f911acbd479e32f469ac86db30d8824195657d310b9570a9b": {
+    "query": "select p.id, p.name, p.position, p.health, p.max_health, p.mana, p.max_mana, p.xp, p.level, p.afk, p.brief, a.id as \"account_id\", a.encrypted_password, a.email as \"email?\", a.roles\n        from players p \n        join accounts a on p.account_id = a.id \n        where p.name = $1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "position",
+          "type_info": "Int4Array"
+        },
+        {
+          "ordinal": 3,
+          "name": "health",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 4,
+          "name": "max_health",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 5,
+          "name": "mana",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 6,
+          "name": "max_mana",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 7,
+          "name": "xp",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 8,
+          "name": "level",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 9,
+          "name": "afk",
+          "type_info": "Bool"
+        },
+        {
+          "ordinal": 10,
+          "name": "brief",
+          "type_info": "Bool"
+        },
+        {
+          "ordinal": 11,
+          "name": "account_id",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 12,
+          "name": "encrypted_password",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 13,
+          "name": "email?",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 14,
+          "name": "roles",
+          "type_info": "VarcharArray"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false
+      ]
+    }
+  },
+  "9442f5443dd12024d46270168754be5b521973531b64416de899205b775597b2": {
+    "query": "select exists (select 1 from players where name = $1)",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "exists",
+          "type_info": "Bool"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        null
+      ]
+    }
+  },
+  "b511c7107a94a4817220867733028ba60b7dacb9771960ce87b72fbc32566a45": {
+    "query": "insert into players (account_id, name)\n        values ($1, $2)\n        returning id",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int4",
+          "Varchar"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "bad00ddf8a9a1671b7c3890ee9e282e817e3ed469749ae16673a4a70a6a6d8f5": {
+    "query": "update players\n            set position = $1,\n                health = $2,\n                max_health = $3,\n                mana = $4,\n                max_mana = $5,\n                xp = $6,\n                level = $7,\n                brief = $8,\n                afk = $9\n            where id = $10",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Int4Array",
+          "Int4",
+          "Int4",
+          "Int4",
+          "Int4",
+          "Int4",
+          "Int4",
+          "Bool",
+          "Bool",
+          "Int4"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "fc4d69987b81720125908124efd595d9ad5870a7b28ffd192cdf789f7f880021": {
+    "query": "insert into accounts (encrypted_password)\n        values ($1)\n        returning id",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  }
+}

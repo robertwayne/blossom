@@ -1,0 +1,2 @@
+criterion_home = "results"
+plotting_backend = "plotters"

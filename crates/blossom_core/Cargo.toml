@@ -1,0 +1,43 @@
+[package]
+name = "blossom_core"
+authors = ["Rob Wagner <rob@sombia.com"]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Core components of the Blossom MUD engine."
+homepage = "https://robertwayne.github.io/blossom"
+repository = "https://github.com/robertwayne/blossom/crates/blossom_core"
+categories = ["game-engines", "game-development"]
+keywords = ["blossom", "mud"]
+readme = "README.md"
+
+
+[dependencies]
+# Internal Crates
+blossom_telnet = { path = "../blossom_telnet", version = "0.1" }
+
+# Third-Party Crates
+argon2 = "0.3"
+bytes = "1"
+dashmap = "5.0"
+flume = "0.10"
+futures = { version = "0.3", features = ["thread-pool"]}
+globwalk = "0.8"
+iridescent = "0.1"
+parking_lot = "0.12"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sqlx = { version = "0.5", features = [ "runtime-tokio-rustls", "postgres", "offline"] }
+thiserror = "1"
+tokio = { version = "1", features = ["full", "tracing"] }
+tokio-util = { version = "0.6", features = ["full"] }
+toml = "0.5"
+tracing = "0.1"
+tracing-subscriber = { version =  "0.3", features = ["env-filter", "tracing"] }
+rhai = { git = "https://github.com/rhaiscript/rhai", features = [
+    "serde",
+    "only_i32",
+    "f32_float",
+    "no_closure",
+    "sync",
+] }

@@ -1,0 +1,22 @@
+# Directories
+netconfig
+results
+out
+dist
+target
+node_modules
+
+# Files
+swarm_names.txt
+
+# Config Files
+.env
+.cargo/config
+.cargo/config.toml
+
+# User Settings
+.vscode
+.idea
+
+# Other
+Cargo.lock

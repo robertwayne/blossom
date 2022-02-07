@@ -1,0 +1,17 @@
+[package]
+name = "blossom_internal"
+authors = ["Rob Wagner <rob@sombia.com"]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "A simple MUD game engine written in Rust."
+homepage = "https://robertwayne.github.io/blossom"
+repository = "https://github.com/robertwayne/blossom/crates/blossom_internal"
+categories = ["game-engines", "game-development"]
+keywords = ["blossom", "mud"]
+readme = "README.md"
+
+[dependencies]
+blossom_core = { path = "../blossom_core", version = "0.1" }
+blossom_ext = { path = "../blossom_ext", version = "0.1" }
+blossom_telnet = { path = "../blossom_telnet", version = "0.1" }

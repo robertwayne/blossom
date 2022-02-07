@@ -1,0 +1,13 @@
+pub mod admin;
+pub mod afk;
+pub mod brief;
+pub mod builder;
+pub mod help;
+pub mod look;
+pub mod moderator;
+pub mod ooc;
+pub mod quit;
+pub mod say;
+pub mod unknown;
+pub mod walk;
+pub mod who;

@@ -1,0 +1,35 @@
+[package]
+name = "blossom"
+authors = ["Rob Wagner <rob@sombia.com"]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "An opinionted MUD engine written in Rust."
+homepage = "https://robertwayne.github.io/blossom"
+repository = "https://github.com/robertwayne/blossom/crates/blossom"
+categories = ["game-engines", "game-development"]
+keywords = ["blossom", "mud"]
+readme = "README.md"
+
+[workspace]
+members = ["crates/*"]
+exclude = ["tools/*", "benches/*"]
+
+[features]
+default = []
+
+# Fast Compilation via Dynamic Linking
+dynamic = ["blossom_dynamic"]
+
+[dependencies]
+blossom_dynamic = { path = "crates/blossom_dynamic", version = "0.1", default-features = false, optional = true }
+blossom_internal = { path = "crates/blossom_internal", version = "0.1" }
+
+[lib]
+name = "blossom"
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = "fat"
