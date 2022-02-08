@@ -1,3 +1,5 @@
+use std::net::SocketAddr;
+
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -79,17 +81,23 @@ impl Config {
         Ok(config)
     }
 
-    /// Returns the listening server address as HOST:PORT.
-    pub fn game_addr(&self) -> String {
-        format!("{}:{}", self.game.host, self.game.port)
+    pub fn game_addr(&self) -> SocketAddr {
+        SocketAddr::new(
+            self.game
+                .host
+                .parse()
+                .expect("Failed to parse game hostname"),
+            self.game.port,
+        )
     }
 
-    /// Returns the web server address as HOST:PORT.
-    pub fn web_addr(&self) -> String {
-        format!("{}:{}", self.web.host, self.web.port)
+    pub fn web_addr(&self) -> SocketAddr {
+        SocketAddr::new(
+            self.web.host.parse().expect("Failed to parse web hostname"),
+            self.web.port,
+        )
     }
 
-    /// Returns the database connection string.
     pub fn db_url(&self) -> String {
         format!(
             "postgresql://{}:{}@{}:{}/{}",
