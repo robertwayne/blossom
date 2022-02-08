@@ -1,0 +1,19 @@
+[package]
+name = "blossom_db"
+authors = ["Rob Wagner <rob@sombia.com"]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Database connection pool manager for Blossom."
+homepage = "https://robertwayne.github.io/blossom"
+repository = "https://github.com/robertwayne/blossom/crates/blossom_db"
+categories = ["game-engines", "game-development"]
+keywords = ["blossom", "mud"]
+
+[dependencies]
+blossom_config = { path = "../blossom_config", version = "0.1" }
+sqlx = { version = "0.5", features = [ "runtime-tokio-rustls", "postgres", "offline"] }
+thiserror = "1"
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version =  "0.3", features = ["env-filter"] }

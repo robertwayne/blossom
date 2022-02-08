@@ -1,3 +1,5 @@
+use blossom_config::ConfigError;
+use blossom_db::DatabaseError;
 use flume::{RecvError, SendError};
 use thiserror::Error;
 
@@ -7,16 +9,16 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug, Error)]
 pub enum Error {
-    #[error("database error: {0}")]
-    DatabaseError(#[from] sqlx::Error),
+    #[error("database error {0}")]
+    DatabaseError(#[from] DatabaseError),
+    #[error("config error {0}")]
+    ConfigError(#[from] ConfigError),
+    #[error("sqlx error {0}")]
+    SqlxError(#[from] sqlx::Error),
     #[error("environment variable {0} not set")]
     EnvVarNotSet(#[from] std::env::VarError),
     #[error("script error: {0}")]
     ScriptError(#[from] scripting::BlossomScriptError),
-    #[error("invalid configuration: {0}")]
-    ConfigError(#[from] toml::de::Error),
-    #[error("serialize error: {0}")]
-    SerializeError(#[from] toml::ser::Error),
     #[error("ioerror: {0}")]
     IOError(#[from] std::io::Error),
     #[error("auth error: {0}")]
