@@ -27,12 +27,12 @@ impl Server {
             .with_span_events(FmtSpan::CLOSE)
             .init();
 
+        // Spawns a database pool (this can be cloned freely)
+        let db = Database::create().await?;
+
         // Loads the `config.toml` file in the /game directory. We also set the environment variable
         // for our database here, which means we MUST create the state AFTER these functions.
         let config = Config::load().await?;
-
-        // Spawns a database pool (this can be cloned freely)
-        let db = Database::create(&config).await?;
 
         // Creates our connection listener
         let telnet_listener = TcpListener::bind(config.game_addr()).await?;
