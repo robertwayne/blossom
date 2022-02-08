@@ -10,17 +10,17 @@ pub enum DatabaseError {
     ConfigError(#[from] ConfigError),
 }
 
-#[derive(Clone, Debug)]
-pub struct Database(PgPool);
+#[derive(Debug)]
+pub struct Database;
 
 impl Database {
     /// Creates a new Postgres database connection pool using the configuration
     /// settings in your game/config.toml file. This can be cloned freely as it
     /// is wrapped in an Arc.
-    pub async fn create() -> Result<Self, DatabaseError> {
+    pub async fn create() -> Result<PgPool, DatabaseError> {
         let config = Config::load().await?;
         let pool = PgPool::connect(&config.db_url()).await?;
 
-        Ok(Database(pool))
+        Ok(pool)
     }
 }
