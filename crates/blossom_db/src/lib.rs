@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use blossom_config::{Config, ConfigError};
 use sqlx::postgres::PgPool;
 use thiserror::Error;
@@ -12,23 +10,17 @@ pub enum DatabaseError {
     ConfigError(#[from] ConfigError),
 }
 
-pub struct Database {
-    pub pool: PgPool,
-}
+#[derive(Clone, Debug)]
+pub struct Database(PgPool);
 
 impl Database {
-    /// Creates a new Postgres connection pool.
+    /// Creates a new Postgres database connection pool using the configuration
+    /// settings in your game/config.toml file. This can be cloned freely as it
+    /// is wrapped in an Arc.
     pub async fn create() -> Result<Self, DatabaseError> {
         let config = Config::load().await?;
         let pool = PgPool::connect(&config.db_url()).await?;
-        Ok(Self { pool })
-    }
-}
 
-impl Deref for Database {
-    type Target = PgPool;
-
-    fn deref(&self) -> &Self::Target {
-        &self.pool
+        Ok(Database(pool))
     }
 }
