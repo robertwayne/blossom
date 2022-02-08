@@ -1,7 +1,6 @@
 use blossom_config::Config;
 use blossom_db::Database;
 use flume::unbounded;
-use sqlx::PgPool;
 use tokio::net::TcpListener;
 use tracing_subscriber::{fmt::format::FmtSpan, EnvFilter};
 
