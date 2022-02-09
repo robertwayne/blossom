@@ -4,7 +4,10 @@ use flume::{Receiver, Sender};
 use crate::{
     command::GameCommand,
     commands::{
-        admin::{debug::DebugCommand, shutdown::Shutdown},
+        admin::{
+            player_info::PlayerInfo, shutdown::Shutdown, system_control::SystemsControl,
+            world_info::WorldInfo,
+        },
         afk::Afk,
         brief::Brief,
         help::Help,
@@ -49,7 +52,9 @@ impl Game {
             world.add_command(Walk::create(), Walk::run);
             world.add_command(Who::create(), Who::run);
             world.add_command(Shutdown::create(), Shutdown::run);
-            world.add_command(DebugCommand::create(), DebugCommand::run);
+            world.add_command(WorldInfo::create(), WorldInfo::run);
+            world.add_command(SystemsControl::create(), SystemsControl::run);
+            world.add_command(PlayerInfo::create(), PlayerInfo::run);
         }
 
         // Game initialization for locations is done sequentially:
