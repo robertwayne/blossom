@@ -1,9 +1,11 @@
+use blossom_config::Config;
+use blossom_db::Database;
 use flume::unbounded;
 use tokio::net::TcpListener;
 use tracing_subscriber::{fmt::format::FmtSpan, EnvFilter};
 
 use crate::{
-    broker::Broker, config::Config, db::create_pool, error::Result, event::Event, game::Game,
+    broker::Broker, error::Result, event::Event, game::Game,
     telnet_handler::telnet_connection_loop, world::World,
 };
 
@@ -25,30 +27,38 @@ impl Server {
             .with_span_events(FmtSpan::CLOSE)
             .init();
 
+        // Spawns a database pool (this can be cloned freely)
+        let db = Database::create().await?;
+
         // Loads the `config.toml` file in the /game directory. We also set the environment variable
         // for our database here, which means we MUST create the state AFTER these functions.
         let config = Config::load().await?;
 
-        // Spawns a database pool (this can be cloned freely)
-        let pg = create_pool(&config).await?;
-
         // Creates our connection listener
-        let telnet_listener = TcpListener::bind(config.addr()).await?;
+        let telnet_listener = TcpListener::bind(config.game_addr()).await?;
+
+        let web_addr = config.web_addr();
+        let pg = db.clone();
+        tokio::spawn(async move {
+            blossom_web::listen(web_addr, pg)
+                .await
+                .expect("Failed to bind to address");
+        });
 
         // Create the broker and game channels for bidirectional communication
         let (tx_broker, rx_broker) = unbounded::<Event>();
         let (tx_game, rx_game) = unbounded::<Event>();
 
         // Starts the broker loop
-        let _broker_handle = Broker::start(pg.clone(), rx_broker, tx_game).await?;
+        let _broker_handle = Broker::start(db.clone(), rx_broker, tx_game).await?;
 
         // Create the world and starts the game loop on its own (blocking) thread
         Game::run(world, &config, rx_game, tx_broker.clone());
 
-        tracing::info!("Server listening on {}", config.addr());
+        tracing::info!("Server listening on {}", config.game_addr());
 
         loop {
-            let pg = pg.clone();
+            let pg = db.clone();
             let tx_broker = tx_broker.clone();
 
             tokio::select! {

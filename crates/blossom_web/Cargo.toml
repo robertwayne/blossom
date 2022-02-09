@@ -1,0 +1,18 @@
+[package]
+name = "blossom_web"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+askama = "0.11"
+axum = "0.4"
+blossom_config = { path = "../blossom_config" }
+blossom_db = { path = "../blossom_db" }
+mime_guess = "2"
+rust-embed = { version = "6.3", features = ["interpolate-folder-path", "compression"] }
+serde = { version = "1", features = ["derive"] }
+sqlx = { version = "0.5", features = [ "runtime-tokio-rustls", "postgres", "offline"] }
+tower-http = { version = "0.2.0", features = ["fs", "trace"] }
+tracing = "0.1"

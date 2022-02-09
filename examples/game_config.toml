@@ -1,11 +1,10 @@
+[game]
 host = "127.0.0.1"
 port = 5000
 
-db_name = "blossom"
-db_user = "blossom"
-db_pass = "blossom"
-db_host = "localhost"
-db_port = 5432
+# The name is used in various places to identify the game, such as the web
+# server, content creation tool, in-game default about commands, and so on.
+name = "Blossom"
 
 # Sets the server tick rate (per second). 
 # The number represents how many ticks you want per second. Remember, while a competetive real-time
@@ -59,4 +58,17 @@ save_interval = 300
 # You can use `help` or `?` in-game to see the list with their aliases.
 default_commands = true
 
-tokio_threads = 8
+# These settings configure the built-in web server, which includes the admin
+# and moderation dashboards, the content creation tools, analytics, logging, and
+# the game web page. This does not refer to a websockets game client.
+[web]
+host = "127.0.0.1"
+port = 8080
+
+[database]
+db_name = "blossom"
+db_user = "blossom"
+db_pass = "blossom"
+db_host = "localhost"
+db_port = 5432
+

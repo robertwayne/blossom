@@ -1,0 +1,17 @@
+[package]
+name = "blossom_config"
+authors = ["Rob Wagner <rob@sombia.com"]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Configuration manager for Blossom."
+homepage = "https://robertwayne.github.io/blossom"
+repository = "https://github.com/robertwayne/blossom/crates/blossom_config"
+categories = ["game-engines", "game-development"]
+keywords = ["blossom", "mud"]
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+thiserror = "1"
+toml = "0.5"
+tracing = "0.1"

@@ -12,6 +12,9 @@ keywords = ["blossom", "mud"]
 readme = "README.md"
 
 [dependencies]
+blossom_config = { path = "../blossom_config", version = "0.1" }
 blossom_core = { path = "../blossom_core", version = "0.1" }
+blossom_db = { path = "../blossom_db", version = "0.1" }
 blossom_ext = { path = "../blossom_ext", version = "0.1" }
 blossom_telnet = { path = "../blossom_telnet", version = "0.1" }
+blossom_web = { path = "../blossom_web", version = "0.1" }

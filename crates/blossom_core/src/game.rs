@@ -1,3 +1,4 @@
+use blossom_config::Config;
 use flume::{Receiver, Sender};
 
 use crate::{
@@ -14,7 +15,6 @@ use crate::{
         walk::Walk,
         who::Who,
     },
-    config::Config,
     event::Event,
     monster::MonsterTemplate,
     region::{AreaBuilder, RegionBuilder},
@@ -36,9 +36,9 @@ impl Game {
         let engine = create_engine();
 
         world.add_system("watcher", SystemWatcher::new());
-        world.add_system("global_save", GlobalSave::new(config.save_interval));
+        world.add_system("global_save", GlobalSave::new(config.game.save_interval));
 
-        if config.default_commands {
+        if config.game.default_commands {
             world.add_command(Afk::create(), Afk::run);
             world.add_command(Brief::create(), Brief::run);
             world.add_command(GlobalChat::create(), GlobalChat::run);

@@ -15,3 +15,15 @@ pub mod ext {
 pub mod telnet {
     pub use blossom_telnet::*;
 }
+
+pub mod config {
+    pub use blossom_config::*;
+}
+
+pub mod db {
+    pub use blossom_db::*;
+}
+
+pub mod web {
+    pub use blossom_web::*;
+}
