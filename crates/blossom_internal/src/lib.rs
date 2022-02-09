@@ -23,3 +23,7 @@ pub mod config {
 pub mod db {
     pub use blossom_db::*;
 }
+
+pub mod web {
+    pub use blossom_web::*;
+}

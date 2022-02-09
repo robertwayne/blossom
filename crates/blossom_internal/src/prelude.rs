@@ -1,1 +1,1 @@
-pub use crate::{config::*, core::*, db::*, ext::*, telnet::*};
+pub use crate::{config::*, core::*, db::*, ext::*, telnet::*, web::*};

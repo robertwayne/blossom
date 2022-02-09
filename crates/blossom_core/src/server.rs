@@ -37,6 +37,14 @@ impl Server {
         // Creates our connection listener
         let telnet_listener = TcpListener::bind(config.game_addr()).await?;
 
+        let web_addr = config.web_addr();
+        let pg = db.clone();
+        tokio::spawn(async move {
+            blossom_web::listen(web_addr, pg)
+                .await
+                .expect("Failed to bind to address");
+        });
+
         // Create the broker and game channels for bidirectional communication
         let (tx_broker, rx_broker) = unbounded::<Event>();
         let (tx_game, rx_game) = unbounded::<Event>();
