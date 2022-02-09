@@ -6,13 +6,19 @@
     "scripts": {
         "build": "node build.js",
         "watch": "nodemon build.js -e js,ts,css,html",
-        "fmt": "yarn prettier --write ."
+        "fmt": "yarn prettier --write .",
+        "lint": "yarn eslint .",
+        "lint:fix": "yarn eslint --fix ."
     },
+    "private": true,
     "devDependencies": {
         "@deanc/esbuild-plugin-postcss": "^1.0.2",
+        "@typescript-eslint/eslint-plugin": "^5.11.0",
+        "@typescript-eslint/parser": "^5.11.0",
         "autoprefixer": "^10.4.2",
         "cssnano": "^5.0.17",
         "esbuild": "^0.14.20",
+        "eslint": "^8.8.0",
         "nodemon": "^2.0.15",
         "postcss": "^8.4.6",
         "prettier": "^2.5.1",
