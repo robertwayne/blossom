@@ -2,6 +2,10 @@
 host = "127.0.0.1"
 port = 5000
 
+# The name is used in various places to identify the game, such as the web
+# server, content creation tool, in-game default about commands, and so on.
+name = "Blossom"
+
 # Sets the server tick rate (per second). 
 # The number represents how many ticks you want per second. Remember, while a competetive real-time
 # FPS server might aim for a higher tick rate (to process packets faster), many real-time games can

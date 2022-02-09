@@ -24,6 +24,7 @@ pub struct Config {
 pub struct GameSettings {
     pub host: String,
     pub port: u16,
+    pub name: String,
     pub tick_rate: u64,
     pub save_interval: u64,
     pub default_commands: bool,
@@ -115,6 +116,7 @@ impl Default for GameSettings {
         GameSettings {
             host: "127.0.0.1".to_string(),
             port: 5000,
+            name: "Blossom".to_string(),
             tick_rate: 20,
             save_interval: 300,
             default_commands: true,
