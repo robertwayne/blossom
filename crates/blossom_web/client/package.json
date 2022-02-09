@@ -1,0 +1,21 @@
+{
+    "name": "public",
+    "version": "1.0.0",
+    "main": "src/index.ts",
+    "license": "MIT",
+    "scripts": {
+        "build": "node build.js",
+        "watch": "nodemon build.js -e js,ts,css,html",
+        "fmt": "yarn prettier --write ."
+    },
+    "devDependencies": {
+        "@deanc/esbuild-plugin-postcss": "^1.0.2",
+        "autoprefixer": "^10.4.2",
+        "cssnano": "^5.0.17",
+        "esbuild": "^0.14.20",
+        "nodemon": "^2.0.15",
+        "postcss": "^8.4.6",
+        "prettier": "^2.5.1",
+        "typescript": "^4.5.5"
+    }
+}
