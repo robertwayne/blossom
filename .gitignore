@@ -8,6 +8,9 @@ node_modules
 
 # Files
 swarm_names.txt
+yarn-error.log
+Cargo.lock
+yarn.lock
 
 # Config Files
 .env
@@ -17,6 +20,3 @@ swarm_names.txt
 # User Settings
 .vscode
 .idea
-
-# Other
-Cargo.lock
