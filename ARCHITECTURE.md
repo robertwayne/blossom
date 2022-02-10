@@ -20,11 +20,6 @@ Moved into a stand-alone crate: **[Iridescent](https://github.com/robertwayne/ir
 Partial telnet implementation. Focuses on parts needed for general MUD
 communication, and will eventually include MUD protocols such as GMCP.
 
-### blossom_ext
-
-Extensions to the Blossom core. This includes things like full ordinal
-direction movement (default is cardinal + up and down).
-
 ### blossom_dynamic
 
 Used for enabling the `dylib` crate feature for dynamic linking.
@@ -40,6 +35,11 @@ message handling, database querying, systems, etc. This module will often be
 broken up into new crates as they outgrow the core.
 
 This is really just the 'hatchery' for new modules.
+
+### blossom_web
+
+Web server which runs in the background as a management dashboard,
+log aggregator, analytics, and access to the content creation tools.
 
 ## Channels and Messaging
 

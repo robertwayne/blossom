@@ -5,7 +5,7 @@ use flume::{Receiver, Sender};
 use sqlx::PgPool;
 
 use crate::{
-    error::{Error, Result},
+    error::{Error, ErrorType, Result},
     event::{ClientEvent, Event, GameEvent},
     player::PlayerId,
     response::Response,
@@ -129,7 +129,10 @@ impl Broker {
     async fn to_client(&self, id: PlayerId, event: GameEvent) -> Result<()> {
         self.tx_peers
             .get(&id)
-            .ok_or(Error::PeerDoesNotExist(id))?
+            .ok_or(Error {
+                kind: ErrorType::Internal,
+                message: "Peer does not exist.".to_string(),
+            })?
             .send_async(Event::Game(id, event))
             .await?;
 

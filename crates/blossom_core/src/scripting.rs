@@ -2,17 +2,6 @@ use std::env;
 
 use rhai::{serde::from_dynamic, Dynamic, Engine};
 use serde::de::DeserializeOwned;
-use thiserror::Error;
-
-#[derive(Debug, Error)]
-pub enum BlossomScriptError {
-    #[error("invalid glob pattern: {0}")]
-    BadPattern(#[from] globwalk::GlobError),
-    #[error("invalid path: {0}")]
-    InvalidPath(#[from] std::io::Error),
-    #[error("invalid script: {0}")]
-    InvalidSyntax(#[from] Box<rhai::EvalAltResult>),
-}
 
 /// This function will return a collection of an entire type of game object
 /// (eg. rooms, items, spells). If you need to get a specific object, or a
@@ -21,7 +10,7 @@ pub enum BlossomScriptError {
 /// Valid patterns look as such:
 ///     ./scripts/rooms/grassy_hill.rhai
 ///     ./scripts/items/broadsword.rhai
-pub fn get_game_objects<T>(engine: &Engine, module_type: &str) -> Result<Vec<T>, BlossomScriptError>
+pub fn get_game_objects<T>(engine: &Engine, module_type: &str) -> Result<Vec<T>, ScriptError>
 where
     T: 'static + Sync + Send + DeserializeOwned + std::fmt::Debug,
 {
@@ -50,6 +39,54 @@ where
     }
 
     Ok(objects)
+}
+
+#[derive(Debug)]
+pub enum ScriptErrorType {
+    BadPattern,
+    InvalidPath,
+    InvalidSyntax,
+}
+
+#[derive(Debug)]
+pub struct ScriptError {
+    pub kind: ScriptErrorType,
+    pub message: String,
+}
+
+impl std::error::Error for ScriptError {}
+
+impl std::fmt::Display for ScriptError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl From<globwalk::GlobError> for ScriptError {
+    fn from(err: globwalk::GlobError) -> Self {
+        Self {
+            kind: ScriptErrorType::BadPattern,
+            message: err.to_string(),
+        }
+    }
+}
+
+impl From<std::io::Error> for ScriptError {
+    fn from(err: std::io::Error) -> Self {
+        Self {
+            kind: ScriptErrorType::InvalidPath,
+            message: err.to_string(),
+        }
+    }
+}
+
+impl From<Box<rhai::EvalAltResult>> for ScriptError {
+    fn from(err: Box<rhai::EvalAltResult>) -> Self {
+        Self {
+            kind: ScriptErrorType::InvalidSyntax,
+            message: err.to_string(),
+        }
+    }
 }
 
 /// This creates a scripting engine which can consume .rhai files. It's

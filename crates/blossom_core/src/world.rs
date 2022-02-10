@@ -14,7 +14,7 @@ use crate::{
     command::{Command, CommandHandle},
     context::Context,
     entity::EntityId,
-    error::{Error, Result},
+    error::{Error, ErrorType, Result},
     event::{ClientEvent, Event, GameEvent},
     monster::Monster,
     player::{Player, PlayerId},
@@ -268,7 +268,10 @@ impl World {
     pub fn get_player(&self, id: PlayerId) -> Result<&Player> {
         match self.players.iter().find(|p| p.id == id) {
             Some(p) => Ok(p),
-            None => Err(Error::PeerDoesNotExist(id)),
+            None => Err(Error {
+                kind: ErrorType::Internal,
+                message: "Player not found".to_string(),
+            }),
         }
     }
 
@@ -276,7 +279,10 @@ impl World {
     pub fn get_player_mut(&mut self, id: PlayerId) -> Result<&mut Player> {
         match self.players.iter_mut().find(|p| p.id == id) {
             Some(p) => Ok(p),
-            None => Err(Error::PeerDoesNotExist(id)),
+            None => Err(Error {
+                kind: ErrorType::Internal,
+                message: "Player not found".to_string(),
+            }),
         }
     }
 
@@ -303,7 +309,10 @@ impl World {
             .find(|m| m.name == name && m.position == position)
         {
             Some(m) => Ok(m),
-            None => Err(Error::EntityNotFound(name.to_string())),
+            None => Err(Error {
+                kind: ErrorType::Internal,
+                message: "Monster not found".to_string(),
+            }),
         }
     }
 
