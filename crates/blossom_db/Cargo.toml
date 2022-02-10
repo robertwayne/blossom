@@ -13,6 +13,4 @@ keywords = ["blossom", "mud"]
 [dependencies]
 blossom_config = { path = "../blossom_config", version = "0.1" }
 sqlx = { version = "0.5", features = [ "runtime-tokio-rustls", "postgres", "offline"] }
-tokio = { version = "1", features = ["full"] }
 tracing = "0.1"
-tracing-subscriber = { version =  "0.3", features = ["env-filter"] }
