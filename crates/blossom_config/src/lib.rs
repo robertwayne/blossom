@@ -1,17 +1,6 @@
 use std::net::SocketAddr;
 
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
-
-#[derive(Debug, Error)]
-pub enum ConfigError {
-    #[error("invalid configuration: {0}")]
-    ConfigError(#[from] toml::de::Error),
-    #[error("serialize error: {0}")]
-    SerializeError(#[from] toml::ser::Error),
-    #[error("parse error: {0}")]
-    ParseError(#[from] std::io::Error),
-}
 
 #[derive(Default, Deserialize, Serialize)]
 pub struct Config {
@@ -141,6 +130,54 @@ impl Default for DatabaseSettings {
             db_pass: "".to_string(),
             db_host: "postgres".to_string(),
             db_port: 5432,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum ConfigErrorType {
+    Parse,
+    Serialize,
+    Deserialize,
+}
+
+#[derive(Debug)]
+pub struct ConfigError {
+    pub kind: ConfigErrorType,
+    pub message: String,
+}
+
+impl std::error::Error for ConfigError {}
+
+impl std::fmt::Display for ConfigError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl From<std::io::Error> for ConfigError {
+    fn from(err: std::io::Error) -> Self {
+        Self {
+            kind: ConfigErrorType::Parse,
+            message: err.to_string(),
+        }
+    }
+}
+
+impl From<toml::de::Error> for ConfigError {
+    fn from(err: toml::de::Error) -> Self {
+        Self {
+            kind: ConfigErrorType::Deserialize,
+            message: err.to_string(),
+        }
+    }
+}
+
+impl From<toml::ser::Error> for ConfigError {
+    fn from(err: toml::ser::Error) -> Self {
+        Self {
+            kind: ConfigErrorType::Serialize,
+            message: err.to_string(),
         }
     }
 }

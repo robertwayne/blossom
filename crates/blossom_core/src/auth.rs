@@ -14,7 +14,7 @@ use crate::{
     account::Account,
     connection::Connection,
     entity::EntityId,
-    error::{Error, Result},
+    error::{Error, ErrorType, Result},
     player::{PartialPlayer, Player},
     role::Role,
     utils::{capitalize, is_http},
@@ -38,8 +38,7 @@ async fn create(
     let argon = Argon2::default();
 
     let hash = argon
-        .hash_password(password.as_bytes(), salt.as_ref())
-        .map_err(|e| Error::AuthError(e.to_string()))?
+        .hash_password(password.as_bytes(), salt.as_ref())?
         .to_string();
 
     // If the player supplied an email, we will send them a confirmation email, but this exists
@@ -88,8 +87,7 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
     .await?;
 
     let argon = Argon2::default();
-    let hash = PasswordHash::new(&record.encrypted_password)
-        .map_err(|e| Error::AuthError(e.to_string()))?;
+    let hash = PasswordHash::new(&record.encrypted_password)?;
 
     if argon.verify_password(password.as_bytes(), &hash).is_ok() {
         Ok(Player {
@@ -114,7 +112,10 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
             dirty: false,
         })
     } else {
-        Err(Error::AuthError("Incorrect password".to_string()))
+        Err(Error {
+            kind: ErrorType::Authentication,
+            message: "Invalid credentials".to_string(),
+        })
     }
 }
 
@@ -204,9 +205,10 @@ async fn get_name(conn: &mut Connection) -> Result<String> {
             // Because this is the first frame we receive from the client, we have to check if it
             // contains HTTP traffic, and if so, drop it silently.
             if is_http(&msg) {
-                return Err(Error::ProtocolError(
-                    "http traffic; dropping silently".to_string(),
-                ));
+                return Err(Error {
+                    kind: ErrorType::Internal,
+                    message: "HTTP traffic is not allowed.".to_string(),
+                });
             }
 
             let msg = msg.trim();
@@ -241,9 +243,10 @@ async fn get_password(conn: &mut Connection) -> Result<String> {
     let password = loop {
         // Drop the connection if they enter an incorrect password 3 times.
         if failure_count > 3 {
-            return Err(Error::AuthError(
-                "Too many incorrect password attempts".to_string(),
-            ));
+            return Err(Error {
+                kind: ErrorType::Authentication,
+                message: "Too many incorrect password attempts.".to_string(),
+            });
         }
 
         conn.send_message("What is your password?").await?;
@@ -280,7 +283,12 @@ async fn set_password(conn: &mut Connection) -> Result<String> {
         if let Some(Ok(TelnetEvent::Message(msg))) = conn.frame_mut().next().await {
             match msg.to_lowercase().as_str() {
                 "y" | "yes" | "" => break,
-                "n" | "no" => return Err(Error::AuthError("Character not found".to_string())),
+                "n" | "no" => {
+                    return Err(Error {
+                        kind: ErrorType::Authentication,
+                        message: "Character not found.".to_string(),
+                    })
+                }
                 _ => continue,
             }
         }
@@ -297,9 +305,10 @@ async fn set_password(conn: &mut Connection) -> Result<String> {
             let msg = msg.trim();
 
             if msg == "exit" {
-                return Err(Error::AuthError(
-                    "Character creation cancelled.".to_string(),
-                ));
+                return Err(Error {
+                    kind: ErrorType::Authentication,
+                    message: "Character creation cancelled.".to_string(),
+                });
             }
 
             if msg.is_empty() || msg.len() < 8 {

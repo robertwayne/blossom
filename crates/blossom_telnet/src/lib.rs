@@ -11,19 +11,46 @@ use bytes::{Buf, BufMut, Bytes, BytesMut};
 use event::TelnetEvent;
 use option::TelnetOption;
 use subnegotiation::SubnegotiationType;
-use thiserror::Error;
 use tokio_util::codec::{Decoder, Encoder};
 
 use crate::constants::*;
 
-type Result<T> = std::result::Result<T, TelnetCodecError>;
+type Result<T> = std::result::Result<T, TelnetError>;
 
-#[derive(Debug, Error)]
-pub enum TelnetCodecError {
-    #[error("codec error: {0}")]
-    CodecError(String),
-    #[error("io error: {0}")]
-    IOError(#[from] std::io::Error),
+#[derive(Debug)]
+pub enum TelnetErrorType {
+    Codec,
+    Io,
+}
+
+#[derive(Debug)]
+pub struct TelnetError {
+    pub kind: TelnetErrorType,
+    pub message: String,
+}
+
+impl std::fmt::Display for TelnetError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl From<String> for TelnetError {
+    fn from(err: String) -> Self {
+        Self {
+            kind: TelnetErrorType::Codec,
+            message: err,
+        }
+    }
+}
+
+impl From<std::io::Error> for TelnetError {
+    fn from(err: std::io::Error) -> Self {
+        Self {
+            kind: TelnetErrorType::Io,
+            message: err.to_string(),
+        }
+    }
 }
 
 /// Implements a Tokio codec for the Telnet protocol, along with MUD-specific extension protocols
@@ -47,7 +74,7 @@ impl TelnetCodec {
 
 impl Decoder for TelnetCodec {
     type Item = TelnetEvent;
-    type Error = TelnetCodecError;
+    type Error = TelnetError;
 
     fn decode(&mut self, src: &mut BytesMut) -> Result<Option<Self::Item>> {
         let x = 0;
@@ -72,7 +99,7 @@ impl Decoder for TelnetCodec {
 }
 
 impl Encoder<TelnetEvent> for TelnetCodec {
-    type Error = TelnetCodecError;
+    type Error = TelnetError;
 
     fn encode(&mut self, event: TelnetEvent, buf: &mut BytesMut) -> Result<()> {
         match event {

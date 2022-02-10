@@ -5,7 +5,7 @@ use futures::{SinkExt, StreamExt};
 use tokio::net::TcpStream;
 use tokio_util::codec::Framed;
 
-use crate::error::{Error, Result};
+use crate::error::{Error, ErrorType, Result};
 
 /// Represents a players connection stream, as well as their write channel half. The read half is
 /// owned by the server message loop. In general, the connection should only be interacted with via
@@ -29,29 +29,32 @@ impl Connection {
     pub async fn send_message(&mut self, string: &str) -> Result<()> {
         let event = TelnetEvent::Message(string.to_string());
 
-        self.frame
-            .send(event)
-            .await
-            .map_err(|e| Error::TelnetError(e.to_string()))
+        self.frame.send(event).await.map_err(|e| Error {
+            kind: ErrorType::Internal,
+            message: e.to_string(),
+        })
     }
 
     /// Sends a Telnet IAC (Interpret As Command) message to the client and records
     /// their response.
     pub async fn send_iac(&mut self, command: TelnetEvent) -> Result<TelnetEvent> {
-        self.frame
-            .send(command)
-            .await
-            .map_err(|e| Error::TelnetError(e.to_string()))?;
+        self.frame.send(command).await?;
 
         let response = match self.frame.next().await {
             Some(Ok(response)) => response,
             Some(Err(e)) => {
                 tracing::error!(%e, "Error sending IAC");
-                return Err(Error::TelnetError("Error sending IAC".to_string()));
+                return Err(Error {
+                    kind: ErrorType::Internal,
+                    message: e.to_string(),
+                });
             }
             None => {
                 tracing::error!("No response from IAC");
-                return Err(Error::TelnetError("No response from IAC".to_string()));
+                return Err(Error {
+                    kind: ErrorType::Internal,
+                    message: "No response from IAC".to_string(),
+                });
             }
         };
 

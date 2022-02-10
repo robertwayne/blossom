@@ -1,14 +1,5 @@
 use blossom_config::{Config, ConfigError};
 use sqlx::postgres::PgPool;
-use thiserror::Error;
-
-#[derive(Debug, Error)]
-pub enum DatabaseError {
-    #[error("sqlx error: {0}")]
-    SqlxError(#[from] sqlx::Error),
-    #[error("config error: {0}")]
-    ConfigError(#[from] ConfigError),
-}
 
 #[derive(Debug)]
 pub struct Database;
@@ -22,5 +13,43 @@ impl Database {
         let pool = PgPool::connect(&config.db_url()).await?;
 
         Ok(pool)
+    }
+}
+
+#[derive(Debug)]
+pub enum DatabaseErrorType {
+    Config,
+    Connection,
+}
+
+#[derive(Debug)]
+pub struct DatabaseError {
+    pub kind: DatabaseErrorType,
+    pub message: String,
+}
+
+impl std::error::Error for DatabaseError {}
+
+impl std::fmt::Display for DatabaseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl From<ConfigError> for DatabaseError {
+    fn from(err: ConfigError) -> Self {
+        Self {
+            kind: DatabaseErrorType::Config,
+            message: err.to_string(),
+        }
+    }
+}
+
+impl From<sqlx::Error> for DatabaseError {
+    fn from(err: sqlx::Error) -> Self {
+        Self {
+            kind: DatabaseErrorType::Connection,
+            message: err.to_string(),
+        }
     }
 }
