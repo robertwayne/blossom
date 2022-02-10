@@ -11,8 +11,8 @@ categories = ["game-engines", "game-development"]
 keywords = ["blossom", "mud"]
 readme = "README.md"
 
-[dependencies]
-blossom_internal = { path = "../blossom_internal", version = "0.1" }
-
 [lib]
 crate-type = ["dylib"]
+
+[dependencies]
+blossom_internal = { path = "../blossom_internal", version = "0.1", default-features = false }
