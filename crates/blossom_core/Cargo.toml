@@ -9,8 +9,6 @@ homepage = "https://robertwayne.github.io/blossom"
 repository = "https://github.com/robertwayne/blossom/crates/blossom_core"
 categories = ["game-engines", "game-development"]
 keywords = ["blossom", "mud"]
-readme = "README.md"
-
 
 [dependencies]
 # Internal Crates
@@ -18,7 +16,6 @@ blossom_config = { path = "../blossom_config", version = "0.1" }
 blossom_db = { path = "../blossom_db", version = "0.1" }
 blossom_telnet = { path = "../blossom_telnet", version = "0.1" }
 blossom_web = { path = "../blossom_web", version = "0.1" }
-
 
 # Third-Party Crates
 argon2 = "0.3"

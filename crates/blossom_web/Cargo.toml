@@ -1,9 +1,14 @@
 [package]
 name = "blossom_web"
+authors = ["Rob Wagner <rob@sombia.com"]
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT OR Apache-2.0"
+description = "Web-based server management, analytics, and content creation tools."
+homepage = "https://robertwayne.github.io/blossom"
+repository = "https://github.com/robertwayne/blossom/crates/blossom_core"
+categories = ["game-engines", "game-development"]
+keywords = ["blossom", "mud"]
 
 [dependencies]
 askama = "0.11"
@@ -12,7 +17,6 @@ blossom_config = { path = "../blossom_config" }
 blossom_db = { path = "../blossom_db" }
 mime_guess = "2"
 rust-embed = { version = "6.3", features = ["interpolate-folder-path", "compression"] }
-serde = { version = "1", features = ["derive"] }
 sqlx = { version = "0.5", features = [ "runtime-tokio-rustls", "postgres", "offline"] }
 tower-http = { version = "0.2.0", features = ["fs", "trace"] }
 tracing = "0.1"

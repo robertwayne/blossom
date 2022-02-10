@@ -9,7 +9,6 @@ homepage = "https://robertwayne.github.io/blossom"
 repository = "https://github.com/robertwayne/blossom/crates/blossom_telnet"
 categories = ["network-programming"]
 keywords = ["blossom", "mud", "tokio", "telnet", "gmcp"]
-readme = "README.md"
 
 [dependencies]
 bytes = "1"
