@@ -12,8 +12,6 @@ pub struct Prompt {
     max_health: Option<i32>,
     mana: Option<i32>,
     max_mana: Option<i32>,
-    xp: Option<i32>,
-    xp_to_level: Option<i32>,
 }
 
 impl From<&Player> for Prompt {
@@ -23,8 +21,6 @@ impl From<&Player> for Prompt {
             max_health: Some(player.max_health),
             mana: Some(player.mana),
             max_mana: Some(player.max_mana),
-            xp: Some(player.xp),
-            xp_to_level: Some(player.xp_to_level),
         }
     }
 }
@@ -38,11 +34,7 @@ impl Display for Prompt {
         }
 
         if let (Some(mana), Some(max_mana)) = (self.mana, self.max_mana) {
-            prompt.push_str(&format!("{}/{}m ", mana, max_mana));
-        }
-
-        if let (Some(xp), Some(xp_to_level)) = (self.xp, self.xp_to_level) {
-            prompt.push_str(&format!("{}/{}tnl", xp, xp_to_level));
+            prompt.push_str(&format!("{}/{}mp", mana, max_mana));
         }
 
         writeln!(f, "[{}]", &prompt.dim())
