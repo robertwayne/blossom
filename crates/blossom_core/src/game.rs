@@ -5,8 +5,8 @@ use crate::{
     command::GameCommand,
     commands::{
         admin::{
-            player_info::PlayerInfo, shutdown::Shutdown, system_control::SystemsControl,
-            world_info::WorldInfo,
+            help::AdminHelp, player_info::PlayerInfo, shutdown::Shutdown,
+            system_control::SystemsControl, world_info::WorldInfo,
         },
         afk::Afk,
         brief::Brief,
@@ -55,6 +55,7 @@ impl Game {
             world.add_command(WorldInfo::create(), WorldInfo::run);
             world.add_command(SystemsControl::create(), SystemsControl::run);
             world.add_command(PlayerInfo::create(), PlayerInfo::run);
+            world.add_command(AdminHelp::create(), AdminHelp::run);
         }
 
         // Game initialization for locations is done sequentially:
