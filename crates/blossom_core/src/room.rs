@@ -1,4 +1,4 @@
-use iridescent::{constants::GREEN, Styled, StyledString};
+use iridescent::{constants::GREEN, Styled, StyledString, RED};
 use serde::Deserialize;
 
 use crate::{
@@ -87,12 +87,12 @@ impl Room {
                 .monsters
                 .iter()
                 .filter(|m| m.position == player.position)
-                .map(|m| m.name.clone())
+                .map(|m| format!("{}", m.name.clone().foreground(RED).bold()))
                 .collect::<Vec<_>>()
                 .join(", ");
 
             if !monsters_here.is_empty() {
-                text.push_str(&format!("\n{}", monsters_here));
+                text.push_str(&format!("\nNearby you see a {}.", monsters_here));
             }
 
             // Get all players in the players current room except the current player.
