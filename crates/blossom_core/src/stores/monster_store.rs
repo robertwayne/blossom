@@ -27,28 +27,11 @@ impl MonsterStore {
         }
     }
 
-    pub fn spawn(
-        &mut self,
-        template_key: String,
-        position: Vec3,
-        world: &mut World,
-    ) -> Option<EntityId> {
-        let template = self.templates.get(&template_key);
-
-        if let Some(template) = template {
-            let new_monster = template.clone();
-            let mut monster = Monster::new(world, new_monster);
-            monster.with_position(position);
-
-            let id = self.map.insert(monster);
-
-            return Some(id);
-        }
-
-        None
+    pub fn insert(&mut self, monster: Monster) -> EntityId {
+        self.map.insert(monster)
     }
 
-    pub fn despawn(&mut self, id: EntityId) {
+    pub fn remove(&mut self, id: EntityId) {
         self.map.remove_by_id(id);
     }
 
@@ -58,6 +41,10 @@ impl MonsterStore {
 
     pub fn remove_template(&mut self, key: &str) {
         self.templates.remove(key);
+    }
+
+    pub fn get_template(&self, key: &str) -> Option<&MonsterTemplate> {
+        self.templates.get(key)
     }
 
     pub fn get(&self, id: EntityId) -> Option<&Monster> {

@@ -264,6 +264,23 @@ impl World {
         }
     }
 
+    pub fn spawn_monster(&mut self, template_key: &str, position: Vec3) -> Option<EntityId> {
+        let template = self.monsters.get_template(&template_key);
+
+        if let Some(template) = template {
+            let new_monster = template.clone();
+            let id = self.next_id();
+            let mut monster = Monster::new(id, new_monster);
+            monster.with_position(position);
+
+            self.monsters.insert(monster);
+
+            return Some(id);
+        }
+
+        None
+    }
+
     /// Gets a player by their ID from world state.
     pub fn get_player(&self, id: PlayerId) -> Result<&Player> {
         match self.players.iter().find(|p| p.id == id) {

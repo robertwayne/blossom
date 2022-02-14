@@ -4,7 +4,6 @@ use crate::{
     entity::{Entity, EntityId},
     quickmap::QuickMapKey,
     vec3::Vec3,
-    world::World,
 };
 
 #[derive(Debug, Deserialize, Clone)]
@@ -38,9 +37,9 @@ impl Monster {
 }
 
 impl Monster {
-    pub fn new(world: &mut World, template: MonsterTemplate) -> Self {
+    pub fn new(id: EntityId, template: MonsterTemplate) -> Self {
         Self {
-            id: world.next_id(),
+            id,
             name: template.name,
             description: template.description,
             position: Vec3::default(),
