@@ -9,8 +9,6 @@ use crate::{
     entity::EntityId,
     monster::{Monster, MonsterTemplate},
     quickmap::QuickMap,
-    vec3::Vec3,
-    world::World,
 };
 
 #[derive(Debug)]

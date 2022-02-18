@@ -265,7 +265,7 @@ impl World {
     }
 
     pub fn spawn_monster(&mut self, template_key: &str, position: Vec3) -> Option<EntityId> {
-        let template = self.monsters.get_template(&template_key);
+        let template = self.monsters.get_template(template_key);
 
         if let Some(template) = template {
             let new_monster = template.clone();

@@ -26,6 +26,7 @@ if (toggle) {
 export const swap_icons = (next: string) => {
     const button = document.getElementById('toggle-btn')
     if (button) {
-        button.innerHTML = next === 'dark' ? LIGHT_MODE_BUTTON : DARK_MODE_BUTTON
+        button.innerHTML =
+            next === 'dark' ? LIGHT_MODE_BUTTON : DARK_MODE_BUTTON
     }
 }
