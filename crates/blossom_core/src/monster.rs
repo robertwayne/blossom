@@ -71,11 +71,6 @@ impl<'a> Searchable for &'a Monster {
 
 impl std::fmt::Display for Monster {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(
-            f,
-            "{}\n{}",
-            format!("{}", self.name.bold()),
-            self.description
-        )
+        write!(f, "{}\n{}", self.name.bold(), self.description)
     }
 }
