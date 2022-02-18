@@ -26,6 +26,7 @@ globwalk = "0.8"
 iridescent = "0.1"
 parking_lot = { version = "0.12", features = ["nightly"] }
 serde = { version = "1", features = ["derive"] }
+simsearch = "0.2"
 sqlx = { version = "0.5", features = [ "runtime-tokio-rustls", "postgres", "offline"] }
 tokio = { version = "1", default-features = false, features = ["rt-multi-thread", "macros", "tracing"] }
 tokio-util = { version = "0.7", default-features = false, features = ["codec"] }
