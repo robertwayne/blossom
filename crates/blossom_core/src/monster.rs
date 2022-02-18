@@ -1,3 +1,4 @@
+use iridescent::Styled;
 use serde::Deserialize;
 
 use crate::{
@@ -65,5 +66,16 @@ impl QuickMapKey<EntityId> for Monster {
 impl<'a> Searchable for &'a Monster {
     fn search_key(&self) -> &str {
         &self.name
+    }
+}
+
+impl std::fmt::Display for Monster {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(
+            f,
+            "{}\n{}",
+            format!("{}", self.name.bold()),
+            self.description
+        )
     }
 }

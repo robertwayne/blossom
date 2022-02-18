@@ -29,7 +29,7 @@ impl GameCommand for Look {
             if let Some(index) = index {
                 let monster = &monsters[index];
 
-                return Ok(Response::Client(format!("{:#?}", monster)));
+                return Ok(Response::Client(format!("{}", monster)));
             }
 
             return Ok(Response::Client("Monster not found.".to_string()));
