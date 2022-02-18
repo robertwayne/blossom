@@ -92,7 +92,7 @@ impl Room {
                 .join(", ");
 
             if !monsters_here.is_empty() {
-                text.push_str(&format!("\nNearby you see a {}.", monsters_here));
+                text.push_str(&format!("\nNearby you see a {}.\n", monsters_here));
             }
 
             // Get all players in the players current room except the current player.
@@ -125,7 +125,7 @@ impl Room {
             }
 
             // Add the exits list.
-            text.push_str(&format!("\n{}\n", self.exits()));
+            text.push_str(&format!("\n{}", self.exits()));
 
             return text;
         }

@@ -37,6 +37,6 @@ impl Display for Prompt {
             prompt.push_str(&format!("{}/{}mp", mana, max_mana));
         }
 
-        writeln!(f, "[{}]", &prompt.dim())
+        writeln!(f, "\n[{}]", &prompt.dim())
     }
 }
