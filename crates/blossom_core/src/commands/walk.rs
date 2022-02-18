@@ -33,7 +33,7 @@ impl GameCommand for Walk {
     }
 
     fn run(ctx: Context) -> Result<Response> {
-        let direction = Direction::from(ctx.tokens.command);
+        let direction = Direction::from(ctx.input.command);
         let player = ctx.world.get_player(ctx.id)?;
         let current_room = ctx
             .world

@@ -20,6 +20,39 @@ impl GameCommand for Look {
     fn run(ctx: Context) -> Result<Response> {
         let player = ctx.world.get_player(ctx.id)?;
 
+        let args = ctx.args();
+
+        if let Some(value) = args.get(0) {
+            let monsters = ctx.world.get_monsters(player.position);
+
+            let monster_strings = monsters
+                .iter()
+                .map(|s| s.name.split_whitespace())
+                .collect::<Vec<_>>()
+                .into_iter()
+                .flatten()
+                .map(|s| s.to_string().to_lowercase())
+                .collect::<Vec<_>>();
+
+            if monster_strings.contains(&value.to_lowercase()) {
+                let monster = monsters
+                    .iter()
+                    .find(|s| s.name.to_lowercase() == value.to_lowercase());
+
+                match monster {
+                    Some(m) => {
+                        return Ok(Response::Client(format!("You see a {}.", m.name)));
+                    }
+                    None => {
+                        return Ok(Response::Client(format!(
+                            "You do not see a {} here.",
+                            value
+                        )))
+                    }
+                }
+            }
+        }
+
         let view = ctx
             .world
             .rooms

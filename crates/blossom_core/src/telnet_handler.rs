@@ -12,8 +12,8 @@ use crate::{
     connection::Connection,
     error::Result,
     event::{ClientEvent, Event, GameEvent},
+    input::Input,
     response::Response,
-    token_stream::TokenStream,
 };
 
 pub async fn telnet_connection_loop(
@@ -68,7 +68,7 @@ pub async fn telnet_connection_loop(
                         GameEvent::Accepted(Response::Client(msg)) => {
                             // Send a command response to the player
                             conn.send_message(&msg).await?;
-                            tx_broker.send(Event::Client(id, ClientEvent::Command(TokenStream { command: "look".to_string(), remaining: Vec::new() })))?;
+                            tx_broker.send(Event::Client(id, ClientEvent::Command(Input { command: "look".to_string(), args: Vec::new() })))?;
                         }
                         GameEvent::Command(response)  => {
                             match response {
@@ -109,7 +109,7 @@ pub async fn telnet_connection_loop(
                                 tx_broker.send(Event::Client(id, ClientEvent::Ping))?;
                                 continue;
                             }
-                            tx_broker.send(Event::Client(id, ClientEvent::Command(TokenStream::from(msg))))?;
+                            tx_broker.send(Event::Client(id, ClientEvent::Command(Input::from(msg))))?;
                         }
                         _ => continue,
                     }

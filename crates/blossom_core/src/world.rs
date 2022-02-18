@@ -101,7 +101,7 @@ impl World {
 
     /// Loops through commands received from the broker and processes them. Note that this is not
     /// ONLY for game-specific commands, but all peer-sent messages that are valid and parsed as
-    /// a TokenStream. This includes connecting and disconnecting.
+    /// an Input struct. This includes connecting and disconnecting.
     fn process_commands(&mut self) {
         while let Ok(Event::Client(id, event)) = self.rx.try_recv() {
             tracing::trace!("Processing command: {:?}", event);
@@ -319,12 +319,8 @@ impl World {
         Ok(self.players.iter().collect())
     }
 
-    pub fn get_monster(&self, position: Vec3, name: &str) -> Result<&Monster> {
-        match self
-            .monsters
-            .iter()
-            .find(|m| m.name == name && m.position == position)
-        {
+    pub fn get_monster(&self, id: EntityId) -> Result<&Monster> {
+        match self.monsters.iter().find(|m| m.id == id) {
             Some(m) => Ok(m),
             None => Err(Error {
                 kind: ErrorType::Internal,

@@ -18,7 +18,7 @@ impl GameCommand for Say {
     }
 
     fn run(ctx: Context) -> Result<Response> {
-        let message = ctx.tokens.remaining.join(" ");
+        let message = ctx.input.args.join(" ");
 
         if message.is_empty() {
             return Ok(Response::Empty);

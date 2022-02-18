@@ -3,8 +3,8 @@ pub mod prelude;
 pub mod core {
     pub use blossom_core::{
         account::*, command::*, context::Context, direction::*, error::Error, event::*, game::*,
-        player::*, prompt::*, quickmap::*, response::*, role::*, room::*, server::*, system::*,
-        token_stream::*, vec3::*, world::*,
+        input::*, player::*, prompt::*, quickmap::*, response::*, role::*, room::*, server::*,
+        system::*, vec3::*, world::*,
     };
 }
 
