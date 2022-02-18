@@ -27,6 +27,7 @@ pub mod response;
 pub mod role;
 pub mod room;
 pub mod scripting;
+pub mod searchable;
 pub mod server;
 pub mod system;
 pub mod timer;

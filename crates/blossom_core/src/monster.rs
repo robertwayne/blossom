@@ -3,6 +3,7 @@ use serde::Deserialize;
 use crate::{
     entity::{Entity, EntityId},
     quickmap::QuickMapKey,
+    searchable::Searchable,
     vec3::Vec3,
 };
 
@@ -21,7 +22,7 @@ impl MonsterTemplate {
 
 #[derive(Debug)]
 pub struct Monster {
-    id: EntityId,
+    pub id: EntityId,
     pub name: String,
     pub description: String,
     pub position: Vec3,
@@ -58,5 +59,11 @@ impl Entity for Monster {
 impl QuickMapKey<EntityId> for Monster {
     fn key(&self) -> EntityId {
         self.id
+    }
+}
+
+impl<'a> Searchable for &'a Monster {
+    fn search_key(&self) -> &str {
+        &self.name
     }
 }
