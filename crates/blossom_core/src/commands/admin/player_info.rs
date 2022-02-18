@@ -21,7 +21,7 @@ impl GameCommand for PlayerInfo {
         let player = ctx.world.get_player(ctx.id)?;
 
         if player.account.roles.contains(&Role::Admin) {
-            match ctx.tokens.remaining.get(0) {
+            match ctx.input.args.get(0) {
                 Some(name) => {
                     if let Some(target) = ctx.world.players.iter().find(|p| p.name == *name) {
                         return Ok(Response::Client(format!("{:#?}", target)));

@@ -1,10 +1,11 @@
+use iridescent::Styled;
 use serde::Deserialize;
 
 use crate::{
     entity::{Entity, EntityId},
     quickmap::QuickMapKey,
+    searchable::Searchable,
     vec3::Vec3,
-    world::World,
 };
 
 #[derive(Debug, Deserialize, Clone)]
@@ -22,7 +23,7 @@ impl MonsterTemplate {
 
 #[derive(Debug)]
 pub struct Monster {
-    id: EntityId,
+    pub id: EntityId,
     pub name: String,
     pub description: String,
     pub position: Vec3,
@@ -38,9 +39,9 @@ impl Monster {
 }
 
 impl Monster {
-    pub fn new(world: &mut World, template: MonsterTemplate) -> Self {
+    pub fn new(id: EntityId, template: MonsterTemplate) -> Self {
         Self {
-            id: world.next_id(),
+            id,
             name: template.name,
             description: template.description,
             position: Vec3::default(),
@@ -59,5 +60,17 @@ impl Entity for Monster {
 impl QuickMapKey<EntityId> for Monster {
     fn key(&self) -> EntityId {
         self.id
+    }
+}
+
+impl<'a> Searchable for &'a Monster {
+    fn search_key(&self) -> &str {
+        &self.name
+    }
+}
+
+impl std::fmt::Display for Monster {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}\n{}", self.name.bold(), self.description)
     }
 }

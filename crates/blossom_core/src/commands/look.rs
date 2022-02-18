@@ -19,6 +19,21 @@ impl GameCommand for Look {
 
     fn run(ctx: Context) -> Result<Response> {
         let player = ctx.world.get_player(ctx.id)?;
+        let args = ctx.args();
+
+        // Check if the player is looking at a monster.
+        if args.get(0).is_some() {
+            let monsters = ctx.world.get_monsters(player.position);
+            let index = ctx.input.fuzzy_match(&monsters[..]);
+
+            if let Some(index) = index {
+                let monster = &monsters[index];
+
+                return Ok(Response::Client(format!("{}", monster)));
+            }
+
+            return Ok(Response::Client("Monster not found.".to_string()));
+        }
 
         let view = ctx
             .world

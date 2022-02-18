@@ -5,8 +5,8 @@ use crate::{
     command::GameCommand,
     commands::{
         admin::{
-            player_info::PlayerInfo, shutdown::Shutdown, system_control::SystemsControl,
-            world_info::WorldInfo,
+            help::AdminHelp, player_info::PlayerInfo, shutdown::Shutdown,
+            system_control::SystemsControl, world_info::WorldInfo,
         },
         afk::Afk,
         brief::Brief,
@@ -23,7 +23,7 @@ use crate::{
     region::{AreaBuilder, RegionBuilder},
     room::RoomBuilder,
     scripting::{create_engine, get_game_objects},
-    systems::{global_save::GlobalSave, watcher::SystemWatcher},
+    systems::{global_save::GlobalSave, spawner::Spawner, watcher::SystemWatcher},
     world::World,
 };
 
@@ -40,6 +40,7 @@ impl Game {
 
         world.add_system("watcher", SystemWatcher::new());
         world.add_system("global_save", GlobalSave::new(config.game.save_interval));
+        world.add_system("spawner", Spawner::new(300));
 
         if config.game.default_commands {
             world.add_command(Afk::create(), Afk::run);
@@ -55,6 +56,7 @@ impl Game {
             world.add_command(WorldInfo::create(), WorldInfo::run);
             world.add_command(SystemsControl::create(), SystemsControl::run);
             world.add_command(PlayerInfo::create(), PlayerInfo::run);
+            world.add_command(AdminHelp::create(), AdminHelp::run);
         }
 
         // Game initialization for locations is done sequentially:

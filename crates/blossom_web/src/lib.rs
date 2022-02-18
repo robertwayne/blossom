@@ -13,7 +13,6 @@ use axum::{
     AddExtensionLayer, Router,
 };
 use blossom_config::Config;
-use blossom_db::Database;
 use sqlx::PgPool;
 use tower_http::trace::TraceLayer;
 

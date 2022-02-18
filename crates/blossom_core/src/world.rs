@@ -101,7 +101,7 @@ impl World {
 
     /// Loops through commands received from the broker and processes them. Note that this is not
     /// ONLY for game-specific commands, but all peer-sent messages that are valid and parsed as
-    /// a TokenStream. This includes connecting and disconnecting.
+    /// an Input struct. This includes connecting and disconnecting.
     fn process_commands(&mut self) {
         while let Ok(Event::Client(id, event)) = self.rx.try_recv() {
             tracing::trace!("Processing command: {:?}", event);
@@ -264,6 +264,23 @@ impl World {
         }
     }
 
+    pub fn spawn_monster(&mut self, template_key: &str, position: Vec3) -> Option<EntityId> {
+        let template = self.monsters.get_template(template_key);
+
+        if let Some(template) = template {
+            let new_monster = template.clone();
+            let id = self.next_id();
+            let mut monster = Monster::new(id, new_monster);
+            monster.with_position(position);
+
+            self.monsters.insert(monster);
+
+            return Some(id);
+        }
+
+        None
+    }
+
     /// Gets a player by their ID from world state.
     pub fn get_player(&self, id: PlayerId) -> Result<&Player> {
         match self.players.iter().find(|p| p.id == id) {
@@ -302,12 +319,8 @@ impl World {
         Ok(self.players.iter().collect())
     }
 
-    pub fn get_monster(&self, position: Vec3, name: &str) -> Result<&Monster> {
-        match self
-            .monsters
-            .iter()
-            .find(|m| m.name == name && m.position == position)
-        {
+    pub fn get_monster(&self, id: EntityId) -> Result<&Monster> {
+        match self.monsters.iter().find(|m| m.id == id) {
             Some(m) => Ok(m),
             None => Err(Error {
                 kind: ErrorType::Internal,

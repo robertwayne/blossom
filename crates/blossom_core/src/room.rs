@@ -1,10 +1,9 @@
-use iridescent::{constants::GREEN, Styled, StyledString};
+use iridescent::{constants::GREEN, Styled, StyledString, RED};
 use serde::Deserialize;
 
 use crate::{
     direction::Direction,
     entity::{Entity, EntityId},
-    monster::Monster,
     player::PlayerId,
     quickmap::QuickMapKey,
     vec3::Vec3,
@@ -18,7 +17,7 @@ pub struct Room {
     pub position: Vec3,
     pub description: String,
     pub exits: Vec<Direction>,
-    pub mob_pool: Vec<Monster>,
+    pub mob_pool: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -28,6 +27,7 @@ pub struct RoomBuilder {
     pub description: String,
     pub position: Vec3,
     pub exits: Vec<Direction>,
+    pub mob_pool: Vec<String>,
 }
 
 impl RoomBuilder {
@@ -38,7 +38,7 @@ impl RoomBuilder {
             position: self.position,
             description: self.description,
             exits: self.exits,
-            mob_pool: Vec::new(),
+            mob_pool: self.mob_pool,
         }
     }
 }
@@ -87,12 +87,12 @@ impl Room {
                 .monsters
                 .iter()
                 .filter(|m| m.position == player.position)
-                .map(|m| m.name.clone())
+                .map(|m| format!("{}", m.name.clone().foreground(RED).bold()))
                 .collect::<Vec<_>>()
                 .join(", ");
 
             if !monsters_here.is_empty() {
-                text.push_str(&format!("\n{}", monsters_here));
+                text.push_str(&format!("\nNearby you see a {}.\n", monsters_here));
             }
 
             // Get all players in the players current room except the current player.
@@ -125,7 +125,7 @@ impl Room {
             }
 
             // Add the exits list.
-            text.push_str(&format!("\n{}\n", self.exits()));
+            text.push_str(&format!("\n{}", self.exits()));
 
             return text;
         }

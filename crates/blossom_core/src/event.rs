@@ -1,9 +1,9 @@
 use flume::Sender;
 
 use crate::{
+    input::Input,
     player::{Player, PlayerId},
     response::Response,
-    token_stream::TokenStream,
 };
 
 #[derive(Debug)]
@@ -62,7 +62,7 @@ pub enum ClientEvent {
     // Manually called event that removes a player from the world
     Disconnect,
     // Client-sent command
-    Command(TokenStream),
+    Command(Input),
     // An event that pings the server for a response on empty input
     Ping,
 }

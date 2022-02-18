@@ -22,12 +22,12 @@ impl GameCommand for SystemsControl {
         let player = ctx.world.get_player(ctx.id)?;
 
         if player.account.roles.contains(&Role::Admin) {
-            let mut tokens = ctx.tokens.remaining.iter();
+            let mut tokens = ctx.input.args.iter();
 
             match tokens.next() {
                 Some(token) => match token.as_str() {
                     "start" => {
-                        if let Some(command) = ctx.tokens.remaining.get(1) {
+                        if let Some(command) = ctx.input.args.get(1) {
                             let result = ctx
                                 .world
                                 .systems
@@ -48,12 +48,12 @@ impl GameCommand for SystemsControl {
                         }
                     }
                     "stop" => {
-                        if let Some(command) = ctx.tokens.remaining.get(1) {
+                        if let Some(command) = ctx.input.args.get(1) {
                             let result = ctx
                                 .world
                                 .systems
                                 .set_status(command.as_str(), SystemStatus::Stopped);
-                            
+
                             match result {
                                 true => Ok(Response::Client(format!(
                                     "Stopping system `{}`.",
@@ -69,12 +69,12 @@ impl GameCommand for SystemsControl {
                         }
                     }
                     "pause" => {
-                        if let Some(command) = ctx.tokens.remaining.get(1) {
+                        if let Some(command) = ctx.input.args.get(1) {
                             let result = ctx
                                 .world
                                 .systems
                                 .set_status(command.as_str(), SystemStatus::Paused);
-                            
+
                             match result {
                                 true => Ok(Response::Client(format!(
                                     "Pausing system `{}`.",
