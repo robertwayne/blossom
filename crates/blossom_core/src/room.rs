@@ -4,7 +4,6 @@ use serde::Deserialize;
 use crate::{
     direction::Direction,
     entity::{Entity, EntityId},
-    monster::Monster,
     player::PlayerId,
     quickmap::QuickMapKey,
     vec3::Vec3,
@@ -18,7 +17,7 @@ pub struct Room {
     pub position: Vec3,
     pub description: String,
     pub exits: Vec<Direction>,
-    pub mob_pool: Vec<Monster>,
+    pub mob_pool: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -28,6 +27,7 @@ pub struct RoomBuilder {
     pub description: String,
     pub position: Vec3,
     pub exits: Vec<Direction>,
+    pub mob_pool: Vec<String>,
 }
 
 impl RoomBuilder {
@@ -38,7 +38,7 @@ impl RoomBuilder {
             position: self.position,
             description: self.description,
             exits: self.exits,
-            mob_pool: Vec::new(),
+            mob_pool: self.mob_pool,
         }
     }
 }
