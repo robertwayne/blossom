@@ -13,7 +13,7 @@ use sqlx::postgres::PgPool;
 use crate::{
     account::Account,
     connection::Connection,
-    entity::EntityId,
+    entity::Entity,
     error::{Error, ErrorType, Result},
     player::{PartialPlayer, Player},
     role::Role,
@@ -91,7 +91,6 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
 
     if argon.verify_password(password.as_bytes(), &hash).is_ok() {
         Ok(Player {
-            _entityid: EntityId::empty(),
             id: record.id,
             account: Account {
                 id: record.account_id,
@@ -176,7 +175,6 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
 
         conn.send_message(welcome_msg.to_string().as_str()).await?;
         Ok(Some(Player {
-            _entityid: EntityId::empty(),
             id: partial_player.id,
             account: partial_player.account,
             name,

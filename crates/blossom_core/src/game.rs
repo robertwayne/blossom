@@ -19,8 +19,6 @@ use crate::{
         who::Who,
     },
     event::Event,
-    monster::MonsterTemplate,
-    region::{AreaBuilder, RegionBuilder},
     room::RoomBuilder,
     scripting::{create_engine, get_game_objects},
     systems::{global_save::GlobalSave, spawner::Spawner, watcher::SystemWatcher},
@@ -57,56 +55,6 @@ impl Game {
             world.add_command(SystemsControl::create(), SystemsControl::run);
             world.add_command(PlayerInfo::create(), PlayerInfo::run);
             world.add_command(AdminHelp::create(), AdminHelp::run);
-        }
-
-        // Game initialization for locations is done sequentially:
-        // 1. We load all regions first, and place them into the location store.
-        // 2. We load all the areas, and place them into the region they belong
-        //    to. Area data files all contain a region by name, so we can just
-        //    iterate through all the regions and fill them up.
-        // 3. We load all the rooms, and place them into the area they belong
-        //    to. Room data files all contain an area by name, so we can just
-        //    iterate through all the areas and fill them up.
-        // Now we have a can store a QuickMap of every region, area, and room
-        // in the game for fast access and iteration.
-
-        // Load all regions
-        if let Ok(regions) = get_game_objects::<RegionBuilder>(&engine, "regions") {
-            for builder in regions {
-                let id = world.next_id();
-                let r = builder.build(id);
-
-                world.regions.push(r);
-            }
-        }
-
-        // Load all areas
-        if let Ok(areas) = get_game_objects::<AreaBuilder>(&engine, "areas") {
-            for builder in areas {
-                let id = world.next_id();
-                let area = builder.build(id);
-
-                world.areas.push(area);
-            }
-        }
-
-        // Load all rooms
-        if let Ok(rooms) = get_game_objects::<RoomBuilder>(&engine, "rooms") {
-            for builder in rooms {
-                let id = world.next_id();
-                let room = builder.build(id);
-
-                world.rooms.insert(room);
-            }
-        }
-
-        // Load all monster templates
-        if let Ok(monsters) = get_game_objects::<MonsterTemplate>(&engine, "monsters") {
-            for template in monsters {
-                world
-                    .monsters
-                    .insert_template(template.create_key(), template);
-            }
         }
 
         tokio::task::spawn_blocking(move || world.start_loop());

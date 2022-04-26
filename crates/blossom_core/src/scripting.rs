@@ -106,7 +106,7 @@ pub fn create_engine() -> Engine {
 // mod tests {
 //     use super::*;
 
-//     use crate::{entity::EntityId, room::Room, vec3::Vec3};
+//     use crate::{entity::Entity, room::Room, vec3::Vec3};
 
 //     #[test]
 //     fn get_game_objects_rooms() -> Result<(), BlossomScriptError> {
@@ -114,7 +114,7 @@ pub fn create_engine() -> Engine {
 //         let rooms = get_game_objects::<Room>(&engine, "data")?;
 
 //         assert!(vec![Room {
-//             entity_id: EntityId::empty(),
+//             entity_id: Entity::empty(),
 //             name: "Test Room".to_string(),
 //             description: "This is a test room.".to_string(),
 //             position: Vec3::new(0, 0, 0),

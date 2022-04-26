@@ -13,17 +13,14 @@ use iridescent::{
 use crate::{
     command::{Command, CommandHandle},
     context::Context,
-    entity::EntityId,
+    entity::Entity,
     error::{Error, ErrorType, Result},
     event::{ClientEvent, Event, GameEvent},
-    monster::Monster,
     player::{Player, PlayerId},
     prompt::Prompt,
-    quickmap::QuickMap,
-    region::{Area, Region},
     response::Response,
     room::Room,
-    stores::{monster_store::MonsterStore, system_store::SystemStore},
+    stores::system_store::SystemStore,
     system::{System, SystemHandle, SystemReadOnly, SystemReadOnlyHandle, SystemStatus},
     timer::Timer,
     vec3::Vec3,
@@ -35,11 +32,6 @@ use crate::{
 pub struct World {
     pub rx: Receiver<Event>,
     pub broker: Sender<Event>,
-    pub players: QuickMap<PlayerId, Player>,
-    pub regions: Vec<Region>,
-    pub areas: Vec<Area>,
-    pub rooms: QuickMap<Vec3, Room>,
-    pub monsters: MonsterStore,
     pub timer: Timer,
     pub systems: SystemStore,
     pub command_map: HashMap<String, usize>,
@@ -55,11 +47,6 @@ impl World {
         World {
             rx,
             broker: tx,
-            players: QuickMap::new(),
-            regions: Vec::new(),
-            areas: Vec::new(),
-            rooms: QuickMap::new(),
-            monsters: MonsterStore::new(),
             timer: Timer::new(),
             systems: SystemStore::new(),
             command_map: HashMap::new(),
@@ -118,7 +105,7 @@ impl World {
                         ))),
                     );
 
-                    player._entityid = self.next_id();
+                    player._Entity = self.next_id();
 
                     self.players.insert(player);
                     self.timer.last_action = Instant::now()
@@ -264,23 +251,6 @@ impl World {
         }
     }
 
-    pub fn spawn_monster(&mut self, template_key: &str, position: Vec3) -> Option<EntityId> {
-        let template = self.monsters.get_template(template_key);
-
-        if let Some(template) = template {
-            let new_monster = template.clone();
-            let id = self.next_id();
-            let mut monster = Monster::new(id, new_monster);
-            monster.with_position(position);
-
-            self.monsters.insert(monster);
-
-            return Some(id);
-        }
-
-        None
-    }
-
     /// Gets a player by their ID from world state.
     pub fn get_player(&self, id: PlayerId) -> Result<&Player> {
         match self.players.iter().find(|p| p.id == id) {
@@ -319,27 +289,10 @@ impl World {
         Ok(self.players.iter().collect())
     }
 
-    pub fn get_monster(&self, id: EntityId) -> Result<&Monster> {
-        match self.monsters.iter().find(|m| m.id == id) {
-            Some(m) => Ok(m),
-            None => Err(Error {
-                kind: ErrorType::Internal,
-                message: "Monster not found".to_string(),
-            }),
-        }
-    }
-
-    pub fn get_monsters(&self, position: Vec3) -> Vec<&Monster> {
-        self.monsters
-            .iter()
-            .filter(|m| m.position == position)
-            .collect::<Vec<_>>()
-    }
-
-    pub fn next_id(&mut self) -> EntityId {
+    pub fn next_id(&mut self) -> Entity {
         self.active_entities += 1;
         self.spawned_entities += 1;
-        EntityId {
+        Entity {
             id: self.spawned_entities,
             tick: self.timer.count,
         }

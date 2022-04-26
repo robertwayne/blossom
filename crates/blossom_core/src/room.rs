@@ -1,18 +1,11 @@
 use iridescent::{constants::GREEN, Styled, StyledString, RED};
 use serde::Deserialize;
 
-use crate::{
-    direction::Direction,
-    entity::{Entity, EntityId},
-    player::PlayerId,
-    quickmap::QuickMapKey,
-    vec3::Vec3,
-    world::World,
-};
+use crate::{direction::Direction, entity::Entity, player::PlayerId, vec3::Vec3, world::World};
 
 #[derive(Debug)]
 pub struct Room {
-    pub entity_id: EntityId,
+    pub entity_id: Entity,
     pub name: String,
     pub position: Vec3,
     pub description: String,
@@ -31,7 +24,7 @@ pub struct RoomBuilder {
 }
 
 impl RoomBuilder {
-    pub fn build(self, id: EntityId) -> Room {
+    pub fn build(self, id: Entity) -> Room {
         Room {
             entity_id: id,
             name: self.name,
@@ -82,19 +75,6 @@ impl Room {
                 text.push_str(&format!("\n{}\n", self.description));
             }
 
-            // Display any monsters in this room.
-            let monsters_here = world
-                .monsters
-                .iter()
-                .filter(|m| m.position == player.position)
-                .map(|m| format!("{}", m.name.clone().foreground(RED).bold()))
-                .collect::<Vec<_>>()
-                .join(", ");
-
-            if !monsters_here.is_empty() {
-                text.push_str(&format!("\nNearby you see a {}.\n", monsters_here));
-            }
-
             // Get all players in the players current room except the current player.
             let players_here = world
                 .players
@@ -131,17 +111,5 @@ impl Room {
         }
 
         "This room has no description.".to_string()
-    }
-}
-
-impl QuickMapKey<Vec3> for Room {
-    fn key(&self) -> Vec3 {
-        self.position
-    }
-}
-
-impl Entity for Room {
-    fn id(&self) -> EntityId {
-        self.entity_id
     }
 }

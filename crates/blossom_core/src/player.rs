@@ -1,11 +1,6 @@
 use sqlx::PgPool;
 
-use crate::{
-    account::Account,
-    entity::{Entity, EntityId},
-    quickmap::QuickMapKey,
-    vec3::Vec3,
-};
+use crate::{account::Account, entity::Entity, vec3::Vec3};
 
 pub type PlayerId = i32;
 
@@ -30,7 +25,6 @@ impl PartialPlayer {
 /// flow. In general, you should just be accessing and/or modifying a player from the world state.
 #[derive(Clone, Debug)]
 pub struct Player {
-    pub _entityid: EntityId,
     pub id: PlayerId,
     pub account: Account,
     pub name: String,
@@ -50,7 +44,6 @@ pub struct Player {
 impl Player {
     pub fn new(id: PlayerId) -> Player {
         Player {
-            _entityid: EntityId::default(),
             id,
             account: Account::default(),
             name: String::new(),
@@ -112,17 +105,5 @@ impl Default for Player {
 impl PartialEq for Player {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
-    }
-}
-
-impl QuickMapKey<PlayerId> for Player {
-    fn key(&self) -> PlayerId {
-        self.id
-    }
-}
-
-impl Entity for Player {
-    fn id(&self) -> EntityId {
-        self._entityid
     }
 }
