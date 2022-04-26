@@ -10,7 +10,7 @@ use axum::{
     http::{StatusCode, Uri},
     response::IntoResponse,
     routing::get,
-    AddExtensionLayer, Router,
+    Router,
 };
 use blossom_config::Config;
 use sqlx::PgPool;
@@ -26,8 +26,8 @@ pub async fn listen(addr: SocketAddr, pg: PgPool) -> Result<(), Box<dyn std::err
         .route("/dist/*file", static_handler.into_service())
         .layer(TraceLayer::new_for_http())
         .fallback(not_found.into_service())
-        .layer(AddExtensionLayer::new(pg))
-        .layer(AddExtensionLayer::new(config));
+        .layer(Extension(pg))
+        .layer(Extension(config));
 
     tracing::info!("Web server listening on {}", addr);
     axum::Server::bind(&addr)
