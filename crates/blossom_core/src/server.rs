@@ -10,70 +10,85 @@ use crate::{
 };
 
 /// Entry point of every Blossom game.
-pub struct Server;
+pub struct Server {
+    rt: tokio::runtime::Runtime,
+}
 
 impl Server {
     pub fn new() -> Self {
-        Server {}
+        Self {
+            rt: tokio::runtime::Builder::new_multi_thread()
+                .thread_name("blossom-server")
+                .build()
+                .expect("Failed to create Tokio runtime"),
+        }
     }
 
     /// Entry point of every Blossom game. Starts the listening server via Tokio, spawns the game
     /// loop off in a separate thread, and then proccesses all incoming connections off to the main
     /// connection loop.
-    #[tokio::main]
-    pub async fn listen(&self, world: World) -> Result<()> {
+    pub fn listen(&self, world: World) -> Result<()> {
         tracing_subscriber::fmt()
             .with_env_filter(EnvFilter::from_default_env())
             .with_span_events(FmtSpan::CLOSE)
             .init();
 
         // Spawns a database pool (this can be cloned freely)
-        let db = Database::create().await?;
+        let db = tokio::spawn(Database::create());
+        // let db = Database::create().await?;
 
         // Loads the `config.toml` file in the /game directory. We also set the environment variable
         // for our database here, which means we MUST create the state AFTER these functions.
-        let config = Config::load().await?;
+        let config = Config::load()?;
 
-        // Creates our connection listener
-        let telnet_listener = TcpListener::bind(config.game_addr()).await?;
-
-        if config.web.enabled {
-            let web_addr = config.web_addr();
-            let pg = db.clone();
-            tokio::spawn(async move {
-                blossom_web::listen(web_addr, pg)
-                    .await
-                    .expect("Failed to bind to address");
-            });
-        }
+        // if config.web.enabled {
+        //     let web_addr = config.web_addr();
+        //     let pg = db.clone();
+        //     tokio::spawn(async move {
+        //         blossom_web::listen(web_addr, pg)
+        //             .await
+        //             .expect("Failed to bind to address");
+        //     });
+        // }
 
         // Create the broker and game channels for bidirectional communication
         let (tx_broker, rx_broker) = unbounded::<Event>();
         let (tx_game, rx_game) = unbounded::<Event>();
 
         // Starts the broker loop
-        let _broker_handle = Broker::start(db.clone(), rx_broker, tx_game).await?;
+        // let _broker_handle = tokio::spawn(async move {
+        //     let db = db.await.expect("Failed to create database pool")?;
+        //     Broker::start(db, rx_broker, tx_game).await;
+        // });
 
         // Create the world and starts the game loop on its own (blocking) thread
-        Game::run(world, &config, rx_game, tx_broker.clone());
+        // Game::run(world, &config, rx_game, tx_broker.clone());
 
         tracing::info!("Server listening on {}", config.game_addr());
 
-        loop {
-            let pg = db.clone();
-            let tx_broker = tx_broker.clone();
+        let connection_handler = async move {
+            // Creates our connection listener
+            let telnet_listener = TcpListener::bind(config.game_addr()).await.unwrap();
 
-            tokio::select! {
-                Ok((stream, addr)) = telnet_listener.accept() => {
-                    tokio::spawn(async move {
-                        tracing::info!("New connection from {}", addr);
-                        if let Err(e) = telnet_connection_loop(stream, addr, pg, tx_broker).await {
-                            tracing::error!(%e, "Error handling telnet connection");
-                        }
-                    });
+            loop {
+                let tx_broker = tx_broker.clone();
+
+                tokio::select! {
+                    Ok((stream, addr)) = telnet_listener.accept() => {
+                        tokio::spawn(async move {
+                            tracing::info!("New connection from {}", addr);
+                            if let Err(e) = telnet_connection_loop(stream, addr, tx_broker).await {
+                                tracing::error!(%e, "Error handling telnet connection");
+                            }
+                        });
+                    }
                 }
             }
-        }
+        };
+
+        self.rt.spawn(connection_handler);
+
+        Ok(())
     }
 }
 

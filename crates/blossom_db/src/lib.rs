@@ -9,7 +9,7 @@ impl Database {
     /// settings in your game/config.toml file. This can be cloned freely as it
     /// is wrapped in an Arc.
     pub async fn create() -> Result<PgPool, DatabaseError> {
-        let config = Config::load().await?;
+        let config = Config::load()?;
         let pool = PgPool::connect(&config.db_url()).await?;
 
         Ok(pool)

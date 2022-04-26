@@ -19,7 +19,8 @@ use crate::{
 pub async fn telnet_connection_loop(
     stream: TcpStream,
     addr: SocketAddr,
-    tx_broker: Sender<Event>,
+    pg: PgPool,
+    game_tx: Sender<Event>,
 ) -> Result<()> {
     let frame = Framed::new(stream, TelnetCodec::new(1024));
     let mut conn = Connection::new(addr, frame);
@@ -49,12 +50,13 @@ pub async fn telnet_connection_loop(
     let (tx, rx) = unbounded::<Event>();
 
     // Move the player off into the game thread
-    tx_broker
+    game_tx
         .send_async(Event::Client(
             player.id,
             ClientEvent::Connect(player, Some(tx)),
         ))
-        .await?;
+        .await
+        .expect("TX BROKER CLOSED?");
 
     loop {
         tokio::select! {
@@ -67,7 +69,7 @@ pub async fn telnet_connection_loop(
                         GameEvent::Accepted(Response::Client(msg)) => {
                             // Send a command response to the player
                             conn.send_message(&msg).await?;
-                            tx_broker.send(Event::Client(id, ClientEvent::Command(Input { command: "look".to_string(), args: Vec::new() })))?;
+                            game_tx.send(Event::Client(id, ClientEvent::Command(Input { command: "look".to_string(), args: Vec::new() })))?;
                         }
                         GameEvent::Command(response)  => {
                             match response {
@@ -105,10 +107,10 @@ pub async fn telnet_connection_loop(
                         TelnetEvent::Message(msg) => {
 
                             if msg.trim().is_empty() {
-                                tx_broker.send(Event::Client(id, ClientEvent::Ping))?;
+                                game_tx.send(Event::Client(id, ClientEvent::Ping))?;
                                 continue;
                             }
-                            tx_broker.send(Event::Client(id, ClientEvent::Command(Input::from(msg))))?;
+                            game_tx.send(Event::Client(id, ClientEvent::Command(Input::from(msg))))?;
                         }
                         _ => continue,
                     }
@@ -127,7 +129,7 @@ pub async fn telnet_connection_loop(
         }
     }
 
-    tx_broker.send(Event::Client(id, ClientEvent::Disconnect))?;
+    game_tx.send(Event::Client(id, ClientEvent::Disconnect))?;
     conn.send_message("\nGoodbye!\n").await?;
 
     Ok(())

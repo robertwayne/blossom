@@ -1,7 +1,9 @@
 use iridescent::{constants::GREEN, Styled, StyledString, RED};
 use serde::Deserialize;
 
-use crate::{direction::Direction, entity::Entity, player::PlayerId, vec3::Vec3, world::World};
+use crate::{
+    direction::Direction, ecs::entity::Entity, player::PlayerId, vec3::Vec3, world::World,
+};
 
 #[derive(Debug)]
 pub struct Room {

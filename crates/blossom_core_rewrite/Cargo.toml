@@ -1,5 +1,5 @@
 [package]
-name = "blossom_core"
+name = "blossom_core_rewrite"
 authors = ["Rob Wagner <rob@sombia.com"]
 version = "0.1.0"
 edition = "2021"

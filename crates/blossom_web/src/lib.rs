@@ -19,7 +19,7 @@ use tower_http::trace::TraceLayer;
 use crate::{asset::StaticFile, template::HtmlTemplate};
 
 pub async fn listen(addr: SocketAddr, pg: PgPool) -> Result<(), Box<dyn std::error::Error>> {
-    let config = Arc::new(Config::load().await?);
+    let config = Arc::new(Config::load()?);
 
     let router = Router::new()
         .route("/", get(index))

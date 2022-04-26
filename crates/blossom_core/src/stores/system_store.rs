@@ -5,14 +5,14 @@ use iridescent::{
 
 use crate::{
     system::{SystemHandle, SystemReadOnlyHandle, SystemStatus, WatchStatus},
-    systems::{execution_timer::ExecutionTimer, watcher::SystemWatcher},
+    systems::execution_timer::ExecutionTimer,
 };
 
 pub struct SystemStore {
     pub write: Vec<SystemHandle>,
     pub readonly: Vec<SystemReadOnlyHandle>,
     pub execution_timer: ExecutionTimer,
-    pub watcher: SystemWatcher,
+    // pub watcher: SystemWatcher,
 }
 
 impl SystemStore {
@@ -21,7 +21,7 @@ impl SystemStore {
             write: Vec::new(),
             readonly: Vec::new(),
             execution_timer: ExecutionTimer::new(),
-            watcher: SystemWatcher::new(),
+            // watcher: SystemWatcher::new(),
         }
     }
 
