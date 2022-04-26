@@ -12,11 +12,18 @@ keywords = ["blossom", "mud"]
 
 [dependencies]
 askama = "0.11"
-axum = "0.4"
+axum = "0.5"
 blossom_config = { path = "../blossom_config" }
 blossom_db = { path = "../blossom_db" }
 mime_guess = "2"
-rust-embed = { version = "6.3", features = ["interpolate-folder-path", "compression"] }
-sqlx = { version = "0.5", features = [ "runtime-tokio-rustls", "postgres", "offline"] }
-tower-http = { version = "0.2.0", features = ["fs", "trace"] }
+rust-embed = { version = "6.3", features = [
+    "interpolate-folder-path",
+    "compression",
+] }
+sqlx = { version = "0.5", features = [
+    "runtime-tokio-rustls",
+    "postgres",
+    "offline",
+] }
+tower-http = { version = "0.3", features = ["fs", "trace"] }
 tracing = "0.1"
