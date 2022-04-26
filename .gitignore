@@ -8,6 +8,7 @@ node_modules
 # Files
 swarm_names.txt
 yarn-error.log
+package-lock.json
 Cargo.lock
 yarn.lock
 
