@@ -34,14 +34,13 @@ pub async fn telnet_connection_loop(
     // Connection initialization. Log a player in (or create an account).
     let maybe_player = authenticate(&mut conn, pg.clone()).await?;
     if maybe_player.is_none() {
-        tracing::info!("Authentication failed.");
         return Ok(());
     }
 
     // We know the player is valid because of the 'is_none' check above; however, in order to keep
     // rightward drift at a minimum in this already long function, we break it early instead of
     // utilizing if/else (+1 indent).
-    let player = maybe_player.expect("This should never happen.");
+    let player = maybe_player.unwrap();
 
     // Retain player ID as a marker for their connection
     let id = player.id;
@@ -49,14 +48,11 @@ pub async fn telnet_connection_loop(
     // Create a channel for a connection
     let (tx, rx) = unbounded::<Event>();
 
-    // Move the player off into the game thread
+    // Move the player and their send channel to the game thread
     game_tx
-        .send_async(Event::Client(
-            player.id,
-            ClientEvent::Connect(player, Some(tx)),
-        ))
+        .send_async(Event::Client(player.id, ClientEvent::Connect(player, tx)))
         .await
-        .expect("TX BROKER CLOSED?");
+        .expect("game send channel no longer exists");
 
     loop {
         tokio::select! {
@@ -105,8 +101,8 @@ pub async fn telnet_connection_loop(
 
                     match msg {
                         TelnetEvent::Message(msg) => {
-
                             if msg.trim().is_empty() {
+                                // conn.send_message("Please don't spam empty commands.").await?;
                                 game_tx.send(Event::Client(id, ClientEvent::Ping))?;
                                 continue;
                             }
@@ -118,11 +114,11 @@ pub async fn telnet_connection_loop(
 
                 },
                 Some(Err(e)) => {
-                    tracing::error!(%e, "Error reading from connection: {}", addr);
+                    tracing::error!(%e, "error reading from connection: {}", addr);
                     break;
                 }
                 None => {
-                    tracing::info!("Telnet connection closed: {}", addr);
+                    tracing::info!("telnet connection closed: {}", addr);
                     break;
                 }
             }

@@ -1,53 +1,75 @@
 use std::collections::HashMap;
 
-use bevy_app::App;
-use bevy_ecs::system::{Res, ResMut};
+use bevy_app::{App, CoreStage};
+use bevy_ecs::prelude::*;
+
+use bevy_ecs::schedule::{Schedule, SystemStage};
 use blossom_config::Config;
 use blossom_db::Database;
-use flume::{unbounded, Receiver, Sender};
+use flume::{unbounded, Sender};
+
+use once_cell::sync::{Lazy, OnceCell};
+use parking_lot::Mutex;
 use tokio::{
     net::TcpListener,
     runtime::{Handle, Runtime},
 };
-use tracing_subscriber::{fmt::format::FmtSpan, EnvFilter};
+use tracing_subscriber::EnvFilter;
 
 use crate::{
-    broker::Broker,
-    event::{ClientEvent, Event},
+    command::{CommandHandle, GameCommand},
+    commands::help::Help,
+    event::{Event, GameEvent},
+    input_system::input_system,
     player::PlayerId,
+    response::Response,
+    runner::runner,
+    stores::system_store::SystemStore,
+    system,
+    system::{SystemHandle, SystemReadOnly, SystemReadOnlyHandle, SystemStatus},
+    systems::{execution_timer::ExecutionTimer, watcher::SystemWatcher},
     telnet_handler::telnet_connection_loop,
+    timer::Timer,
 };
 
-pub struct Game {
-    pub rt: Runtime,
-    pub app: App,
-    pub rx: Receiver<Event>,
-    pub tx: Sender<Event>,
-}
+pub type GameCommandMap = HashMap<String, CommandHandle>;
+pub type Peers = HashMap<PlayerId, Sender<Event>>;
+
+pub static DYNAMIC_SYSTEMS: Lazy<Mutex<SystemStore>> = Lazy::new(|| Mutex::new(SystemStore::new()));
+
+pub struct Game {}
 
 impl Game {
+    pub fn add_system(name: &'static str, system: impl system::System + 'static) {
+        DYNAMIC_SYSTEMS
+            .lock()
+            .write
+            .push(SystemHandle::new(name, Box::new(system)));
+    }
+
+    pub fn add_system_readonly(name: &'static str, system: impl SystemReadOnly + 'static) {
+        DYNAMIC_SYSTEMS
+            .lock()
+            .readonly
+            .push(SystemReadOnlyHandle::new(name, Box::new(system)));
+    }
+
     pub fn run() -> Result<(), Box<dyn std::error::Error>> {
         tracing_subscriber::fmt()
             .with_env_filter(EnvFilter::from_default_env())
+            .with_max_level(tracing::Level::DEBUG)
             .init();
 
         let rt = tokio::runtime::Builder::new_multi_thread()
             .thread_name("blossom-server")
             .enable_all()
             .build()
-            .expect("Failed to create Tokio runtime");
+            .expect("failed to create a tokio runtime");
 
         let db = rt.block_on(Database::create())?;
         let config = Config::load()?;
 
-        // let (broker_tx, broker_rx) = unbounded::<Event>();
         let (game_tx, game_rx) = unbounded::<Event>();
-
-        // let db_c1 = db.clone();
-
-        // let _ = rt.spawn(async move {
-        //     let _ = Broker::start(db_c1, broker_rx, game_tx);
-        // });
 
         let listener = rt.block_on(TcpListener::bind(config.game_addr()))?;
         tracing::info!("Listening on {}", config.game_addr());
@@ -63,9 +85,10 @@ impl Game {
                         let handle = Handle::current();
 
                         handle.spawn(async move {
-                            tracing::info!("New connection from {}", addr);
+                            tracing::debug!("New connection from {}", addr);
+
                             if let Err(e) = telnet_connection_loop(stream, addr, db, game_tx).await {
-                                tracing::error!(%e, "Error handling telnet connection");
+                                tracing::error!(%e, "error handling telnet connection");
                             }
                         });
                     }
@@ -76,14 +99,36 @@ impl Game {
         rt.spawn(connection_handle);
 
         let peer_map: HashMap<PlayerId, Sender<Event>> = HashMap::new();
+        let mut commands = HashMap::new();
+
+        // Add default dynamic systems
+        // let stores = DYNAMIC_SYSTEMS.lock();
+        // stores
+        //     .write
+        //     .push(SystemHandle::new("watcher", Box::new(SystemWatcher::new())));
+
+        let help = Help::create();
+        commands.insert(
+            help.name.clone(),
+            CommandHandle {
+                inner: help,
+                func: Box::new(Help::run),
+            },
+        );
 
         let mut app = App::new();
         app.insert_resource(db)
             .insert_resource(config)
             .insert_resource(game_rx)
-            .insert_resource(peer_map);
-        app.set_runner(test_runner);
-        app.add_system(test_system);
+            .insert_resource(peer_map)
+            .insert_resource(commands)
+            .insert_resource(Timer::new());
+        app.set_runner(runner);
+        app.add_system(input_system);
+        app.add_system_to_stage(
+            CoreStage::PostUpdate,
+            dynamic_system_handler.exclusive_system().at_end(),
+        );
 
         app.run();
 
@@ -91,33 +136,44 @@ impl Game {
     }
 }
 
-pub fn test_runner(mut app: App) {
-    tracing::info!("Hi");
-    loop {
-        app.update();
+// pub fn dynamic_write_system_handler(world: &mut World) {
+//     let cell = world.cell();
+//     let mut stores = cell.get_resource_mut::<SystemStore>().unwrap();
+
+//     for system in stores.write.iter_mut() {
+//         if let SystemStatus::Running = system.status {
+//             system.inner.update(world);
+//         }
+//     }
+// }
+
+pub fn dynamic_system_handler(world: &mut World) {
+    // let stores = world.get_resource::<SystemStore>().unwrap();
+    let mut stores = DYNAMIC_SYSTEMS.lock();
+
+    for system in stores.readonly.iter() {
+        if let SystemStatus::Running = system.status {
+            system.inner.update(world);
+        }
+    }
+
+    for system in stores.write.iter_mut() {
+        if let SystemStatus::Running = system.status {
+            system.inner.update(world);
+        }
     }
 }
 
-pub fn test_system(rx: Res<Receiver<Event>>, mut peers: ResMut<HashMap<PlayerId, Sender<Event>>>) {
-    if let Ok(event) = rx.try_recv() {
-        tracing::info!("Received event: {:?}", event);
+/// Helper function for sending a generic GameEvent to a peer. This only exists
+/// for simplfying the API.
+#[inline(always)]
+pub fn send_event(id: PlayerId, tx: &Sender<Event>, event: GameEvent) {
+    let _ = tx.send(Event::Game(id, event));
+}
 
-        match event {
-            Event::Client(id, e) => match e {
-                // We know the tx will always be Some, because we ONLY send a Some value. However,
-                // because the game should NOT know about the peer connection or have its send
-                // channel, we need to make this an option so we can forward as a None.
-                ClientEvent::Connect(player, tx) => {
-                    tracing::info!("Client {} connected", id);
-                    peers.insert(player.id, tx.expect("this should never happen"));
-                }
-                ClientEvent::Disconnect => {
-                    tracing::info!("Client {} disconnected", id);
-                    peers.remove(&id);
-                }
-                _ => {}
-            },
-            _ => {}
-        }
-    }
+/// Helper function for sending a GameEvent::Command to a peer. It only exists
+/// for simplfying the API, as this is the most common event type to send.
+#[inline(always)]
+pub fn send_command(id: PlayerId, tx: &Sender<Event>, response: Response) {
+    send_event(id, tx, GameEvent::Command(response));
 }

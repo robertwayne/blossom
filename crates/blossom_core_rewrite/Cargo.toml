@@ -39,7 +39,10 @@ tokio = { version = "1", default-features = false, features = [
     "tracing",
 ] }
 tokio-util = { version = "0.7", default-features = false, features = ["codec"] }
-tracing = "0.1"
+tracing = { version = "0.1", features = [
+    "max_level_trace",
+    "release_max_level_debug",
+] }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "tracing"] }
 rhai = { version = "1.4", features = [
     "serde",
@@ -51,3 +54,4 @@ rhai = { version = "1.4", features = [
 
 bevy_ecs = "0.7.0"
 bevy_app = { version = "0.7.0", features = ["trace"] }
+once_cell = "1"

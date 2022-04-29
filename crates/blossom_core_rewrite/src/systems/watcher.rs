@@ -1,6 +1,10 @@
+use bevy_ecs::prelude::*;
+
 use crate::{
+    player::Player,
+    stores::system_store::SystemStore,
     system::{System, SystemStatus, WatchStatus},
-    world::World,
+    timer::Timer,
 };
 
 /// Represents what the watcher is looking for.
@@ -34,7 +38,7 @@ impl SystemWatcher {
     pub fn new() -> Self {
         Self {
             mode: WatchMode::Sleep,
-            interval: 300,
+            interval: 60,
         }
     }
 }
@@ -45,28 +49,41 @@ impl Default for SystemWatcher {
     }
 }
 
-impl System for SystemWatcher {
+impl SystemWatcher {
     fn update(&mut self, world: &mut World) {
-        if self.mode == WatchMode::Wake && !world.players.is_empty() {
+        let mut query = world.query::<&Player>();
+        let players = query.iter(&world).count();
+
+        let world = world.cell();
+
+        let timer = world
+            .get_resource::<Timer>()
+            .expect("timer resource not found");
+
+        let mut systems = world
+            .get_resource_mut::<SystemStore>()
+            .expect("system resource not found");
+
+        if self.mode == WatchMode::Wake && players != 0 {
             tracing::debug!("New connection detected. Waking up all paused systems.");
 
             // Now we wait to put systems to sleep.
             self.mode = WatchMode::Sleep;
 
-            for system in &mut world.systems.write {
+            for system in &mut systems.write {
                 if system.status == SystemStatus::Paused && system.watch == WatchStatus::Automatic {
                     system.status = SystemStatus::Running;
                 }
             }
 
-            for system in &mut world.systems.readonly {
+            for system in &mut systems.readonly {
                 if system.status == SystemStatus::Paused && system.watch == WatchStatus::Automatic {
                     system.status = SystemStatus::Running;
                 }
             }
         } else if self.mode == WatchMode::Sleep
-            && world.players.is_empty()
-            && world.timer.last_action + self.interval < world.timer.seconds
+            && players == 0
+            && timer.last_action + self.interval < timer.seconds
         {
             tracing::debug!(
                 "No players connected for {} seconds. Suspending all systems.",
@@ -76,14 +93,14 @@ impl System for SystemWatcher {
             // Now we wait to wake back up.
             self.mode = WatchMode::Wake;
 
-            for system in &mut world.systems.write {
+            for system in &mut systems.write {
                 if system.status == SystemStatus::Running && system.watch == WatchStatus::Automatic
                 {
                     system.status = SystemStatus::Paused;
                 }
             }
 
-            for system in &mut world.systems.readonly {
+            for system in &mut systems.readonly {
                 if system.status == SystemStatus::Running && system.watch == WatchStatus::Automatic
                 {
                     system.status = SystemStatus::Paused;

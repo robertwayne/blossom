@@ -58,7 +58,7 @@ impl std::fmt::Display for ClientEvent {
 #[derive(Debug)]
 pub enum ClientEvent {
     // Post-authentication event that adds a player to the world
-    Connect(Player, Option<Sender<Event>>),
+    Connect(Player, Sender<Event>),
     // Manually called event that removes a player from the world
     Disconnect,
     // Client-sent command

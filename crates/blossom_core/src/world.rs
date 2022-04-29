@@ -72,20 +72,20 @@ impl World {
     //         // Process the command queue
     //         self.process_commands();
 
-    //         // Run game-specific, readonly systems
-    //         for system in self.systems.readonly.iter() {
-    //             if let SystemStatus::Running = system.status {
-    //                 system.inner.update(self);
-    //             }
-    //         }
+    // Run game-specific, readonly systems
+    // for system in self.systems.readonly.iter() {
+    //     if let SystemStatus::Running = system.status {
+    //         system.inner.update(self);
+    //     }
+    // }
 
-    //         // Run game-specific, writeable systems
-    //         let mut systems = std::mem::take(&mut self.systems.write);
-    //         for system in systems.iter_mut() {
-    //             if let SystemStatus::Running = system.status {
-    //                 system.inner.update(self);
-    //             }
-    //         }
+    // // Run game-specific, writeable systems
+    // let mut systems = std::mem::take(&mut self.systems.write);
+    // for system in systems.iter_mut() {
+    //     if let SystemStatus::Running = system.status {
+    //         system.inner.update(self);
+    //     }
+    // }
     //         self.systems.write = systems;
 
     //         // Internal system for tracking execution time of game ticks.
@@ -193,15 +193,15 @@ impl World {
     // }
 
     /// Sends a `GameEvent` to the broker.
-    // pub fn send_event(&self, id: PlayerId, event: GameEvent) {
-    //     let _ = self.broker.send(Event::Game(id, event));
-    // }
+    pub fn send_event(&self, id: PlayerId, event: GameEvent) {
+        let _ = self.broker.send(Event::Game(id, event));
+    }
 
     /// Sends a `GameEvent::Command` to the broker. This is just a wrapper around `to_broker` to
     /// simplify the Command API, as it is the most common event type.
-    // pub fn send_command(&self, id: PlayerId, response: Response) {
-    //     self.send_event(id, GameEvent::Command(response));
-    // }
+    pub fn send_command(&self, id: PlayerId, response: Response) {
+        self.send_event(id, GameEvent::Command(response));
+    }
 
     /// Moves the server time ahead by one tick, as defined in the config file.
     fn tick(&mut self) {
@@ -273,20 +273,20 @@ impl World {
     }
 
     // Helper function for sending a prompt to the client.
-    // fn send_prompt(&mut self, id: PlayerId) {
-    //     // I'm not happy with this structure, but we always want to send a prompt after
-    //     // a command invocation, so we just send a second message with the prompt. It is
-    //     // more idiomatic than handling this in the command itself.
-    //     let mut query = self._world.query::<(Entity, &Player)>();
-    //     for (entity, player) in query.iter(&self._world) {
-    //         if player.id == id {
-    //             self.send_event(
-    //                 id,
-    //                 GameEvent::Command(Response::Client(format!("{}", Prompt::from(player)))),
-    //             )
-    //         }
-    //     }
-    // }
+    fn send_prompt(&mut self, id: PlayerId) {
+        // I'm not happy with this structure, but we always want to send a prompt after
+        // a command invocation, so we just send a second message with the prompt. It is
+        // more idiomatic than handling this in the command itself.
+        let mut query = self._world.query::<(Entity, &Player)>();
+        for (entity, player) in query.iter(&self._world) {
+            if player.id == id {
+                self.send_event(
+                    id,
+                    GameEvent::Command(Response::Client(format!("{}", Prompt::from(player)))),
+                )
+            }
+        }
+    }
 }
 
 impl Default for World {

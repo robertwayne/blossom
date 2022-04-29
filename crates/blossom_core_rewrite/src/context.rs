@@ -1,4 +1,4 @@
-use crate::{input::Input, player::PlayerId, world::World};
+use crate::{input::Input, player::PlayerId};
 
 pub struct Context {
     pub id: PlayerId,

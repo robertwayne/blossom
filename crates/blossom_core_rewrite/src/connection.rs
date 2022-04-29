@@ -53,7 +53,7 @@ impl Connection {
                 tracing::error!("No response from IAC");
                 return Err(Error {
                     kind: ErrorType::Internal,
-                    message: "No response from IAC".to_string(),
+                    message: "no response from IAC".to_string(),
                 });
             }
         };
