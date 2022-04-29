@@ -1,34 +1,45 @@
+use std::cell::RefCell;
+
 use iridescent::{
     constants::{GREEN, RED, YELLOW},
     Styled,
 };
+use parking_lot::Mutex;
 
 use crate::{
     system::{SystemHandle, SystemReadOnlyHandle, SystemStatus, WatchStatus},
-    systems::{execution_timer::ExecutionTimer, watcher::SystemWatcher},
+    systems::watcher::SystemWatcher,
 };
 
 pub struct SystemStore {
     pub write: Vec<SystemHandle>,
     pub readonly: Vec<SystemReadOnlyHandle>,
-    pub execution_timer: ExecutionTimer,
-    pub watcher: SystemWatcher,
+    pub watcher: Option<SystemWatcher>,
 }
 
-impl SystemStore {
-    pub fn new() -> Self {
+impl Default for SystemStore {
+    fn default() -> Self {
         Self {
             write: Vec::new(),
             readonly: Vec::new(),
-            execution_timer: ExecutionTimer::new(),
-            watcher: SystemWatcher::new(),
+            watcher: None,
+        }
+    }
+}
+
+impl SystemStore {
+    pub fn new(watcher: SystemWatcher) -> Self {
+        Self {
+            write: Vec::new(),
+            readonly: Vec::new(),
+            watcher: Some(watcher),
         }
     }
 
     pub fn set_status(&mut self, system_name: &str, status: SystemStatus) -> bool {
         let mut result = false;
 
-        for system in &mut self.write {
+        for system in &mut self.write.iter_mut() {
             if system.name == system_name {
                 system.status = status;
                 system.watch = WatchStatus::Manual;
@@ -36,7 +47,7 @@ impl SystemStore {
             }
         }
 
-        for system in &mut self.readonly {
+        for system in &mut self.readonly.iter_mut() {
             if system.name == system_name {
                 system.status = status;
                 system.watch = WatchStatus::Manual;
@@ -45,12 +56,6 @@ impl SystemStore {
         }
 
         result
-    }
-}
-
-impl Default for SystemStore {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
@@ -114,7 +119,8 @@ mod tests {
             fn update(&mut self, _: &mut World) {}
         }
 
-        let mut system_store = SystemStore::new();
+        let w = SystemWatcher::new();
+        let mut system_store = SystemStore::new(w);
 
         system_store.write.push(SystemHandle {
             inner: Box::new(MockSystem),

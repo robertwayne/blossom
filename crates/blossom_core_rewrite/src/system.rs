@@ -1,4 +1,4 @@
-use bevy_ecs::prelude::*;
+use bevy_ecs::{prelude::*, world::WorldCell};
 
 /// Systems are ways to add a function into the core game loop. Each system runs once per server
 /// 'tick', and runs in the order they were added. Systems do not stop, and as they are run often,
@@ -30,7 +30,7 @@ pub enum WatchStatus {
 }
 
 pub trait System: Send + Sync {
-    fn update(&self, world: &mut World);
+    fn update(&mut self, world: WorldCell) -> WorldCell;
 }
 
 /// `SystemHandle`'s should not be worked with directly; use `System` instead.
@@ -61,7 +61,7 @@ impl std::fmt::Display for SystemHandle {
 
 /// Represents a system that has shared, immutable access to the world and its parent struct.
 pub trait SystemReadOnly: Send + Sync {
-    fn update(&self, world: &World);
+    fn update(&self, world: &WorldCell);
 }
 
 /// `SystemReadOnlyHandle`'s should not be worked with directly; use `SystemReadOnly` instead.

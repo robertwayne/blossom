@@ -38,7 +38,7 @@ impl SystemWatcher {
     pub fn new() -> Self {
         Self {
             mode: WatchMode::Sleep,
-            interval: 60,
+            interval: 5,
         }
     }
 }
@@ -50,33 +50,20 @@ impl Default for SystemWatcher {
 }
 
 impl SystemWatcher {
-    fn update(&mut self, world: &mut World) {
-        let mut query = world.query::<&Player>();
-        let players = query.iter(&world).count();
-
-        let world = world.cell();
-
-        let timer = world
-            .get_resource::<Timer>()
-            .expect("timer resource not found");
-
-        let mut systems = world
-            .get_resource_mut::<SystemStore>()
-            .expect("system resource not found");
-
+    pub fn update(&mut self, systems: &mut SystemStore, timer: &Timer, players: usize) {
         if self.mode == WatchMode::Wake && players != 0 {
             tracing::debug!("New connection detected. Waking up all paused systems.");
 
             // Now we wait to put systems to sleep.
             self.mode = WatchMode::Sleep;
 
-            for system in &mut systems.write {
+            for system in systems.write.iter_mut() {
                 if system.status == SystemStatus::Paused && system.watch == WatchStatus::Automatic {
                     system.status = SystemStatus::Running;
                 }
             }
 
-            for system in &mut systems.readonly {
+            for system in systems.readonly.iter_mut() {
                 if system.status == SystemStatus::Paused && system.watch == WatchStatus::Automatic {
                     system.status = SystemStatus::Running;
                 }
@@ -93,14 +80,14 @@ impl SystemWatcher {
             // Now we wait to wake back up.
             self.mode = WatchMode::Wake;
 
-            for system in &mut systems.write {
+            for system in systems.write.iter_mut() {
                 if system.status == SystemStatus::Running && system.watch == WatchStatus::Automatic
                 {
                     system.status = SystemStatus::Paused;
                 }
             }
 
-            for system in &mut systems.readonly {
+            for system in systems.readonly.iter_mut() {
                 if system.status == SystemStatus::Running && system.watch == WatchStatus::Automatic
                 {
                     system.status = SystemStatus::Paused;

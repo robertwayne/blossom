@@ -21,7 +21,7 @@ use crate::{
     commands::help::Help,
     event::{Event, GameEvent},
     input_system::input_system,
-    player::PlayerId,
+    player::{Player, PlayerId},
     response::Response,
     runner::runner,
     stores::system_store::SystemStore,
@@ -35,25 +35,9 @@ use crate::{
 pub type GameCommandMap = HashMap<String, CommandHandle>;
 pub type Peers = HashMap<PlayerId, Sender<Event>>;
 
-pub static DYNAMIC_SYSTEMS: Lazy<Mutex<SystemStore>> = Lazy::new(|| Mutex::new(SystemStore::new()));
-
-pub struct Game {}
+pub struct Game;
 
 impl Game {
-    pub fn add_system(name: &'static str, system: impl system::System + 'static) {
-        DYNAMIC_SYSTEMS
-            .lock()
-            .write
-            .push(SystemHandle::new(name, Box::new(system)));
-    }
-
-    pub fn add_system_readonly(name: &'static str, system: impl SystemReadOnly + 'static) {
-        DYNAMIC_SYSTEMS
-            .lock()
-            .readonly
-            .push(SystemReadOnlyHandle::new(name, Box::new(system)));
-    }
-
     pub fn run() -> Result<(), Box<dyn std::error::Error>> {
         tracing_subscriber::fmt()
             .with_env_filter(EnvFilter::from_default_env())
@@ -102,10 +86,12 @@ impl Game {
         let mut commands = HashMap::new();
 
         // Add default dynamic systems
-        // let stores = DYNAMIC_SYSTEMS.lock();
-        // stores
-        //     .write
-        //     .push(SystemHandle::new("watcher", Box::new(SystemWatcher::new())));
+        // {
+        //     DYNAMIC_SYSTEMS
+        //         .lock()
+        //         .write
+        //         .push(SystemHandle::new("watcher", Box::new(SystemWatcher::new())));
+        // }
 
         let help = Help::create();
         commands.insert(
@@ -116,53 +102,38 @@ impl Game {
             },
         );
 
+        let watcher = SystemWatcher::new();
+        let mut store = SystemStore::new(watcher);
+
         let mut app = App::new();
         app.insert_resource(db)
             .insert_resource(config)
             .insert_resource(game_rx)
             .insert_resource(peer_map)
             .insert_resource(commands)
+            .insert_resource(store)
             .insert_resource(Timer::new());
         app.set_runner(runner);
         app.add_system(input_system);
+        app.add_system_to_stage(CoreStage::PostUpdate, system_watcher);
         app.add_system_to_stage(
             CoreStage::PostUpdate,
             dynamic_system_handler.exclusive_system().at_end(),
         );
-
         app.run();
 
         Ok(())
     }
 }
 
-// pub fn dynamic_write_system_handler(world: &mut World) {
-//     let cell = world.cell();
-//     let mut stores = cell.get_resource_mut::<SystemStore>().unwrap();
-
-//     for system in stores.write.iter_mut() {
-//         if let SystemStatus::Running = system.status {
-//             system.inner.update(world);
-//         }
-//     }
-// }
-
-pub fn dynamic_system_handler(world: &mut World) {
-    // let stores = world.get_resource::<SystemStore>().unwrap();
-    let mut stores = DYNAMIC_SYSTEMS.lock();
-
-    for system in stores.readonly.iter() {
-        if let SystemStatus::Running = system.status {
-            system.inner.update(world);
-        }
-    }
-
-    for system in stores.write.iter_mut() {
-        if let SystemStatus::Running = system.status {
-            system.inner.update(world);
-        }
-    }
+pub fn system_watcher(timer: Res<Timer>, mut store: ResMut<SystemStore>, players: Query<&Player>) {
+    let mut watcher = std::mem::take(&mut store.watcher).unwrap();
+    let count = players.iter().count();
+    watcher.update(&mut store, &timer, count);
+    store.watcher = Some(watcher);
 }
+
+pub fn dynamic_system_handler(world: &mut World) {}
 
 /// Helper function for sending a generic GameEvent to a peer. This only exists
 /// for simplfying the API.

@@ -55,6 +55,7 @@ impl Timer {
 
         if self.count % self.tick_rate == 0 {
             self.seconds += 1;
+            println!("NEW SECONDS: {}", self.seconds)
         }
 
         std::thread::sleep(Duration::from_millis(self.interval));
