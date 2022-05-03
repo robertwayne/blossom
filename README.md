@@ -52,7 +52,7 @@ the code and game data for Coven, the example game above, it is also
 
 Prerequesites:
 
-- Rust 1.60 (nightly; Blossom uses some nightly-only features)
+- Rust 1.62 (nightly; Blossom uses some nightly-only features)
 - PostgreSQL 14
 - *(optional)* Python 3 (tooling)
 - *(optional)* SQLx CLI (migrations)
