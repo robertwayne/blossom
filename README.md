@@ -8,26 +8,6 @@ actually want to build a MUD, you'd be best off using an existing codebase. Any
 of the old C-bases, Evennia *(Python)*, or Ranvier *(JavaScript)* are excellent
 options.
 
-## Live Game
-
-<!-- markdownlint-disable -->
-<div>
-  <strong>Secure:</strong> blossom-engine.com:5443
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <strong>Unsecure:</strong> blossom-engine.com:5080
-</div>
-
-<br>
-<!-- markdownlint-enable -->
-
-*The server should be online most of the time. If it is not, I am probably
-updating and it should be back momentarily.*
-
-*It is recommended to always connect with the secure connection. Your traffic
-will be encrypted with modern TLS. You will, of course, need an actual MUD
-client to connect securely. If you are using old-school telnet, you will have to
-use the unsecure connection.*
-
 ## Usage
 
 ```rs
