@@ -6,43 +6,47 @@ port = 5000
 # server, content creation tool, in-game default about commands, and so on.
 name = "Blossom"
 
-# Sets the server tick rate (per second). 
-# The number represents how many ticks you want per second. Remember, while a competetive real-time
-# FPS server might aim for a higher tick rate (to process packets faster), many real-time games can
-# get away with very low tick rates. High tick rates will cause excessive CPU usage, and in a MUD,
-# there is simply no reason to process the game loop more than the default, which is already high.
+# Sets the server tick rate (per second). The number represents how many ticks
+# you want per second. Remember, while a competetive real-time FPS server might
+# aim for a higher tick rate (to process packets faster), many real-time games
+# can get away with very low tick rates. High tick rates will cause excessive
+# CPU usage, and in a MUD, there is simply no reason to process the game loop
+# more than the default, which is already high.
 #
-# A tick is how long it takes for the server to execute one iteration of the main game loop. This
-# loop handles timers, game-specific systems, internal systems, and processing events sent from the
-# broker.
+# A tick is how long it takes for the server to execute one iteration of the
+# main game loop. This loop handles timers, game-specific systems, internal
+# systems, and processing events sent from the broker.
 #
-# Tick rate is represented as TICKS PER SECOND. So, a tick rate of 20 means that the server will
-# execute the main game loop 20 times per second, or at 50 milliseconds per tick. A tick rate of
-# 2 means that the server will execute the main game loop twice per second, or at 500 milliseconds.
+# Tick rate is represented as TICKS PER SECOND. So, a tick rate of 20 means that
+# the server will execute the main game loop 20 times per second, or at 50
+# milliseconds per tick. A tick rate of 2 means that the server will execute the
+# main game loop twice per second, or at 500 milliseconds.
 #
 # The default tick rate is 20.
 tick_rate = 20
 
-# Sets the global save interval (in seconds).
-# The number represents how often the server will save persistent game state to the database. This
-# uses an internal system which looks for objects in the game with a `dirty` flag set to true, and
-# sends them off to the broker for saving. Because this happens off the game loop, you don't have to
-# worry about a high save interval, though it is not neccesary in general. Actions that require
-# immediate saving are handled via explicit save calls.
+# Sets the global save interval (in seconds). The number represents how often
+# the server will save persistent game state to the database. This uses an
+# internal system which looks for objects in the game with a `dirty` flag set to
+# true, and sends them off to the broker for saving. Because this happens off
+# the game loop, you don't have to worry about a high save interval, though it
+# is not neccesary in general. Actions that require immediate saving are handled
+# via explicit save calls.
 #
-# Save interval is represented as SECONDS PER SAVE. So a save interval of 300 means that the server
-# will save the game state every 5 minutes. A save interval of 60 means that the server will save
-# the game state every minute.
+# Save interval is represented as SECONDS PER SAVE. So a save interval of 300
+# means that the server will save the game state every 5 minutes. A save
+# interval of 60 means that the server will save the game state every minute.
 #
-# If you set this value to 0, the server will NEVER save the game state to the database outside of
-# explicit save calls, including when the server is shutting down. You should NOT set this.
+# If you set this value to 0, the server will NEVER save the game state to the
+# database outside of explicit save calls, including when the server is shutting
+# down. You should NOT set this.
 #
 # The default save interval is 300.
 save_interval = 300
 
-# Toggles usage of built-in commands.
-# If set to true, a handful of basic, generic commands will be active on the server. These are
-# generally useful across all game types, and you'll probably want to leave this on.
+# Toggles usage of built-in commands. If set to true, a handful of basic,
+# generic commands will be active on the server. These are generally useful
+# across all game types, and you'll probably want to leave this on.
 #
 # Default commands include:
 #  - `say` - Allows players to send messages to other players in the same room.
@@ -52,15 +56,16 @@ save_interval = 300
 #  - `help` - Displays a list of commands available to the player.
 #  - `quit` - Quits the game.
 #
-# In addition, the standard directional movement commands are available:
-# These are: `north`, `south`, `east`, `west`, `up`, and `down`, with respective aliases.
+# In addition, the standard directional movement commands are available: These
+# are: `north`, `south`, `east`, `west`, `up`, and `down`, with respective
+# aliases.
 #
 # You can use `help` or `?` in-game to see the list with their aliases.
 default_commands = true
 
-# These settings configure the built-in web server, which includes the admin
-# and moderation dashboards, the content creation tools, analytics, logging, and
-# the game web page. This does not refer to a websockets game client.
+# These settings configure the built-in web server, which includes the admin and
+# moderation dashboards, the content creation tools, analytics, logging, and the
+# game web page. This does not refer to a websockets game client.
 [web]
 enabled = true
 host = "127.0.0.1"
