@@ -20,8 +20,9 @@ impl From<String> for Role {
 }
 
 impl Role {
-    /// Creates a new Vec<Role> from a Vec<String> of roles. Useful when deserializing roles from
-    /// the database, which are stored as an array of varchar.
+    /// Creates a new Vec<Role> from a Vec<String> of roles. Useful when
+    /// deserializing roles from the database, which are stored as an array of
+    /// varchar.
     pub fn list(roles: &[String]) -> Vec<Role> {
         roles.iter().map(|r| Role::from(r.clone())).collect()
     }

@@ -2,16 +2,17 @@ use simsearch::{SearchOptions, SimSearch};
 
 use crate::searchable::Searchable;
 
-/// An Input is a sequence of strings that will be parsed, then handled, by the broker and the
-/// game loop. Inputs are constructed by the conncetion loop after receiving a valid packet
-/// from a peer, then sent to the broker via a `ClientEvent::Command`.
+/// An Input is a sequence of strings that will be parsed, then handled, by the
+/// broker and the game loop. Inputs are constructed by the conncetion loop
+/// after receiving a valid packet from a peer, then sent to the broker via a
+/// `ClientEvent::Command`.
 ///
-/// Inputs are also accessible when implementing the `GameCommand` trait, so each command has
-/// full access to the all the characters sent in a message.
+/// Inputs are also accessible when implementing the `GameCommand` trait, so
+/// each command has full access to the all the characters sent in a message.
 #[derive(Debug, Default)]
 pub struct Input {
-    // The first word in a message; represents a command name. This is used for matching against
-    // the command name and its aliases.
+    // The first word in a message; represents a command name. This is used for
+    // matching against the command name and its aliases.
     pub command: String,
     // The rest of the message, split into a vector of strings.
     pub args: Vec<String>,
@@ -30,8 +31,8 @@ impl Input {
     /// enabled by removing this option. The benefit is that the search is
     /// SIMD-powered and MUCH faster.
     ///
-    /// @TODO: Make this configurable via the game config file.
-    /// @TODO: Return the reference to T instead of the index in the collection.
+    /// @TODO: Make this configurable via the game config file. @TODO: Return
+    /// the reference to T instead of the index in the collection.
     pub fn fuzzy_match<T>(&self, values: &[&T]) -> Option<usize>
     where
         for<'a> &'a T: Searchable,

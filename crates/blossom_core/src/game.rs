@@ -27,8 +27,9 @@ use crate::{
     world::World,
 };
 
-/// Internal entry point for the game loop. Handles initialization of the world, adds systems,
-/// commands, and loads up all script files before moving the world off to its own blocking thread.
+/// Internal entry point for the game loop. Handles initialization of the world,
+/// adds systems, commands, and loads up all script files before moving the
+/// world off to its own blocking thread.
 pub struct Game;
 
 impl Game {
@@ -66,9 +67,9 @@ impl Game {
         //    iterate through all the regions and fill them up.
         // 3. We load all the rooms, and place them into the area they belong
         //    to. Room data files all contain an area by name, so we can just
-        //    iterate through all the areas and fill them up.
-        // Now we have a can store a QuickMap of every region, area, and room
-        // in the game for fast access and iteration.
+        //    iterate through all the areas and fill them up. Now we have a can
+        // store a QuickMap of every region, area, and room in the game for fast
+        // access and iteration.
 
         // Load all regions
         if let Ok(regions) = get_game_objects::<RegionBuilder>(&engine, "regions") {

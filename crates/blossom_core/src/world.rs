@@ -29,9 +29,9 @@ use crate::{
     vec3::Vec3,
 };
 
-/// Stateful representation of the game world, containing references to all game entities,
-/// channels needed for between the broker and the game loop, and all of the systems and
-/// commands added at startup.
+/// Stateful representation of the game world, containing references to all game
+/// entities, channels needed for between the broker and the game loop, and all
+/// of the systems and commands added at startup.
 pub struct World {
     pub rx: Receiver<Event>,
     pub broker: Sender<Event>,
@@ -99,9 +99,10 @@ impl World {
         }
     }
 
-    /// Loops through commands received from the broker and processes them. Note that this is not
-    /// ONLY for game-specific commands, but all peer-sent messages that are valid and parsed as
-    /// an Input struct. This includes connecting and disconnecting.
+    /// Loops through commands received from the broker and processes them. Note
+    /// that this is not ONLY for game-specific commands, but all peer-sent
+    /// messages that are valid and parsed as an Input struct. This includes
+    /// connecting and disconnecting.
     fn process_commands(&mut self) {
         while let Ok(Event::Client(id, event)) = self.rx.try_recv() {
             tracing::trace!("Processing command: {:?}", event);
@@ -127,9 +128,9 @@ impl World {
                 }
                 ClientEvent::Disconnect => {
                     if let Ok(player) = self.get_player(id) {
-                        // Sends a Save event to the broker which will handle the actual database
-                        // update. We only send this if the player is marked for saving; same
-                        // as global save.
+                        // Sends a Save event to the broker which will handle
+                        // the actual database update. We only send this if the
+                        // player is marked for saving; same as global save.
                         if player.dirty {
                             self.send_event(id, GameEvent::Save(player.clone()));
                         }
@@ -176,8 +177,9 @@ impl World {
         let _ = self.broker.send(Event::Game(id, event));
     }
 
-    /// Sends a `GameEvent::Command` to the broker. This is just a wrapper around `to_broker` to
-    /// simplify the Command API, as it is the most common event type.
+    /// Sends a `GameEvent::Command` to the broker. This is just a wrapper
+    /// around `to_broker` to simplify the Command API, as it is the most common
+    /// event type.
     pub fn send_command(&self, id: PlayerId, response: Response) {
         self.send_event(id, GameEvent::Command(response));
     }
@@ -194,8 +196,9 @@ impl World {
         sleep(Duration::from_millis(self.timer.interval));
     }
 
-    // Adds a system to the world with mutable access to both the world and its parent struct.
-    // Systems run once per server tick and run in the order they were added.
+    // Adds a system to the world with mutable access to both the world and its
+    // parent struct. Systems run once per server tick and run in the order they
+    // were added.
     pub fn add_system(&mut self, name: &'static str, system: impl System + 'static) -> &mut Self {
         self.systems
             .write
@@ -204,8 +207,9 @@ impl World {
         self
     }
 
-    // Adds a system to the world with read-only access to both the world and its parent struct.
-    // Systems run once per server tick and run in the order they were added.
+    // Adds a system to the world with read-only access to both the world and
+    // its parent struct. Systems run once per server tick and run in the order
+    // they were added.
     pub fn add_system_readonly(
         &mut self,
         name: &'static str,
@@ -218,14 +222,15 @@ impl World {
         self
     }
 
-    /// Adds a command to the world. Commands are invoked by peers when sending a message and run
-    /// once on the next frame.
+    /// Adds a command to the world. Commands are invoked by peers when sending
+    /// a message and run once on the next frame.
     pub fn add_command(
         &mut self,
         command: Command,
         func: impl FnMut(Context) -> Result<Response> + Send + Sync + 'static,
     ) -> &mut Self {
-        // Combine the command name and aliases into a single array so we can map them later.
+        // Combine the command name and aliases into a single array so we can
+        // map them later.
         let mut keys: Vec<String> = command
             .aliases
             .iter()
@@ -239,10 +244,12 @@ impl World {
             func: Box::new(func),
         });
 
-        // Create a mapping from each key (name or alias) to the index that the command handle is
-        // stored at. This lets us access commands later simply by indexing in. This is much easier
-        // than maintaining a map with multiple handles (which would require cloning or a lot of
-        // ref handling - which would make the World struct more verbose to invoke for users).
+        // Create a mapping from each key (name or alias) to the index that the
+        // command handle is stored at. This lets us access commands later
+        // simply by indexing in. This is much easier than maintaining a map
+        // with multiple handles (which would require cloning or a lot of ref
+        // handling - which would make the World struct more verbose to invoke
+        // for users).
         let map_index = self.commands.len() - 1;
         for key in keys {
             self.command_map.insert(key, map_index);
@@ -253,9 +260,10 @@ impl World {
 
     /// Helper function for sending a prompt to the client.
     fn send_prompt(&mut self, id: PlayerId) {
-        // I'm not happy with this structure, but we always want to send a prompt after
-        // a command invocation, so we just send a second message with the prompt. It is
-        // more idiomatic than handling this in the command itself.
+        // I'm not happy with this structure, but we always want to send a
+        // prompt after a command invocation, so we just send a second message
+        // with the prompt. It is more idiomatic than handling this in the
+        // command itself.
         if let Ok(player) = self.get_player(id) {
             self.send_event(
                 id,

@@ -63,9 +63,10 @@ impl Room {
         exits.foreground(GREEN)
     }
 
-    /// Returns a view of the room; this includes the room name, description, exits, nearby players,
-    /// and nearby items, objects, enemies, and anything else relevant to the room. Generally
-    /// invoked when using commands like `look` or when moving into a room.
+    /// Returns a view of the room; this includes the room name, description,
+    /// exits, nearby players, and nearby items, objects, enemies, and anything
+    /// else relevant to the room. Generally invoked when using commands like
+    /// `look` or when moving into a room.
     pub fn view(&self, id: PlayerId, world: &World) -> String {
         let player = world.get_player(id);
 
@@ -75,9 +76,9 @@ impl Room {
             // We always display the room name first.
             text.push_str(&format!("{}", self.name()));
 
-            // Add the room description if force is true. This is true when the `look` command
-            // is called explicitly by a player, as opposed to implicitly when the walk command
-            // is used.
+            // Add the room description if force is true. This is true when the
+            // `look` command is called explicitly by a player, as opposed to
+            // implicitly when the walk command is used.
             if !player.brief {
                 text.push_str(&format!("\n{}\n", self.description));
             }
@@ -95,7 +96,8 @@ impl Room {
                 text.push_str(&format!("\nNearby you see a {}.\n", monsters_here));
             }
 
-            // Get all players in the players current room except the current player.
+            // Get all players in the players current room except the current
+            // player.
             let players_here = world
                 .players
                 .iter()

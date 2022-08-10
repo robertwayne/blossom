@@ -1,6 +1,7 @@
 use crate::{event::GameEvent, system::System, world::World};
 
-/// Internal, core system that handles saving the game state to the database on a regular interval.
+/// Internal, core system that handles saving the game state to the database on
+/// a regular interval.
 pub struct GlobalSave {
     pub interval: u64,
     pub last_run: u64,

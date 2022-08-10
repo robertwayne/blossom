@@ -11,8 +11,9 @@ pub fn capitalize(s: &str) -> String {
     }
 }
 
-/// Guard function for detecting HTTP traffic on the telnet stream. Checks if the first line of the
-/// stream is a valid HTTP method or contains an HTTP version, and if it is, drops it silently.
+/// Guard function for detecting HTTP traffic on the telnet stream. Checks if
+/// the first line of the stream is a valid HTTP method or contains an HTTP
+/// version, and if it is, drops it silently.
 pub fn is_http(message: &str) -> bool {
     zip(HTTP_METHODS, INVALID_HTTP_VERSIONS)
         .into_iter()

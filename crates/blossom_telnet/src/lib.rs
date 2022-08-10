@@ -1,5 +1,6 @@
-/// This crate is is based off of https://github.com/jtenner/telnet_codec by jtenner, which is
-/// more complete, as far as the Telnet protocol is concerned - but is also archived.
+/// This crate is is based off of https://github.com/jtenner/telnet_codec by
+/// jtenner, which is more complete, as far as the Telnet protocol is concerned
+/// - but is also archived.
 pub mod constants;
 pub mod event;
 pub mod option;
@@ -53,8 +54,9 @@ impl From<std::io::Error> for TelnetError {
     }
 }
 
-/// Implements a Tokio codec for the Telnet protocol, along with MUD-specific extension protocols
-/// such as GMCP. You should never have to interact with this directly.
+/// Implements a Tokio codec for the Telnet protocol, along with MUD-specific
+/// extension protocols such as GMCP. You should never have to interact with
+/// this directly.
 #[derive(Debug)]
 pub struct TelnetCodec {
     pub sga: bool,
@@ -248,16 +250,17 @@ fn decode_loop(
                                 return Ok(None);
                             }
 
-                            // Handle matches against the third byte in the buffer.
-                            // This is for subnegotiation.
+                            // Handle matches against the third byte in the
+                            // buffer. This is for subnegotiation.
                             match src[x] {
                                 IAC => {
                                     if x + 1 > src.len() {
                                         return Ok(None);
                                     }
 
-                                    // Handle matches against the fourth byte in the buffer.
-                                    // This is the final byte in the buffer.
+                                    // Handle matches against the fourth byte in
+                                    // the buffer. This is the final byte in the
+                                    // buffer.
                                     match src[x + 1] {
                                         SE => return decode_se(invalid, src, subvec, opt),
                                         IAC => subvec.push(IAC),

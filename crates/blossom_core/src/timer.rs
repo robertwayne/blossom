@@ -1,21 +1,23 @@
 use std::{fmt::Display, time::Instant};
 
-/// Used as the internal representation of the game loop time. This is updated on each 'tick'
-/// of the game loop. This does NOT relate to in-game game time, which is handled by its own
-/// separate timer, `GameTime`.
+/// Used as the internal representation of the game loop time. This is updated
+/// on each 'tick' of the game loop. This does NOT relate to in-game game time,
+/// which is handled by its own separate timer, `GameTime`.
 #[derive(Debug)]
 pub struct Timer {
     // Represents the time at which the game loop started.
     pub start_time: Instant,
     // Reference to the tick_rate defined in the config file.
     pub tick_rate: u64,
-    // The interval the game loop should wait before the next tick: 1000 / tick_rate.
+    // The interval the game loop should wait before the next tick: 1000 /
+    // tick_rate.
     pub interval: u64,
     // How many seconds have passed since the game loop started.
     pub seconds: u64,
     // How many ticks have passed since the game loop started.
     pub count: u64,
-    // How long since the last non-system was executed on the game loop (eg. commands, joined, etc.)
+    // How long since the last non-system was executed on the game loop (eg.
+    // commands, joined, etc.)
     pub last_action: u64,
 }
 

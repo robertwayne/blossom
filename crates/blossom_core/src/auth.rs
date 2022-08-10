@@ -41,8 +41,9 @@ async fn create(
         .hash_password(password.as_bytes(), salt.as_ref())?
         .to_string();
 
-    // If the player supplied an email, we will send them a confirmation email, but this exists
-    // on a separate table until activated; thus we always apply default values to a new account.
+    // If the player supplied an email, we will send them a confirmation email,
+    // but this exists on a separate table until activated; thus we always apply
+    // default values to a new account.
     let account_record = sqlx::query!(
         "insert into accounts (encrypted_password)
         values ($1)
@@ -73,9 +74,9 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
     let name = name.trim();
     let password = password.trim();
 
-    // We check if a name is associated with an account when the player is prompted to enter their
-    // username at the start, thus we can guarantee that a single record will exist if this function
-    // is called.
+    // We check if a name is associated with an account when the player is
+    // prompted to enter their username at the start, thus we can guarantee that
+    // a single record will exist if this function is called.
     let record = sqlx::query!(
         r#"select p.id, p.name, p.position, p.health, p.max_health, p.mana, p.max_mana, p.xp, p.level, p.afk, p.brief, a.id as "account_id", a.encrypted_password, a.email as "email?", a.roles
         from players p 
@@ -136,13 +137,13 @@ async fn name_exists(name: &str, pg: &PgPool) -> Result<bool> {
     }
 }
 
-/// This starts an authentication process for a player. It will handle input, finding if a player
-/// name exists, password authentication, new account creation flow, and login. It will always
-/// return a player if it succeeds.
+/// This starts an authentication process for a player. It will handle input,
+/// finding if a player name exists, password authentication, new account
+/// creation flow, and login. It will always return a player if it succeeds.
 ///
-/// This function will return additionally returns a special flag, `restart`, which will restart the
-/// authentication process if the player. We need to do this because some responses should drop the
-/// connection instead.
+/// This function will return additionally returns a special flag, `restart`,
+/// which will restart the authentication process if the player. We need to do
+/// this because some responses should drop the connection instead.
 pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Player>> {
     let name = match get_name(conn).await {
         Ok(name) => name,
@@ -201,8 +202,9 @@ async fn get_name(conn: &mut Connection) -> Result<String> {
             .await?;
 
         if let Some(Ok(TelnetEvent::Message(msg))) = conn.frame_mut().next().await {
-            // Because this is the first frame we receive from the client, we have to check if it
-            // contains HTTP traffic, and if so, drop it silently.
+            // Because this is the first frame we receive from the client, we
+            // have to check if it contains HTTP traffic, and if so, drop it
+            // silently.
             if is_http(&msg) {
                 return Err(Error {
                     kind: ErrorType::Internal,
@@ -271,8 +273,9 @@ async fn get_password(conn: &mut Connection) -> Result<String> {
     Ok(password)
 }
 
-/// Prompts a new player for their password and returns the input. This will also ask if the player
-/// wishes to create a new character with the name they provided.
+/// Prompts a new player for their password and returns the input. This will
+/// also ask if the player wishes to create a new character with the name they
+/// provided.
 async fn set_password(conn: &mut Connection) -> Result<String> {
     loop {
         // Set the players password -- we will turn off echo for this.

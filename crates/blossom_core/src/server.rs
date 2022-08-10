@@ -17,9 +17,9 @@ impl Server {
         Server {}
     }
 
-    /// Entry point of every Blossom game. Starts the listening server via Tokio, spawns the game
-    /// loop off in a separate thread, and then proccesses all incoming connections off to the main
-    /// connection loop.
+    /// Entry point of every Blossom game. Starts the listening server via
+    /// Tokio, spawns the game loop off in a separate thread, and then
+    /// proccesses all incoming connections off to the main connection loop.
     #[tokio::main]
     pub async fn listen(&self, world: World) -> Result<()> {
         tracing_subscriber::fmt()
@@ -30,8 +30,9 @@ impl Server {
         // Spawns a database pool (this can be cloned freely)
         let db = Database::create().await?;
 
-        // Loads the `config.toml` file in the /game directory. We also set the environment variable
-        // for our database here, which means we MUST create the state AFTER these functions.
+        // Loads the `config.toml` file in the /game directory. We also set the
+        // environment variable for our database here, which means we MUST
+        // create the state AFTER these functions.
         let config = Config::load().await?;
 
         // Creates our connection listener
@@ -52,7 +53,8 @@ impl Server {
         // Starts the broker loop
         let _broker_handle = Broker::start(db.clone(), rx_broker, tx_game).await?;
 
-        // Create the world and starts the game loop on its own (blocking) thread
+        // Create the world and starts the game loop on its own (blocking)
+        // thread
         Game::run(world, &config, rx_game, tx_broker.clone());
 
         tracing::info!("Server listening on {}", config.game_addr());
