@@ -4,7 +4,7 @@ use crate::searchable::Searchable;
 
 /// An Input is a sequence of strings that will be parsed, then handled, by the broker and the
 /// game loop. Inputs are constructed by the conncetion loop after receiving a valid packet
-/// from a peer, then sent to the broker via a ClientEvent::Command.
+/// from a peer, then sent to the broker via a `ClientEvent::Command`.
 ///
 /// Inputs are also accessible when implementing the `GameCommand` trait, so each command has
 /// full access to the all the characters sent in a message.
@@ -25,7 +25,7 @@ impl Input {
     /// This will return the index of the most relevant match within the
     /// original collection.
     ///
-    /// This uses the SimSearch levenshtein implementation, which has a
+    /// This uses the `SimSearch` levenshtein implementation, which has a
     /// limitation of ASCII-only strings. UTF-8 string compatability can be
     /// enabled by removing this option. The benefit is that the search is
     /// SIMD-powered and MUCH faster.
@@ -64,7 +64,10 @@ impl From<String> for Input {
         let tokens = message.split_whitespace().collect::<Vec<_>>();
         Input {
             command: tokens[0].to_string(),
-            args: tokens[1..].iter().map(|t| t.to_string()).collect(),
+            args: tokens[1..]
+                .iter()
+                .map(std::string::ToString::to_string)
+                .collect(),
         }
     }
 }

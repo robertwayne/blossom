@@ -6,7 +6,7 @@ pub trait GameCommand {
 }
 
 /// Wrapper around a Command which provides access to its `run` method via the `func` field.
-/// In generaly, you should never have to work with CommandHandles directly, always work with
+/// In generaly, you should never have to work with `CommandHandle`s directly, always work with
 /// the `Command` struct and `GameCommand` trait implementations.
 pub struct CommandHandle {
     pub func: Box<dyn FnMut(Context) -> Result<Response> + Send + Sync + 'static>,

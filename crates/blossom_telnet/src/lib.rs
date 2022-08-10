@@ -155,8 +155,8 @@ fn decode_naws(subvec: Vec<u8>) -> Result<Option<TelnetEvent>> {
     match subvec.len() {
         4 => {
             let result = SubnegotiationType::WindowSize(
-                ((subvec[0] as u16) << 8) | (subvec[1] as u16),
-                ((subvec[2] as u16) << 8) | (subvec[3] as u16),
+                (u16::from(subvec[0]) << 8) | u16::from(subvec[1]),
+                (u16::from(subvec[2]) << 8) | u16::from(subvec[3]),
             );
             Ok(Some(TelnetEvent::Subnegotiation(result)))
         }
@@ -182,7 +182,7 @@ fn decode_se(
     subvec: Vec<u8>,
     opt: u8,
 ) -> Result<Option<TelnetEvent>> {
-    src.split_at(2);
+    let _ = src.split_at(2);
 
     if invalid {
         Ok(None)

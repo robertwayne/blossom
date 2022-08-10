@@ -23,7 +23,7 @@ impl System for GlobalSave {
             world.send_event(
                 -1, // this ID doesn't actually matter
                 GameEvent::GlobalSave(world.players.iter().filter(|p| p.dirty).cloned().collect()),
-            )
+            );
         }
     }
 }

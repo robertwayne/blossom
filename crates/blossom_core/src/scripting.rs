@@ -5,7 +5,7 @@ use serde::de::DeserializeOwned;
 
 /// This function will return a collection of an entire type of game object
 /// (eg. rooms, items, spells). If you need to get a specific object, or a
-/// specific set of of a type, use get_game_object or get_game_object_set.
+/// specific set of of a type, use `get_game_object` or `get_game_object_set`.
 ///
 /// Valid patterns look as such:
 ///     ./scripts/rooms/grassy_hill.rhai

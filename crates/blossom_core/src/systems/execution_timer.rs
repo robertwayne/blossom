@@ -3,7 +3,7 @@ use std::time::Instant;
 /// Internal, core system for tracking the execution time of game ticks. This means the time it
 /// takes for all of the functions inside the game loop to run, BEFORE calling `.tick()`. This
 /// is useful for debugging and profiling overall game performance -- you can think of it as your
-/// server frame time, even though iterations are hard-capped by the tick_rate variable.
+/// server frame time, even though iterations are hard-capped by the `tick_rate` variable.
 ///
 /// If somehow your tick execution time exceeded your tick interval (sleep duration), the game loop
 /// would slowly drift off a consistent time, and could affect other systems signifigantly. In
@@ -46,7 +46,7 @@ impl ExecutionTimer {
     pub fn average(&self) -> String {
         let time = self.average_tick_execution_time();
 
-        let time = if time < 1000 {
+        if time < 1000 {
             format!("{}ns", time)
         } else if time < 1_000_000 {
             format!("{}µs", time / 1000)
@@ -54,9 +54,7 @@ impl ExecutionTimer {
             format!("{}ms", time / 1_000_000)
         } else {
             format!("{}s", time / 1_000_000_000)
-        };
-
-        time
+        }
     }
 
     pub fn update(&mut self, start: Instant) {

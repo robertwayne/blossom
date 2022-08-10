@@ -2,23 +2,23 @@ use std::collections::HashMap;
 
 use crate::entity::{Entity, EntityId};
 
-/// Used as a HashMap key within QuickMap's. This should be a non-changing value.
+/// Used as a `HashMap` key within `QuickMap`'s. This should be a non-changing value.
 pub trait QuickMapKey<T> {
     fn key(&self) -> T;
 }
 
 /// This is a 'data structure' that represents a U as two separate structures, one for fast
 /// iteration, and the other for fast lookups via a key of type T, which is any type that
-/// implements the QuickMapKey trait.
+/// implements the `QuickMapKey` trait.
 ///
 /// The first data structure is a simple Vec<U>, which is used for iterating over U.
 /// Because filter maps are a common operation, and systems prefer the ability to iterate over
-/// groups / all U at once, this offers ideal performance. While using a HashMap would truly
+/// groups / all U at once, this offers ideal performance. While using a `HashMap` would truly
 /// be MORE than performant enough, it is still a fair bit slower when iterating over groups of
 /// data.
 ///
 /// The second data structure is a HashMap<T, usize>. This is for performing fast lookups
-/// It is as fast +/- a few ns as a straight HashMap when performing lookups. Because it is simply
+/// It is as fast +/- a few ns as a straight `HashMap` when performing lookups. Because it is simply
 /// a map of (T, usize), where T is generally an i32 or Vec3, the additional size is negligible.
 /// The real cost is the extra complexity, but as mentioned above, this is all abstracted out and
 /// handled in the background, so no one will ever need to know how they are retrieving or

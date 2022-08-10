@@ -77,7 +77,7 @@ impl World {
             self.process_commands();
 
             // Run game-specific, readonly systems
-            for system in self.systems.readonly.iter() {
+            for system in &self.systems.readonly {
                 if let SystemStatus::Running = system.status {
                     system.inner.update(self);
                 }
@@ -85,7 +85,7 @@ impl World {
 
             // Run game-specific, writeable systems
             let mut systems = std::mem::take(&mut self.systems.write);
-            for system in systems.iter_mut() {
+            for system in &mut systems {
                 if let SystemStatus::Running = system.status {
                     system.inner.update(self);
                 }
@@ -95,7 +95,7 @@ impl World {
             // Internal system for tracking execution time of game ticks.
             self.systems.execution_timer.update(start);
 
-            self.tick()
+            self.tick();
         }
     }
 
@@ -154,7 +154,7 @@ impl World {
 
                             result
                         }
-                        None => self.unknown(id),
+                        None => World::unknown(id),
                     };
 
                     if let Ok(response) = result {
@@ -260,7 +260,7 @@ impl World {
             self.send_event(
                 id,
                 GameEvent::Command(Response::Client(format!("{}", Prompt::from(player)))),
-            )
+            );
         }
     }
 
@@ -389,7 +389,7 @@ mod tests {
         let player2 = Player::new(2);
         let player3 = Player::new(3);
         world.players.insert(player1.clone());
-        world.players.insert(player2.clone());
+        world.players.insert(player2);
         world.players.insert(player3.clone());
 
         let players = world.get_players(&[1, 3]).unwrap();

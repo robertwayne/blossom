@@ -98,7 +98,7 @@ impl Broker {
             }
             GameEvent::Command(response) => match &response {
                 Response::Channel(here, _) => {
-                    self.broadcast(here.to_vec(), GameEvent::Command(response))
+                    self.broadcast(here.clone(), GameEvent::Command(response))
                         .await?;
                 }
                 _ => self.to_client(id, GameEvent::Command(response)).await?,

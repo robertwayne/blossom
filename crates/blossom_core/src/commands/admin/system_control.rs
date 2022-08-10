@@ -5,6 +5,7 @@ use crate::{
     response::Response,
     role::Role,
     system::SystemStatus,
+    world::World,
 };
 
 pub struct SystemsControl;
@@ -33,15 +34,15 @@ impl GameCommand for SystemsControl {
                                 .systems
                                 .set_status(command.as_str(), SystemStatus::Running);
 
-                        match result {
-                            true => Ok(Response::Client(format!(
+                        if result {
+                             Ok(Response::Client(format!(
                                 "Starting system `{}`.",
                                 command
-                            ))),
-                            false => Ok(Response::Client(format!(
+                            )))
+                         }else { Ok(Response::Client(format!(
                                 "Could not find a system named `{}`.",
                                 command
-                            ))),
+                            )))
                         }
                         } else {
                             Ok(Response::Client(format!("No system named {}", token)))
@@ -54,15 +55,14 @@ impl GameCommand for SystemsControl {
                                 .systems
                                 .set_status(command.as_str(), SystemStatus::Stopped);
 
-                            match result {
-                                true => Ok(Response::Client(format!(
+                            if result { Ok(Response::Client(format!(
                                     "Stopping system `{}`.",
                                     command
-                                ))),
-                                false => Ok(Response::Client(format!(
+                                )))
+                             } else { Ok(Response::Client(format!(
                                     "Could not find a system named `{}`.",
                                     command
-                                ))),
+                                )))
                             }
                         } else {
                             Ok(Response::Client(format!("No system named {}", token)))
@@ -75,15 +75,15 @@ impl GameCommand for SystemsControl {
                                 .systems
                                 .set_status(command.as_str(), SystemStatus::Paused);
 
-                            match result {
-                                true => Ok(Response::Client(format!(
+                            if result { Ok(Response::Client(format!(
                                     "Pausing system `{}`.",
                                     command
-                                ))),
-                                false => Ok(Response::Client(format!(
+                                )))
+                            } else {
+                                Ok(Response::Client(format!(
                                     "Could not find a system named `{}`.",
                                     command
-                                ))),
+                                )))
                             }
                         } else {
                             Ok(Response::Client(format!("No system named {}", token)))
@@ -95,7 +95,7 @@ impl GameCommand for SystemsControl {
                 None => Ok(Response::Client("Various system control commands.".to_string())),
             }
         } else {
-            ctx.world.unknown(player.id)
+            World::unknown(player.id)
         }
     }
 }

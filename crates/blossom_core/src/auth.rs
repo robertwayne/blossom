@@ -32,7 +32,7 @@ async fn create(
     let name = name.trim();
     let password = password.trim();
     let _confirm_password = confirm_password.trim();
-    let _email = email.map(|e| e.trim());
+    let _email = email.map(str::trim);
 
     let salt = SaltString::generate(&mut OsRng);
     let argon = Argon2::default();
@@ -49,7 +49,7 @@ async fn create(
         returning id",
         hash
     )
-    .fetch_one(&*pg)
+    .fetch_one(pg)
     .await?;
 
     let player_record = sqlx::query!(
@@ -59,7 +59,7 @@ async fn create(
         account_record.id,
         name
     )
-    .fetch_one(&*pg)
+    .fetch_one(pg)
     .await?;
 
     Ok(PartialPlayer::new(
@@ -83,7 +83,7 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
         where p.name = $1"#,
         name,
     )
-    .fetch_one(&*pg)
+    .fetch_one(pg)
     .await?;
 
     let argon = Argon2::default();
@@ -96,7 +96,7 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
             account: Account {
                 id: record.account_id,
                 email: record.email,
-                roles: Role::list(record.roles),
+                roles: Role::list(&record.roles),
             },
             name: record.name.to_string(),
             position: Vec3::from(record.position),
@@ -127,7 +127,7 @@ async fn name_exists(name: &str, pg: &PgPool) -> Result<bool> {
         r#"select exists (select 1 from players where name = $1)"#,
         name
     )
-    .fetch_one(&*pg)
+    .fetch_one(pg)
     .await;
 
     match record {
@@ -155,13 +155,12 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
         let password = get_password(conn).await?;
         let partial_player = login(&name, &password, &pg).await;
 
-        match partial_player {
-            Ok(player) => Ok(Some(player)),
-            Err(_) => {
-                conn.send_message("Invalid credentials.").await?;
+        if let Ok(player) = partial_player {
+            Ok(Some(player))
+        } else {
+            conn.send_message("Invalid credentials.").await?;
 
-                Ok(None)
-            }
+            Ok(None)
         }
     } else {
         let password = set_password(conn).await?;
@@ -275,7 +274,7 @@ async fn get_password(conn: &mut Connection) -> Result<String> {
 /// Prompts a new player for their password and returns the input. This will also ask if the player
 /// wishes to create a new character with the name they provided.
 async fn set_password(conn: &mut Connection) -> Result<String> {
-    let _ = loop {
+    loop {
         // Set the players password -- we will turn off echo for this.
         conn.send_message("Character not found. Create a new character with this name? [Y/n]")
             .await?;
@@ -292,7 +291,7 @@ async fn set_password(conn: &mut Connection) -> Result<String> {
                 _ => continue,
             }
         }
-    };
+    }
 
     // ECHO off
     conn.send_iac(TelnetEvent::Will(TelnetOption::Echo)).await?;
