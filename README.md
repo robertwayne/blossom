@@ -8,26 +8,6 @@ actually want to build a MUD, you'd be best off using an existing codebase. Any
 of the old C-bases, Evennia *(Python)*, or Ranvier *(JavaScript)* are excellent
 options.
 
-## Live Game
-
-<!-- markdownlint-disable -->
-<div>
-  <strong>Secure:</strong> blossom-engine.com:5443
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <strong>Unsecure:</strong> blossom-engine.com:5080
-</div>
-
-<br>
-<!-- markdownlint-enable -->
-
-*The server should be online most of the time. If it is not, I am probably
-updating and it should be back momentarily.*
-
-*It is recommended to always connect with the secure connection. Your traffic
-will be encrypted with modern TLS. You will, of course, need an actual MUD
-client to connect securely. If you are using old-school telnet, you will have to
-use the unsecure connection.*
-
 ## Usage
 
 ```rs
@@ -52,7 +32,7 @@ the code and game data for Coven, the example game above, it is also
 
 Prerequesites:
 
-- Rust 1.60 (nightly; Blossom uses some nightly-only features)
+- Rust 1.62 (nightly; Blossom uses some nightly-only features)
 - PostgreSQL 14
 - *(optional)* Python 3 (tooling)
 - *(optional)* SQLx CLI (migrations)
@@ -74,7 +54,7 @@ dual-licensed under MIT and Apache-2.0.*
 
 Blossom source code is dual-licensed under either
 
-- **[MIT License](/docs/LICENSE-MIT.md)**
-- **[Apache License, Version 2.0](/docs/LICENSE-APACHE.md)**
+- **[MIT License](/docs/LICENSE-MIT)**
+- **[Apache License, Version 2.0](/docs/LICENSE-APACHE)**
 
 at your option.

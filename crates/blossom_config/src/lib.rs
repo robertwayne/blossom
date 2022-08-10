@@ -21,6 +21,7 @@ pub struct GameSettings {
 
 #[derive(Deserialize, Serialize)]
 pub struct WebSettings {
+    pub enabled: bool,
     pub host: String,
     pub port: u16,
 }
@@ -117,6 +118,7 @@ impl Default for GameSettings {
 impl Default for WebSettings {
     fn default() -> Self {
         WebSettings {
+            enabled: true,
             host: "127.0.0.1".to_string(),
             port: 8080,
         }

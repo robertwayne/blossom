@@ -24,7 +24,6 @@ flume = "0.10"
 futures = { version = "0.3", features = ["thread-pool"] }
 globwalk = "0.8"
 iridescent = "0.1"
-parking_lot = { version = "0.12", features = ["nightly"] }
 rand = "0.8"
 serde = { version = "1", features = ["derive"] }
 simsearch = "0.2"
