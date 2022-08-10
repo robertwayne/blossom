@@ -4,6 +4,7 @@ use crate::{
     error::Result,
     response::Response,
     role::Role,
+    world::World,
 };
 
 pub struct PlayerInfo;
@@ -34,7 +35,7 @@ impl GameCommand for PlayerInfo {
                 )),
             }
         } else {
-            ctx.world.unknown(player.id)
+            World::unknown(player.id)
         }
     }
 }

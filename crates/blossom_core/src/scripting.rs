@@ -3,12 +3,11 @@ use std::env;
 use rhai::{serde::from_dynamic, Dynamic, Engine};
 use serde::de::DeserializeOwned;
 
-/// This function will return a collection of an entire type of game object
-/// (eg. rooms, items, spells). If you need to get a specific object, or a
-/// specific set of of a type, use get_game_object or get_game_object_set.
+/// This function will return a collection of an entire type of game object (eg.
+/// rooms, items, spells). If you need to get a specific object, or a specific
+/// set of of a type, use `get_game_object` or `get_game_object_set`.
 ///
-/// Valid patterns look as such:
-///     ./scripts/rooms/grassy_hill.rhai
+/// Valid patterns look as such: ./scripts/rooms/grassy_hill.rhai
 ///     ./scripts/items/broadsword.rhai
 pub fn get_game_objects<T>(engine: &Engine, module_type: &str) -> Result<Vec<T>, ScriptError>
 where
@@ -90,8 +89,8 @@ impl From<Box<rhai::EvalAltResult>> for ScriptError {
 }
 
 /// This creates a scripting engine which can consume .rhai files. It's
-/// important to note that it's okay to create many of these, which is
-/// why it is not part of the shared state.
+/// important to note that it's okay to create many of these, which is why it is
+/// not part of the shared state.
 pub fn create_engine() -> Engine {
     let mut engine = rhai::Engine::new();
     engine.disable_symbol("eval");
@@ -102,26 +101,18 @@ pub fn create_engine() -> Engine {
     engine
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
+// #[cfg(test)] mod tests { use super::*;
 
 //     use crate::{entity::EntityId, room::Room, vec3::Vec3};
 
-//     #[test]
-//     fn get_game_objects_rooms() -> Result<(), BlossomScriptError> {
-//         let engine = create_engine();
-//         let rooms = get_game_objects::<Room>(&engine, "data")?;
+//     #[test] fn get_game_objects_rooms() -> Result<(), BlossomScriptError> {
+//     let engine = create_engine(); let rooms =
+//         get_game_objects::<Room>(&engine, "data")?;
 
-//         assert!(vec![Room {
-//             entity_id: EntityId::empty(),
-//             name: "Test Room".to_string(),
-//             description: "This is a test room.".to_string(),
-//             position: Vec3::new(0, 0, 0),
-//             exits: Vec::new(),
-//         }]
-//         .iter()
-//         .any(|item| rooms.contains(item)));
+//         assert!(vec![Room { entity_id: EntityId::empty(), name: "Test
+//             Room".to_string(), description: "This is a test
+//             room.".to_string(), position: Vec3::new(0, 0, 0), exits:
+//             Vec::new(), }] .iter() .any(|item| rooms.contains(item)));
 
 //         Ok(())
 //     }

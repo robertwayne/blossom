@@ -60,17 +60,9 @@ pub struct Region {
     pub mob_pool: Vec<String>,
 }
 
-// impl QuickMapKey<String> for Region {
-//     fn key(&self) -> String {
-//         self.name
-//     }
-// }
+// impl QuickMapKey<String> for Region { fn key(&self) -> String { self.name } }
 
-// impl QuickMapKey<String> for Area {
-//     fn key(&self) -> String {
-//         self.name
-//     }
-// }
+// impl QuickMapKey<String> for Area { fn key(&self) -> String { self.name } }
 
 impl Entity for Region {
     fn id(&self) -> EntityId {

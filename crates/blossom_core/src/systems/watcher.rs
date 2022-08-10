@@ -5,23 +5,25 @@ use crate::{
 
 /// Represents what the watcher is looking for.
 /// - `Wake`: The watcher will wake up systems when a player joins the server.
-/// - `Sleep`: The watcher will put systems to sleep when there have been no actions for 5 minutes.
+/// - `Sleep`: The watcher will put systems to sleep when there have been no
+///   actions for 5 minutes.
 #[derive(Debug, PartialEq, Eq)]
 enum WatchMode {
     Wake,
     Sleep,
 }
 
-/// This is an internal, core system that handles automatic system status updates (eg. outside of a
-/// call to `.set_status()`.) In general, the system watcher will put systems to sleep if there have
-/// been no connections for 5 minutes. As soon as a player joins the server, the system watcher will
-/// wake up all the paused systems.
+/// This is an internal, core system that handles automatic system status
+/// updates (eg. outside of a call to `.set_status()`.) In general, the system
+/// watcher will put systems to sleep if there have been no connections for 5
+/// minutes. As soon as a player joins the server, the system watcher will wake
+/// up all the paused systems.
 ///
-/// The goal is to save bandwitch and CPU cycles, however little, when the server is otherwise in a
-/// dormant state.
+/// The goal is to save bandwitch and CPU cycles, however little, when the
+/// server is otherwise in a dormant state.
 ///
-/// In cases where you do not want a system to be managed by the watcher, you can set that systems
-/// watch status to `Watch::Manual`.
+/// In cases where you do not want a system to be managed by the watcher, you
+/// can set that systems watch status to `Watch::Manual`.
 #[derive(Debug)]
 pub struct SystemWatcher {
     // See `WatchMode` for more information.

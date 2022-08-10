@@ -1,5 +1,5 @@
 /// Represents a permissions-based role that an account can hold.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Role {
     Admin,
     Moderator,
@@ -20,9 +20,10 @@ impl From<String> for Role {
 }
 
 impl Role {
-    /// Creates a new Vec<Role> from a Vec<String> of roles. Useful when deserializing roles from
-    /// the database, which are stored as an array of varchar.
-    pub fn list(roles: Vec<String>) -> Vec<Role> {
+    /// Creates a new Vec<Role> from a Vec<String> of roles. Useful when
+    /// deserializing roles from the database, which are stored as an array of
+    /// varchar.
+    pub fn list(roles: &[String]) -> Vec<Role> {
         roles.iter().map(|r| Role::from(r.clone())).collect()
     }
 }

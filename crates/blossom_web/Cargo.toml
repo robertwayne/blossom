@@ -20,7 +20,7 @@ rust-embed = { version = "6.3", features = [
     "interpolate-folder-path",
     "compression",
 ] }
-sqlx = { version = "0.5", features = [
+sqlx = { version = "0.6", features = [
     "runtime-tokio-rustls",
     "postgres",
     "offline",

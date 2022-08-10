@@ -32,7 +32,7 @@ async fn create(
     let name = name.trim();
     let password = password.trim();
     let _confirm_password = confirm_password.trim();
-    let _email = email.map(|e| e.trim());
+    let _email = email.map(str::trim);
 
     let salt = SaltString::generate(&mut OsRng);
     let argon = Argon2::default();
@@ -41,15 +41,16 @@ async fn create(
         .hash_password(password.as_bytes(), salt.as_ref())?
         .to_string();
 
-    // If the player supplied an email, we will send them a confirmation email, but this exists
-    // on a separate table until activated; thus we always apply default values to a new account.
+    // If the player supplied an email, we will send them a confirmation email,
+    // but this exists on a separate table until activated; thus we always apply
+    // default values to a new account.
     let account_record = sqlx::query!(
         "insert into accounts (encrypted_password)
         values ($1)
         returning id",
         hash
     )
-    .fetch_one(&*pg)
+    .fetch_one(pg)
     .await?;
 
     let player_record = sqlx::query!(
@@ -59,7 +60,7 @@ async fn create(
         account_record.id,
         name
     )
-    .fetch_one(&*pg)
+    .fetch_one(pg)
     .await?;
 
     Ok(PartialPlayer::new(
@@ -73,9 +74,9 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
     let name = name.trim();
     let password = password.trim();
 
-    // We check if a name is associated with an account when the player is prompted to enter their
-    // username at the start, thus we can guarantee that a single record will exist if this function
-    // is called.
+    // We check if a name is associated with an account when the player is
+    // prompted to enter their username at the start, thus we can guarantee that
+    // a single record will exist if this function is called.
     let record = sqlx::query!(
         r#"select p.id, p.name, p.position, p.health, p.max_health, p.mana, p.max_mana, p.xp, p.level, p.afk, p.brief, a.id as "account_id", a.encrypted_password, a.email as "email?", a.roles
         from players p 
@@ -83,7 +84,7 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
         where p.name = $1"#,
         name,
     )
-    .fetch_one(&*pg)
+    .fetch_one(pg)
     .await?;
 
     let argon = Argon2::default();
@@ -96,7 +97,7 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
             account: Account {
                 id: record.account_id,
                 email: record.email,
-                roles: Role::list(record.roles),
+                roles: Role::list(&record.roles),
             },
             name: record.name.to_string(),
             position: Vec3::from(record.position),
@@ -127,7 +128,7 @@ async fn name_exists(name: &str, pg: &PgPool) -> Result<bool> {
         r#"select exists (select 1 from players where name = $1)"#,
         name
     )
-    .fetch_one(&*pg)
+    .fetch_one(pg)
     .await;
 
     match record {
@@ -136,13 +137,13 @@ async fn name_exists(name: &str, pg: &PgPool) -> Result<bool> {
     }
 }
 
-/// This starts an authentication process for a player. It will handle input, finding if a player
-/// name exists, password authentication, new account creation flow, and login. It will always
-/// return a player if it succeeds.
+/// This starts an authentication process for a player. It will handle input,
+/// finding if a player name exists, password authentication, new account
+/// creation flow, and login. It will always return a player if it succeeds.
 ///
-/// This function will return additionally returns a special flag, `restart`, which will restart the
-/// authentication process if the player. We need to do this because some responses should drop the
-/// connection instead.
+/// This function will return additionally returns a special flag, `restart`,
+/// which will restart the authentication process if the player. We need to do
+/// this because some responses should drop the connection instead.
 pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Player>> {
     let name = match get_name(conn).await {
         Ok(name) => name,
@@ -155,13 +156,12 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
         let password = get_password(conn).await?;
         let partial_player = login(&name, &password, &pg).await;
 
-        match partial_player {
-            Ok(player) => Ok(Some(player)),
-            Err(_) => {
-                conn.send_message("Invalid credentials.").await?;
+        if let Ok(player) = partial_player {
+            Ok(Some(player))
+        } else {
+            conn.send_message("Invalid credentials.").await?;
 
-                Ok(None)
-            }
+            Ok(None)
         }
     } else {
         let password = set_password(conn).await?;
@@ -202,8 +202,9 @@ async fn get_name(conn: &mut Connection) -> Result<String> {
             .await?;
 
         if let Some(Ok(TelnetEvent::Message(msg))) = conn.frame_mut().next().await {
-            // Because this is the first frame we receive from the client, we have to check if it
-            // contains HTTP traffic, and if so, drop it silently.
+            // Because this is the first frame we receive from the client, we
+            // have to check if it contains HTTP traffic, and if so, drop it
+            // silently.
             if is_http(&msg) {
                 return Err(Error {
                     kind: ErrorType::Internal,
@@ -272,10 +273,11 @@ async fn get_password(conn: &mut Connection) -> Result<String> {
     Ok(password)
 }
 
-/// Prompts a new player for their password and returns the input. This will also ask if the player
-/// wishes to create a new character with the name they provided.
+/// Prompts a new player for their password and returns the input. This will
+/// also ask if the player wishes to create a new character with the name they
+/// provided.
 async fn set_password(conn: &mut Connection) -> Result<String> {
-    let _ = loop {
+    loop {
         // Set the players password -- we will turn off echo for this.
         conn.send_message("Character not found. Create a new character with this name? [Y/n]")
             .await?;
@@ -292,7 +294,7 @@ async fn set_password(conn: &mut Connection) -> Result<String> {
                 _ => continue,
             }
         }
-    };
+    }
 
     // ECHO off
     conn.send_iac(TelnetEvent::Will(TelnetOption::Echo)).await?;

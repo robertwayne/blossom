@@ -7,9 +7,10 @@ use tokio_util::codec::Framed;
 
 use crate::error::{Error, ErrorType, Result};
 
-/// Represents a players connection stream, as well as their write channel half. The read half is
-/// owned by the server message loop. In general, the connection should only be interacted with via
-/// the `send_message` and `send_iac` methods.
+/// Represents a players connection stream, as well as their write channel half.
+/// The read half is owned by the server message loop. In general, the
+/// connection should only be interacted with via the `send_message` and
+/// `send_iac` methods.
 pub struct Connection {
     addr: SocketAddr,
     frame: Framed<TcpStream, TelnetCodec>,
@@ -35,8 +36,8 @@ impl Connection {
         })
     }
 
-    /// Sends a Telnet IAC (Interpret As Command) message to the client and records
-    /// their response.
+    /// Sends a Telnet IAC (Interpret As Command) message to the client and
+    /// records their response.
     pub async fn send_iac(&mut self, command: TelnetEvent) -> Result<TelnetEvent> {
         self.frame.send(command).await?;
 

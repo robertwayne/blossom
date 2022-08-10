@@ -36,8 +36,9 @@ pub struct DatabaseSettings {
 }
 
 impl Config {
-    /// Attempts to read in a `config.toml` file from the root directory of your game. This file is
-    /// required for the game to run, so this will panic if there are ANY errors.
+    /// Attempts to read in a `config.toml` file from the root directory of your
+    /// game. This file is required for the game to run, so this will panic if
+    /// there are ANY errors.
     pub async fn load() -> Result<Self, ConfigError> {
         let dir_exists = std::fs::metadata("game").is_ok();
 

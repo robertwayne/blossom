@@ -4,6 +4,7 @@ use crate::{
     error::Result,
     response::Response,
     role::Role,
+    world::World,
 };
 
 pub struct WorldInfo;
@@ -23,7 +24,7 @@ impl GameCommand for WorldInfo {
         if player.account.roles.contains(&Role::Admin) {
             Ok(Response::Client(format!("{}", ctx.world)))
         } else {
-            ctx.world.unknown(player.id)
+            World::unknown(player.id)
         }
     }
 }

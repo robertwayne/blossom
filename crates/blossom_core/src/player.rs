@@ -9,10 +9,11 @@ use crate::{
 
 pub type PlayerId = i32;
 
-/// Represents a partially initialized state for a player. This exists solely for the
-/// authentication loop to prepare a struct from the database between stages (username, password)
-/// before reading all of the players data and filling out a `Player` struct. There is never a
-/// reason to use this outside of that specific area -- use `Player` instead.
+/// Represents a partially initialized state for a player. This exists solely
+/// for the authentication loop to prepare a struct from the database between
+/// stages (username, password) before reading all of the players data and
+/// filling out a `Player` struct. There is never a reason to use this outside
+/// of that specific area -- use `Player` instead.
 #[derive(Debug)]
 pub struct PartialPlayer {
     pub id: PlayerId,
@@ -25,9 +26,10 @@ impl PartialPlayer {
     }
 }
 
-/// The full representation of a player after authenticating with the server. Note that you should
-/// never need to create a `Player` struct yourself, as all of that is handled inside the auth
-/// flow. In general, you should just be accessing and/or modifying a player from the world state.
+/// The full representation of a player after authenticating with the server.
+/// Note that you should never need to create a `Player` struct yourself, as all
+/// of that is handled inside the auth flow. In general, you should just be
+/// accessing and/or modifying a player from the world state.
 #[derive(Clone, Debug)]
 pub struct Player {
     pub _entityid: EntityId,

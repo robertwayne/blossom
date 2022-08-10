@@ -6,7 +6,7 @@ use crate::player::Player;
 
 /// Represents the chat prompt which appears as the final line of every client
 /// message. The prompt is configurable, so we represent it with a struct that
-/// implements StyledString.
+/// implements `StyledString`.
 pub struct Prompt {
     health: Option<i32>,
     max_health: Option<i32>,

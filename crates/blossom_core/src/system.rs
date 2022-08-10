@@ -1,19 +1,22 @@
-/// Systems are ways to add a function into the core game loop. Each system runs once per server
-/// 'tick', and runs in the order they were added. Systems do not stop, and as they are run often,
-/// they should not block the thread for a long time. The game loop runs on a single thread, so it
-/// would severely impact performance. Currently there is no way to spawn a task onto a new thread
-/// from the game loop, but this is on the list of things to do.
+/// Systems are ways to add a function into the core game loop. Each system runs
+/// once per server 'tick', and runs in the order they were added. Systems do
+/// not stop, and as they are run often, they should not block the thread for a
+/// long time. The game loop runs on a single thread, so it would severely
+/// impact performance. Currently there is no way to spawn a task onto a new
+/// thread from the game loop, but this is on the list of things to do.
 ///
-/// There are currently two system types: `System` and `SystemReadOnly`. `System`'s have exclusive
-/// references to the world and its parent struct, while `SystemReadOnly`'s do not. An important
-/// note is that `SystemReadOnly`'s run after `System`'s. This means changes to state are reflected
-/// immediately by those systems.
+/// There are currently two system types: `System` and `SystemReadOnly`.
+/// `System`'s have exclusive references to the world and its parent struct,
+/// while `SystemReadOnly`'s do not. An important note is that
+/// `SystemReadOnly`'s run after `System`'s. This means changes to state are
+/// reflected immediately by those systems.
 ///
-/// Systems require a name and a struct to be attached to; which could exist simply as a marker
-/// with no data -- but if you wish to store your own state, this struct is where you would do so.
+/// Systems require a name and a struct to be attached to; which could exist
+/// simply as a marker with no data -- but if you wish to store your own state,
+/// this struct is where you would do so.
 ///
-/// Systems are still a work-in-progress, so the API may change as I try to simplify usage while
-/// increasing the extendability.
+/// Systems are still a work-in-progress, so the API may change as I try to
+/// simplify usage while increasing the extendability.
 use crate::world::World;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -41,7 +44,8 @@ pub struct SystemHandle {
     pub inner: Box<dyn System>,
 }
 
-/// Represents a system that has exclusive, mutable access to the world and its parent struct.
+/// Represents a system that has exclusive, mutable access to the world and its
+/// parent struct.
 impl SystemHandle {
     pub fn new(name: &'static str, inner: Box<dyn System>) -> Self {
         Self {
@@ -59,12 +63,14 @@ impl std::fmt::Display for SystemHandle {
     }
 }
 
-/// Represents a system that has shared, immutable access to the world and its parent struct.
+/// Represents a system that has shared, immutable access to the world and its
+/// parent struct.
 pub trait SystemReadOnly: Send + Sync {
     fn update(&self, world: &World);
 }
 
-/// `SystemReadOnlyHandle`'s should not be worked with directly; use `SystemReadOnly` instead.
+/// `SystemReadOnlyHandle`'s should not be worked with directly; use
+/// `SystemReadOnly` instead.
 pub struct SystemReadOnlyHandle {
     pub status: SystemStatus,
     pub watch: WatchStatus,

@@ -8,8 +8,8 @@ use sqlx::Type;
 
 use crate::direction::Direction;
 
-/// Basic implementation of an integer-based 3D vector (x, y, z). This is primarily used for
-/// representing the location of a game object in the world.
+/// Basic implementation of an integer-based 3D vector (x, y, z). This is
+/// primarily used for representing the location of a game object in the world.
 #[derive(Clone, Copy, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize, Type)]
 pub struct Vec3 {
     pub x: i32,

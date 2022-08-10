@@ -41,8 +41,8 @@ impl Broker {
             let _ = loop_handle.broker_loop().await;
         });
 
-        // Then we can return the original handle so the connection manager can distribute clones
-        // to peers as they connect
+        // Then we can return the original handle so the connection manager can
+        // distribute clones to peers as they connect
         Ok(handle)
     }
 
@@ -61,15 +61,17 @@ impl Broker {
         }
     }
 
-    /// Processes client events from the connection pool and passes them to the game thread.
+    /// Processes client events from the connection pool and passes them to the
+    /// game thread.
     async fn handle_client_event(&self, id: i32, event_type: ClientEvent) -> Result<()> {
         tracing::trace!("Handling client event: {:?}", event_type);
 
         match event_type {
             ClientEvent::Connect(player, tx) => {
-                // We know the tx will always be Some, because we ONLY send a Some value. However,
-                // because the game should NOT know about the peer connection or have its send
-                // channel, we need to make this an option so we can forward as a None.
+                // We know the tx will always be Some, because we ONLY send a
+                // Some value. However, because the game should NOT know about
+                // the peer connection or have its send channel, we need to make
+                // this an option so we can forward as a None.
                 self.tx_peers
                     .insert(id, tx.expect("This should never happen."));
                 self.to_game(id, ClientEvent::Connect(player, None)).await?;
@@ -88,7 +90,8 @@ impl Broker {
         Ok(())
     }
 
-    /// Processes game events from the game thread and invokes the correct passing function.
+    /// Processes game events from the game thread and invokes the correct
+    /// passing function.
     async fn handle_game_event(&self, id: PlayerId, event_type: GameEvent) -> Result<()> {
         tracing::trace!("Handling game event: {:?}", event_type);
 
@@ -98,7 +101,7 @@ impl Broker {
             }
             GameEvent::Command(response) => match &response {
                 Response::Channel(here, _) => {
-                    self.broadcast(here.to_vec(), GameEvent::Command(response))
+                    self.broadcast(here.clone(), GameEvent::Command(response))
                         .await?;
                 }
                 _ => self.to_client(id, GameEvent::Command(response)).await?,
@@ -139,7 +142,8 @@ impl Broker {
         Ok(())
     }
 
-    /// Passes a game event to a group of clients represented as an array of IDs.
+    /// Passes a game event to a group of clients represented as an array of
+    /// IDs.
     async fn broadcast(&self, ids: Vec<PlayerId>, event: GameEvent) -> Result<()> {
         for id in ids {
             self.to_client(id, event.clone()).await?;

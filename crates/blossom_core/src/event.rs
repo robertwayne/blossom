@@ -8,9 +8,11 @@ use crate::{
 
 #[derive(Debug)]
 pub enum Event {
-    // Events propgated from the world to the broker. The connection loop parses these events.
+    // Events propgated from the world to the broker. The connection loop parses
+    // these events.
     Game(PlayerId, GameEvent),
-    // Events propgated from the connection loop to the broker. The game loop parses these events.
+    // Events propgated from the connection loop to the broker. The game loop
+    // parses these events.
     Client(PlayerId, ClientEvent),
 }
 
@@ -23,9 +25,10 @@ impl std::fmt::Display for Event {
     }
 }
 
-/// Represents an event SENT BY THE GAME. A GameEvent will never be read by the game itself, and
-/// is generally handled by the connection loop. In some cases, the broker may respond to one of
-/// these events (such as in the case of Save or GlobalSave, because the broker holds the peer map).
+/// Represents an event SENT BY THE GAME. A `GameEvent` will never be read by
+/// the game itself, and is generally handled by the connection loop. In some
+/// cases, the broker may respond to one of these events (such as in the case of
+/// Save or `GlobalSave`, because the broker holds the peer map).
 #[derive(Clone, Debug)]
 pub enum GameEvent {
     // Returns a response from a successful ClientEventType::Connect
@@ -51,10 +54,10 @@ impl std::fmt::Display for ClientEvent {
     }
 }
 
-/// Represents an event SENT BY THE CLIENT. A ClientEvent will never be read by the client itself,
-/// and is generally handled by the game loop. Note that when the word Client is used, this refers
-/// to events created and sent from the conncetion loop after parsing a valid packet received from
-/// a peer.
+/// Represents an event SENT BY THE CLIENT. A `ClientEvent` will never be read
+/// by the client itself, and is generally handled by the game loop. Note that
+/// when the word Client is used, this refers to events created and sent from
+/// the conncetion loop after parsing a valid packet received from a peer.
 #[derive(Debug)]
 pub enum ClientEvent {
     // Post-authentication event that adds a player to the world

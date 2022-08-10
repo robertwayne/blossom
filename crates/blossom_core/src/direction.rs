@@ -1,6 +1,7 @@
 use serde::{Deserialize, Deserializer};
 
-/// Represents cardinal directions plus up or down. Directions translate to Vec3's.
+/// Represents cardinal directions plus up or down. Directions translate to
+/// Vec3's.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Direction {
     North,
@@ -25,8 +26,9 @@ impl From<String> for Direction {
     }
 }
 
-// We need a custom deserializer because the derive won't handle direction strings with lower or
-// mixed case -- upper case only. With this impl, we can handle both cases.
+// We need a custom deserializer because the derive won't handle direction
+// strings with lower or mixed case -- upper case only. With this impl, we can
+// handle both cases.
 impl<'de> Deserialize<'de> for Direction {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where

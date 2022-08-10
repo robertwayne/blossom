@@ -38,9 +38,10 @@ pub async fn telnet_connection_loop(
         return Ok(());
     }
 
-    // We know the player is valid because of the 'is_none' check above; however, in order to keep
-    // rightward drift at a minimum in this already long function, we break it early instead of
-    // utilizing if/else (+1 indent).
+    // We know the player is valid because of the 'is_none' check above;
+    // however, in order to keep rightward drift at a minimum in this already
+    // long function, we break it early instead of utilizing if/else (+1
+    // indent).
     let player = maybe_player.expect("This should never happen.");
 
     // Retain player ID as a marker for their connection
