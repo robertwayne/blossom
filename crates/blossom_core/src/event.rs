@@ -23,9 +23,10 @@ impl std::fmt::Display for Event {
     }
 }
 
-/// Represents an event SENT BY THE GAME. A GameEvent will never be read by the game itself, and
-/// is generally handled by the connection loop. In some cases, the broker may respond to one of
-/// these events (such as in the case of Save or GlobalSave, because the broker holds the peer map).
+/// Represents an event SENT BY THE GAME. A GameEvent will never be read by the
+/// game itself, and is generally handled by the connection loop. In some cases,
+/// the broker may respond to one of these events (such as in the case of Save
+/// or GlobalSave, because the broker holds the peer map).
 #[derive(Clone, Debug)]
 pub enum GameEvent {
     // Returns a response from a successful ClientEventType::Connect
