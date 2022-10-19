@@ -41,7 +41,7 @@ impl Game {
 
         world.add_system("watcher", SystemWatcher::new());
         world.add_system("global_save", GlobalSave::new(config.game.save_interval));
-        world.add_system("spawner", Spawner::new(300));
+        // world.add_system("spawner", Spawner::new(300));
 
         if config.game.default_commands {
             world.add_command(Afk::create(), Afk::run);
