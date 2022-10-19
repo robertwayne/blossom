@@ -32,11 +32,11 @@ the code and game data for Coven, the example game above, it is also
 
 Prerequesites:
 
-- Rust 1.65 (nightly; Blossom uses some nightly-only features)
+- Rust Nightly 1.66
 - PostgreSQL 14
 - *(optional)* Python 3 (tooling)
 - *(optional)* SQLx CLI (migrations)
-- *(optional)* Node 18 (dashboard / content creation tools)
+- *(optional)* Node 19 (dashboard / content creation tools)
 
 1. `git clone https://github.com/robertwayne/blossom`
 2. Modify the `.env.TEMPLATE` file in the root directory with your local
