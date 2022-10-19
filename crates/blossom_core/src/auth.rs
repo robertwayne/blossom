@@ -91,6 +91,8 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
     let hash = PasswordHash::new(&record.encrypted_password)?;
 
     if argon.verify_password(password.as_bytes(), &hash).is_ok() {
+        tracing::trace!("Verified password.");
+        
         Ok(Player {
             _entityid: EntityId::empty(),
             id: record.id,

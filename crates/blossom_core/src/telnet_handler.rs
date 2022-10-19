@@ -51,6 +51,7 @@ pub async fn telnet_connection_loop(
     let (tx, rx) = unbounded::<Event>();
 
     // Move the player off into the game thread
+    tracing::trace!("{} authenticated: moving to game thread", player.name);
     tx_broker
         .send_async(Event::Client(
             player.id,
