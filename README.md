@@ -20,12 +20,14 @@ options.
 
 ## Live Game
 
-The example server listed at the top of the README should be online most of the time. 
+The test server listed at the top of the README should be online most of the time. 
+
+Connecting via Telnet: `telnet blossom-engine.com 5080`
 
 *It is recommended to always connect with the secure connection. Your traffic
-will be encrypted with modern TLS. You will, of course, need an actual MUD
-client to connect securely. If you are using old-school telnet, you will have to
-use the unsecure connection.*
+will be encrypted with modern TLS. You will need an actual MUD client to connect 
+securely. I recommend [Mudlet](https://www.mudlet.org/) for a powerful, 
+cross-platform option!*
 
 ## Usage
 
