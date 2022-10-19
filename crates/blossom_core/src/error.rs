@@ -1,6 +1,6 @@
 use blossom_config::ConfigError;
 use blossom_db::DatabaseError;
-use blossom_telnet::TelnetError;
+use nectar::error::TelnetError;
 
 use crate::{event::Event, scripting::ScriptError};
 

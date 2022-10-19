@@ -1,6 +1,6 @@
 use std::net::SocketAddr;
 
-use blossom_telnet::{event::TelnetEvent, TelnetCodec};
+use nectar::{event::TelnetEvent, TelnetCodec};
 use flume::{unbounded, Sender};
 use futures::StreamExt;
 use sqlx::PgPool;

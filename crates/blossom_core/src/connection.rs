@@ -1,6 +1,6 @@
 use std::net::SocketAddr;
 
-use blossom_telnet::{event::TelnetEvent, TelnetCodec};
+use nectar::{event::TelnetEvent, TelnetCodec};
 use futures::{SinkExt, StreamExt};
 use tokio::net::TcpStream;
 use tokio_util::codec::Framed;

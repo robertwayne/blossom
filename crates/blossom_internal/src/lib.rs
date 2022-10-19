@@ -8,10 +8,6 @@ pub mod core {
     };
 }
 
-pub mod telnet {
-    pub use blossom_telnet::*;
-}
-
 pub mod config {
     pub use blossom_config::*;
 }

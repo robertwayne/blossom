@@ -17,8 +17,7 @@ Moved into a stand-alone crate: **[Iridescent](https://github.com/robertwayne/ir
 
 ### blossom_telnet
 
-Partial telnet implementation. Focuses on parts needed for general MUD
-communication, and will eventually include MUD protocols such as GMCP.
+Moved into a stand-alone crate: **[Nectar](https://github.com/robertwayne/nectar)**.
 
 ### blossom_dynamic
 

@@ -2,7 +2,7 @@ use argon2::{
     password_hash::{rand_core::OsRng, PasswordHasher, SaltString},
     Argon2, PasswordHash, PasswordVerifier,
 };
-use blossom_telnet::{event::TelnetEvent, option::TelnetOption};
+use nectar::{event::TelnetEvent, option::TelnetOption};
 use futures::StreamExt;
 use iridescent::{
     constants::{RED, YELLOW},
