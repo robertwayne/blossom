@@ -4,6 +4,7 @@ use crate::{
     error::Result,
     response::Response,
     role::Role,
+    world::World,
 };
 
 const HELP_TEXT: &str = r#"
@@ -33,7 +34,12 @@ impl GameCommand for AdminHelp {
         }
     }
 
-    fn run(_ctx: Context) -> Result<Response> {
+    fn run(ctx: Context) -> Result<Response> {
+        let player = ctx.world.get_player_mut(ctx.id)?;
+        if !player.account.roles.contains(&Role::Admin) {
+            return World::unknown(player.id);
+        }
+
         Ok(Response::Client(HELP_TEXT.to_string()))
     }
 }
