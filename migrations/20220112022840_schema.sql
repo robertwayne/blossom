@@ -2,7 +2,7 @@ create table if not exists accounts
 (
     id                 serial primary key unique                not null,
     email              text,
-    encrypted_password text                                     not null,
+    password_hash      text                                     not null,
     roles              varchar(16)[] default array[]::varchar[] not null,
 
     /* Meta */

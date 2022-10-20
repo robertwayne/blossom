@@ -1,7 +1,7 @@
 {
   "db": "PostgreSQL",
   "3d9776d21eb1b83f911acbd479e32f469ac86db30d8824195657d310b9570a9b": {
-    "query": "select p.id, p.name, p.position, p.health, p.max_health, p.mana, p.max_mana, p.xp, p.level, p.afk, p.brief, a.id as \"account_id\", a.encrypted_password, a.email as \"email?\", a.roles\n        from players p \n        join accounts a on p.account_id = a.id \n        where p.name = $1",
+    "query": "select p.id, p.name, p.position, p.health, p.max_health, p.mana, p.max_mana, p.xp, p.level, p.afk, p.brief, a.id as \"account_id\", a.password_hash, a.email as \"email?\", a.roles\n        from players p \n        join accounts a on p.account_id = a.id \n        where p.name = $1",
     "describe": {
       "columns": [
         {
@@ -66,7 +66,7 @@
         },
         {
           "ordinal": 12,
-          "name": "encrypted_password",
+          "name": "password_hash",
           "type_info": "Text"
         },
         {
@@ -167,7 +167,7 @@
     }
   },
   "fc4d69987b81720125908124efd595d9ad5870a7b28ffd192cdf789f7f880021": {
-    "query": "insert into accounts (encrypted_password)\n        values ($1)\n        returning id",
+    "query": "insert into accounts (password_hash)\n        values ($1)\n        returning id",
     "describe": {
       "columns": [
         {

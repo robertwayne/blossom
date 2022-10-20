@@ -45,7 +45,7 @@ async fn create(
     // but this exists on a separate table until activated; thus we always apply
     // default values to a new account.
     let account_record = sqlx::query!(
-        "insert into accounts (encrypted_password)
+        "insert into accounts (password_hash)
         values ($1)
         returning id",
         hash
@@ -78,7 +78,7 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
     // prompted to enter their username at the start, thus we can guarantee that
     // a single record will exist if this function is called.
     let record = sqlx::query!(
-        r#"select p.id, p.name, p.position, p.health, p.max_health, p.mana, p.max_mana, p.xp, p.level, p.afk, p.brief, a.id as "account_id", a.encrypted_password, a.email as "email?", a.roles
+        r#"select p.id, p.name, p.position, p.health, p.max_health, p.mana, p.max_mana, p.xp, p.level, p.afk, p.brief, a.id as "account_id", a.password_hash, a.email as "email?", a.roles
         from players p 
         join accounts a on p.account_id = a.id 
         where p.name = $1"#,
@@ -88,7 +88,7 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
     .await?;
 
     let argon = Argon2::default();
-    let hash = PasswordHash::new(&record.encrypted_password)?;
+    let hash = PasswordHash::new(&record.password_hash)?;
 
     if argon.verify_password(password.as_bytes(), &hash).is_ok() {
         tracing::trace!("Verified password.");
