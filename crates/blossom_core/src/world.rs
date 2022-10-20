@@ -109,14 +109,20 @@ impl World {
 
             match event {
                 ClientEvent::Connect(mut player, _) => {
+                    let mut msg = String::new();
+
+                    if player.seen {
+                        msg = format!(
+                            "\n{}{}{}\n",
+                            "Welcome back, ".foreground(theme::YELLOW).bold(),
+                            player.name.foreground(theme::BLUE).bold(),
+                            "!".foreground(theme::YELLOW).bold(),
+                        );
+                    } 
+
                     self.send_event(
                         id,
-                        GameEvent::Accepted(Response::Client(format!(
-                            "\n{}{}{}\n",
-                            "Welcome back, ".foreground(theme::YELLOW),
-                            player.name.foreground(theme::BLUE),
-                            "!".foreground(theme::YELLOW),
-                        ))),
+                        GameEvent::Accepted(Response::Client(msg)),
                     );
 
                     player._entityid = self.next_id();

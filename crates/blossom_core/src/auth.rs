@@ -113,6 +113,7 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
             brief: record.brief,
             afk: record.afk,
             dirty: false,
+            seen: true,
         })
     } else {
         Err(Error {
@@ -169,14 +170,16 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
         let password = set_password(conn).await?;
         let partial_player = create(&name, &password, &password, None, &pg).await?;
 
-        let welcome_msg = format!(
-            "\nWelcome, {}! You can view all the commands by typing \"help\" or \"?\".",
-            &name
-        )
-        .bold()
-        .foreground(theme::YELLOW);
+        let colored_name = &name.foreground(theme::BLUE).bold();
 
-        conn.send_message(welcome_msg.to_string().as_str()).await?;
+        conn.send_message(&format!("{} {}{}", 
+            "\nWelcome,".foreground(theme::YELLOW).bold(), 
+            colored_name,
+            "!".foreground(theme::YELLOW).bold()))
+        .await?;
+
+        conn.send_message(&format!("{}", "You can view all the commands by typing \"help\" or \"?\".".foreground(theme::YELLOW).bold())).await?;
+
         Ok(Some(Player {
             _entityid: EntityId::empty(),
             id: partial_player.id,
@@ -193,6 +196,7 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
             brief: false,
             afk: false,
             dirty: false,
+            seen: false,
         }))
     }
 }

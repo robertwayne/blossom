@@ -47,6 +47,7 @@ pub struct Player {
     pub brief: bool,
     pub afk: bool,
     pub dirty: bool,
+    pub seen: bool,
 }
 
 impl Player {
@@ -67,6 +68,7 @@ impl Player {
             brief: false,
             afk: false,
             dirty: false,
+            seen: false,
         }
     }
 
