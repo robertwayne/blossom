@@ -1,14 +1,12 @@
 use std::collections::HashMap;
 
-use iridescent::{
-    constants::{GREEN, YELLOW},
-    Styled,
-};
+use iridescent::Styled;
 
 use crate::{
     entity::EntityId,
     monster::{Monster, MonsterTemplate},
-    quickmap::QuickMap, theme,
+    quickmap::QuickMap,
+    theme,
 };
 
 #[derive(Debug)]
@@ -75,8 +73,12 @@ impl std::fmt::Display for MonsterStore {
         write!(
             f,
             "Monsters: {} actual, {} templates",
-            self.map.len().to_string().foreground(GREEN).bold(),
-            self.templates.len().to_string().foreground(theme::YELLOW).bold()
+            self.map.len().to_string().foreground(theme::GREEN).bold(),
+            self.templates
+                .len()
+                .to_string()
+                .foreground(theme::YELLOW)
+                .bold()
         )
     }
 }

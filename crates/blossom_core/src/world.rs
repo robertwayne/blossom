@@ -5,10 +5,7 @@ use std::{
 };
 
 use flume::{Receiver, Sender};
-use iridescent::{
-    constants::{CYAN, GREEN, YELLOW},
-    Styled,
-};
+use iridescent::Styled;
 
 use crate::{
     command::{Command, CommandHandle},
@@ -25,8 +22,9 @@ use crate::{
     room::Room,
     stores::{monster_store::MonsterStore, system_store::SystemStore},
     system::{System, SystemHandle, SystemReadOnly, SystemReadOnlyHandle, SystemStatus},
+    theme,
     timer::Timer,
-    vec3::Vec3, theme,
+    vec3::Vec3,
 };
 
 /// Stateful representation of the game world, containing references to all game
@@ -118,12 +116,9 @@ impl World {
                             player.name.foreground(theme::BLUE).bold(),
                             "!".foreground(theme::YELLOW).bold(),
                         );
-                    } 
+                    }
 
-                    self.send_event(
-                        id,
-                        GameEvent::Accepted(Response::Client(msg)),
-                    );
+                    self.send_event(id, GameEvent::Accepted(Response::Client(msg)));
 
                     player._entityid = self.next_id();
 

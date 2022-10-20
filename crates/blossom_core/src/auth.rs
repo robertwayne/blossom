@@ -2,12 +2,9 @@ use argon2::{
     password_hash::{rand_core::OsRng, PasswordHasher, SaltString},
     Argon2, PasswordHash, PasswordVerifier,
 };
-use nectar::{event::TelnetEvent, option::TelnetOption};
 use futures::StreamExt;
-use iridescent::{
-    constants::{RED, YELLOW},
-    Styled,
-};
+use iridescent::{constants::RED, Styled};
+use nectar::{event::TelnetEvent, option::TelnetOption};
 use sqlx::postgres::PgPool;
 
 use crate::{
@@ -17,8 +14,9 @@ use crate::{
     error::{Error, ErrorType, Result},
     player::{PartialPlayer, Player},
     role::Role,
+    theme,
     utils::{capitalize, is_http},
-    vec3::Vec3, theme,
+    vec3::Vec3,
 };
 
 /// Creates a new account and character.
@@ -92,7 +90,7 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
 
     if argon.verify_password(password.as_bytes(), &hash).is_ok() {
         tracing::trace!("Verified password.");
-        
+
         Ok(Player {
             _entityid: EntityId::empty(),
             id: record.id,
@@ -172,13 +170,21 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
 
         let colored_name = &name.foreground(theme::BLUE).bold();
 
-        conn.send_message(&format!("{} {}{}", 
-            "\nWelcome,".foreground(theme::YELLOW).bold(), 
+        conn.send_message(&format!(
+            "{} {}{}",
+            "\nWelcome,".foreground(theme::YELLOW).bold(),
             colored_name,
-            "!".foreground(theme::YELLOW).bold()))
+            "!".foreground(theme::YELLOW).bold()
+        ))
         .await?;
 
-        conn.send_message(&format!("{}", "You can view all the commands by typing \"help\" or \"?\".".foreground(theme::YELLOW).bold())).await?;
+        conn.send_message(&format!(
+            "{}",
+            "You can view all the commands by typing \"help\" or \"?\"."
+                .foreground(theme::YELLOW)
+                .bold()
+        ))
+        .await?;
 
         Ok(Some(Player {
             _entityid: EntityId::empty(),
@@ -262,8 +268,11 @@ async fn get_password(conn: &mut Connection) -> Result<String> {
             let msg = msg.trim();
 
             if msg.is_empty() {
-                conn.send_message(&format!("{}", "Invalid credentials.".foreground(theme::RED)))
-                    .await?;
+                conn.send_message(&format!(
+                    "{}",
+                    "Invalid credentials.".foreground(theme::RED)
+                ))
+                .await?;
 
                 failure_count += 1;
                 continue;

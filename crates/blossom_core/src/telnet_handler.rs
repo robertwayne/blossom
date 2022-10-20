@@ -1,8 +1,8 @@
 use std::net::SocketAddr;
 
-use nectar::{event::TelnetEvent, TelnetCodec};
 use flume::{unbounded, Sender};
 use futures::StreamExt;
+use nectar::{event::TelnetEvent, TelnetCodec};
 use sqlx::PgPool;
 use tokio::net::TcpStream;
 use tokio_util::codec::Framed;

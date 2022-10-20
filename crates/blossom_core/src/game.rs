@@ -23,7 +23,7 @@ use crate::{
     region::{AreaBuilder, RegionBuilder},
     room::RoomBuilder,
     scripting::{create_engine, get_game_objects},
-    systems::{global_save::GlobalSave, spawner::Spawner, watcher::SystemWatcher},
+    systems::{global_save::GlobalSave, watcher::SystemWatcher},
     world::World,
 };
 

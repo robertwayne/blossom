@@ -1,11 +1,9 @@
-use iridescent::{
-    constants::{GREEN, RED, YELLOW},
-    Styled,
-};
+use iridescent::Styled;
 
 use crate::{
     system::{SystemHandle, SystemReadOnlyHandle, SystemStatus, WatchStatus},
-    systems::{execution_timer::ExecutionTimer, watcher::SystemWatcher}, theme,
+    systems::{execution_timer::ExecutionTimer, watcher::SystemWatcher},
+    theme,
 };
 
 pub struct SystemStore {
@@ -71,13 +69,17 @@ impl std::fmt::Display for SystemStore {
 
         let text = format!(
             "{} ({}, {} readonly)\n  Running: [{}]\n  Paused: [{}]\n  Stopped: [{}]",
-            system_set.len().to_string().foreground(GREEN).bold(),
-            self.write.len().to_string().foreground(GREEN).bold(),
-            self.readonly.len().to_string().foreground(GREEN).bold(),
+            system_set.len().to_string().foreground(theme::GREEN).bold(),
+            self.write.len().to_string().foreground(theme::GREEN).bold(),
+            self.readonly
+                .len()
+                .to_string()
+                .foreground(theme::GREEN)
+                .bold(),
             system_set
                 .iter()
                 .filter(|s| s.1 == SystemStatus::Running)
-                .map(|s| format!("{}", s.0.to_string().foreground(GREEN).bold()))
+                .map(|s| format!("{}", s.0.to_string().foreground(theme::GREEN).bold()))
                 .collect::<Vec<_>>()
                 .join(", "),
             system_set
@@ -89,7 +91,7 @@ impl std::fmt::Display for SystemStore {
             system_set
                 .iter()
                 .filter(|s| s.1 == SystemStatus::Stopped)
-                .map(|s| format!("{}", s.0.to_string().foreground(RED).bold()))
+                .map(|s| format!("{}", s.0.to_string().foreground(theme::RED).bold()))
                 .collect::<Vec<_>>()
                 .join(", "),
         );

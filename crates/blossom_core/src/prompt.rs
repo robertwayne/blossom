@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use iridescent::{Styled, Rgb};
+use iridescent::Styled;
 
 use crate::{player::Player, theme};
 

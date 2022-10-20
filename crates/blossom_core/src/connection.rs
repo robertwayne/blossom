@@ -1,7 +1,7 @@
 use std::net::SocketAddr;
 
-use nectar::{event::TelnetEvent, TelnetCodec};
 use futures::{SinkExt, StreamExt};
+use nectar::{event::TelnetEvent, TelnetCodec};
 use tokio::net::TcpStream;
 use tokio_util::codec::Framed;
 

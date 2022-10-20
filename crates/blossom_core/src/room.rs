@@ -1,4 +1,4 @@
-use iridescent::{Styled, StyledString, RED};
+use iridescent::{Styled, StyledString};
 use serde::Deserialize;
 
 use crate::{
@@ -6,8 +6,9 @@ use crate::{
     entity::{Entity, EntityId},
     player::PlayerId,
     quickmap::QuickMapKey,
+    theme,
     vec3::Vec3,
-    world::World, theme,
+    world::World,
 };
 
 #[derive(Debug)]

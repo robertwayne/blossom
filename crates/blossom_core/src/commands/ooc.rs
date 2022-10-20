@@ -1,10 +1,11 @@
-use iridescent::{constants::GREEN, Styled};
+use iridescent::Styled;
 
 use crate::{
     command::{Command, GameCommand},
     context::Context,
     error::Result,
-    response::Response, theme,
+    response::Response,
+    theme,
 };
 
 pub struct GlobalChat;
