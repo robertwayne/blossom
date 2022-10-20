@@ -8,7 +8,7 @@ use iridescent::{
 use crate::{
     entity::EntityId,
     monster::{Monster, MonsterTemplate},
-    quickmap::QuickMap,
+    quickmap::QuickMap, theme,
 };
 
 #[derive(Debug)]
@@ -76,7 +76,7 @@ impl std::fmt::Display for MonsterStore {
             f,
             "Monsters: {} actual, {} templates",
             self.map.len().to_string().foreground(GREEN).bold(),
-            self.templates.len().to_string().foreground(YELLOW).bold()
+            self.templates.len().to_string().foreground(theme::YELLOW).bold()
         )
     }
 }

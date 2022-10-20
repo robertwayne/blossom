@@ -23,7 +23,7 @@ dashmap = "5.0"
 flume = "0.10"
 futures = { version = "0.3", features = ["thread-pool"] }
 globwalk = "0.8"
-iridescent = "0.1"
+iridescent = { version = "0.2" }
 rand = "0.8"
 serde = { version = "1", features = ["derive"] }
 simsearch = "0.2"

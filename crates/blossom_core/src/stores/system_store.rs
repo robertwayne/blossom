@@ -5,7 +5,7 @@ use iridescent::{
 
 use crate::{
     system::{SystemHandle, SystemReadOnlyHandle, SystemStatus, WatchStatus},
-    systems::{execution_timer::ExecutionTimer, watcher::SystemWatcher},
+    systems::{execution_timer::ExecutionTimer, watcher::SystemWatcher}, theme,
 };
 
 pub struct SystemStore {
@@ -83,7 +83,7 @@ impl std::fmt::Display for SystemStore {
             system_set
                 .iter()
                 .filter(|s| s.1 == SystemStatus::Paused)
-                .map(|s| format!("{}", s.0.to_string().foreground(YELLOW).bold()))
+                .map(|s| format!("{}", s.0.to_string().foreground(theme::YELLOW).bold()))
                 .collect::<Vec<_>>()
                 .join(", "),
             system_set

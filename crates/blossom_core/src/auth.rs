@@ -18,7 +18,7 @@ use crate::{
     player::{PartialPlayer, Player},
     role::Role,
     utils::{capitalize, is_http},
-    vec3::Vec3,
+    vec3::Vec3, theme,
 };
 
 /// Creates a new account and character.
@@ -174,7 +174,7 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
             &name
         )
         .bold()
-        .foreground(YELLOW);
+        .foreground(theme::YELLOW);
 
         conn.send_message(welcome_msg.to_string().as_str()).await?;
         Ok(Some(Player {
@@ -258,7 +258,7 @@ async fn get_password(conn: &mut Connection) -> Result<String> {
             let msg = msg.trim();
 
             if msg.is_empty() {
-                conn.send_message(&format!("{}", "Invalid credentials.".foreground(RED)))
+                conn.send_message(&format!("{}", "Invalid credentials.".foreground(theme::RED)))
                     .await?;
 
                 failure_count += 1;
@@ -318,7 +318,7 @@ async fn set_password(conn: &mut Connection) -> Result<String> {
             if msg.is_empty() || msg.len() < 8 {
                 conn.send_message(&format!(
                     "{}",
-                    "Password should be at least 8 characters.".foreground(RED)
+                    "Password should be at least 8 characters.".foreground(theme::RED)
                 ))
                 .await?;
 

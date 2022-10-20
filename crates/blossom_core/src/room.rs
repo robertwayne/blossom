@@ -1,4 +1,4 @@
-use iridescent::{constants::GREEN, Styled, StyledString, RED};
+use iridescent::{Styled, StyledString, RED};
 use serde::Deserialize;
 
 use crate::{
@@ -7,7 +7,7 @@ use crate::{
     player::PlayerId,
     quickmap::QuickMapKey,
     vec3::Vec3,
-    world::World,
+    world::World, theme,
 };
 
 #[derive(Debug)]
@@ -46,7 +46,7 @@ impl RoomBuilder {
 impl Room {
     /// Returns the name of the room as a styled string.
     pub fn name(&self) -> StyledString {
-        self.name.foreground(GREEN)
+        self.name.foreground(theme::GREEN)
     }
 
     /// Returns all of the exits in the room as a styled string.
@@ -60,7 +60,7 @@ impl Room {
 
         let exits = format!("[Exits: {}]", exit_string);
 
-        exits.foreground(GREEN)
+        exits.foreground(theme::GREEN)
     }
 
     /// Returns a view of the room; this includes the room name, description,
@@ -88,7 +88,7 @@ impl Room {
                 .monsters
                 .iter()
                 .filter(|m| m.position == player.position)
-                .map(|m| format!("{}", m.name.clone().foreground(RED).bold()))
+                .map(|m| format!("{}", m.name.clone().foreground(theme::RED).bold()))
                 .collect::<Vec<_>>()
                 .join(", ");
 

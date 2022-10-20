@@ -26,7 +26,7 @@ use crate::{
     stores::{monster_store::MonsterStore, system_store::SystemStore},
     system::{System, SystemHandle, SystemReadOnly, SystemReadOnlyHandle, SystemStatus},
     timer::Timer,
-    vec3::Vec3,
+    vec3::Vec3, theme,
 };
 
 /// Stateful representation of the game world, containing references to all game
@@ -113,9 +113,9 @@ impl World {
                         id,
                         GameEvent::Accepted(Response::Client(format!(
                             "\n{}{}{}\n",
-                            "Welcome back, ".foreground(YELLOW),
-                            player.name.foreground(CYAN),
-                            "!".foreground(YELLOW),
+                            "Welcome back, ".foreground(theme::YELLOW),
+                            player.name.foreground(theme::BLUE),
+                            "!".foreground(theme::YELLOW),
                         ))),
                     );
 
@@ -364,11 +364,11 @@ impl std::fmt::Display for World {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let output = format!("Blossom World Stats\nUptime: {}\nAverage Execution Time: {}\nConnections: {}\nSystems: {}\nEntity Count: {} active, {} spawned\n{}",
             self.timer.to_string().bold(),
-            self.systems.execution_timer.average().foreground(GREEN).bold(),
-            self.players.len().to_string().foreground(GREEN).bold(),
+            self.systems.execution_timer.average().foreground(theme::GREEN).bold(),
+            self.players.len().to_string().foreground(theme::GREEN).bold(),
             self.systems,
-            self.active_entities.to_string().foreground(GREEN).bold(),
-            self.spawned_entities.to_string().foreground(YELLOW).bold(),
+            self.active_entities.to_string().foreground(theme::GREEN).bold(),
+            self.spawned_entities.to_string().foreground(theme::YELLOW).bold(),
             self.monsters
         );
 

@@ -4,7 +4,7 @@ use crate::{
     command::{Command, GameCommand},
     context::Context,
     error::Result,
-    response::Response,
+    response::Response, theme,
 };
 
 pub struct GlobalChat;
@@ -40,7 +40,7 @@ impl GameCommand for GlobalChat {
 
         let msg = format!(
             "{} {} {}, \"{}\"",
-            "[Global]".foreground(GREEN),
+            "[Global]".foreground(theme::GREEN),
             player.name,
             verb,
             message,

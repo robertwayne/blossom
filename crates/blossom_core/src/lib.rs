@@ -34,3 +34,4 @@ pub mod timer;
 pub mod utils;
 pub mod vec3;
 pub mod world;
+pub mod theme;

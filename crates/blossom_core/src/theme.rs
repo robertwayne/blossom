@@ -1,0 +1,9 @@
+pub const RED: &str = "#b13e53";
+pub const ORANGE: &str = "#ef7d57";
+pub const YELLOW: &str = "#ffcd75";
+pub const LIGHT_GREEN: &str = "#a7f070";
+pub const GREEN: &str = "#38b764";
+pub const TEAL: &str = "#257179";
+pub const BLUE: &str = "#3b5dc9";
+pub const LIGHT_BLUE: &str = "#41a6f6";
+pub const GRAY: &str = "#94b0c2";
