@@ -18,11 +18,11 @@ impl PartialEq for Account {
 }
 
 impl Account {
-    pub fn new(id: i32) -> Self {
+    pub fn new(id: i32, roles: Vec<Role>) -> Self {
         Self {
             id,
             email: None,
-            roles: Vec::new(),
+            roles,
         }
     }
 }

@@ -39,14 +39,18 @@ async fn create(
         .hash_password(password.as_bytes(), salt.as_ref())?
         .to_string();
 
+    let is_first = is_first_account(pg).await?;
+    let roles = if is_first { vec![Role::Admin] } else { vec![] };
+
     // If the player supplied an email, we will send them a confirmation email,
     // but this exists on a separate table until activated; thus we always apply
     // default values to a new account.
     let account_record = sqlx::query!(
-        "insert into accounts (password_hash)
-        values ($1)
+        "insert into accounts (password_hash, roles)
+        values ($1, $2)
         returning id",
-        hash
+        hash,
+        &Role::as_str_list(&roles),
     )
     .fetch_one(pg)
     .await?;
@@ -63,7 +67,7 @@ async fn create(
 
     Ok(PartialPlayer::new(
         player_record.id,
-        Account::new(account_record.id),
+        Account::new(account_record.id, roles),
     ))
 }
 
@@ -138,6 +142,24 @@ async fn name_exists(name: &str, pg: &PgPool) -> Result<bool> {
     }
 }
 
+/// Returns whether the account being created is the first account on the
+/// server. If so, we will grant them the `admin` role.
+async fn is_first_account(pg: &PgPool) -> Result<bool> {
+    let record = sqlx::query!(r#"select exists (select 1 from players)"#)
+        .fetch_one(pg)
+        .await
+        .map_err(|_| Error {
+            kind: ErrorType::Database,
+            message: "Failed to check if first account.".to_string(),
+        })?;
+
+    if record.exists == Some(true) {
+        Ok(false)
+    } else {
+        Ok(true)
+    }
+}
+
 /// This starts an authentication process for a player. It will handle input,
 /// finding if a player name exists, password authentication, new account
 /// creation flow, and login. It will always return a player if it succeeds.
@@ -179,12 +201,28 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
         .await?;
 
         conn.send_message(&format!(
-            "{}",
-            "You can view all the commands by typing \"help\" or \"?\"."
+            "{} {} {} {} {}",
+            "You can view all the commands by typing"
                 .foreground(theme::YELLOW)
-                .bold()
+                .bold(),
+            "help".foreground(theme::BLUE).bold(),
+            "or".foreground(theme::YELLOW).bold(),
+            "?".foreground(theme::BLUE).bold(),
+            "at any time.".foreground(theme::YELLOW).bold()
         ))
         .await?;
+
+        if partial_player.account.roles.contains(&Role::Admin) {
+            conn.send_message(&format!(
+                "\n{} {} {}",
+                "You are the first character on the server. You have been granted the ADMIN role. Type"
+                    .foreground(theme::RED)
+                    .bold(),
+                "@help".foreground(theme::BLUE).bold(),
+                "for a list of admin commands.".foreground(theme::RED).bold()
+            ))
+            .await?;
+        }
 
         Ok(Some(Player {
             _entityid: EntityId::empty(),
