@@ -41,8 +41,8 @@ impl Server {
         let config = Config::load().await?;
 
         // Creates our connection listener
-        let telnet_listener = TcpListener::bind(config.game_addr()).await?;
-        let websocket_listener = TcpListener::bind("127.0.0.1:9000").await?;
+        let telnet_listener = TcpListener::bind(config.telnet_addr()).await?;
+        let websocket_listener = TcpListener::bind(config.websocket_addr()).await?;
 
         if config.web.enabled {
             let web_addr = config.web_addr();
@@ -65,7 +65,11 @@ impl Server {
         // thread
         Game::run(world, &config, rx_game, tx_broker.clone());
 
-        tracing::info!("Server listening on {}", config.game_addr());
+        tracing::info!(
+            "Server listening on {} (Telnet) and {} (WebSocket)",
+            config.telnet_addr(),
+            config.websocket_addr()
+        );
 
         loop {
             let pg = db.clone();

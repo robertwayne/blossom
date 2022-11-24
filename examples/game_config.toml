@@ -1,6 +1,9 @@
 [game]
-host = "127.0.0.1"
-port = 5000
+telnet_host = "127.0.0.1"
+telnet_port = 5000
+
+websocket_host = "127.0.0.1"
+websocket_port = 5001
 
 # The name is used in various places to identify the game, such as the web
 # server, content creation tool, in-game default about commands, and so on.

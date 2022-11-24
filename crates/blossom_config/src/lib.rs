@@ -11,8 +11,10 @@ pub struct Config {
 
 #[derive(Deserialize, Serialize)]
 pub struct GameSettings {
-    pub host: String,
-    pub port: u16,
+    pub telnet_host: String,
+    pub telnet_port: u16,
+    pub websocket_host: String,
+    pub websocket_port: u16,
     pub name: String,
     pub tick_rate: u64,
     pub save_interval: u64,
@@ -73,13 +75,23 @@ impl Config {
         Ok(config)
     }
 
-    pub fn game_addr(&self) -> SocketAddr {
+    pub fn telnet_addr(&self) -> SocketAddr {
         SocketAddr::new(
             self.game
-                .host
+                .telnet_host
                 .parse()
-                .expect("Failed to parse game hostname"),
-            self.game.port,
+                .expect("Failed to parse telnet hostname"),
+            self.game.telnet_port,
+        )
+    }
+
+    pub fn websocket_addr(&self) -> SocketAddr {
+        SocketAddr::new(
+            self.game
+                .websocket_host
+                .parse()
+                .expect("Failed to parse websocket hostname"),
+            self.game.websocket_port,
         )
     }
 
@@ -105,8 +117,10 @@ impl Config {
 impl Default for GameSettings {
     fn default() -> Self {
         GameSettings {
-            host: "127.0.0.1".to_string(),
-            port: 5000,
+            telnet_host: "127.0.0.1".to_string(),
+            telnet_port: 5000,
+            websocket_host: "127.0.0.1".to_string(),
+            websocket_port: 5001,
             name: "Blossom".to_string(),
             tick_rate: 20,
             save_interval: 300,
