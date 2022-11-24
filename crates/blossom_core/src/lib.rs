@@ -3,10 +3,10 @@
 mod auth;
 mod broker;
 mod connection;
+mod connection_handler;
 mod constants;
 mod stores;
 mod systems;
-mod telnet_handler;
 
 pub mod account;
 pub mod command;

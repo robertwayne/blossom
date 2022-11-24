@@ -1,29 +1,48 @@
 use std::net::SocketAddr;
 
 use flume::{unbounded, Sender};
-use futures::StreamExt;
-use nectar::{event::TelnetEvent, TelnetCodec};
+use nectar::TelnetCodec;
 use sqlx::PgPool;
 use tokio::net::TcpStream;
+use tokio_tungstenite::tungstenite::protocol::WebSocketConfig;
 use tokio_util::codec::Framed;
 
 use crate::{
     auth::authenticate,
-    connection::Connection,
+    connection::{Connection, RawStream},
     error::Result,
     event::{ClientEvent, Event, GameEvent},
     input::Input,
     response::Response,
+    server::StreamType,
 };
 
-pub async fn telnet_connection_loop(
-    stream: TcpStream,
+pub async fn connection_loop(
+    stream_type: StreamType,
     addr: SocketAddr,
+    stream: TcpStream,
     pg: PgPool,
     tx_broker: Sender<Event>,
 ) -> Result<()> {
-    let frame = Framed::new(stream, TelnetCodec::new(1024));
-    let mut conn = Connection::new(addr, frame);
+    let mut conn = match stream_type {
+        StreamType::Telnet => {
+            let frame = Framed::new(stream, TelnetCodec::new(1024));
+
+            Connection::new(addr, RawStream::Telnet(frame))
+        }
+        StreamType::WebSocket => {
+            let config = WebSocketConfig {
+                max_message_size: Some(1400),
+                max_frame_size: Some(1400),
+                ..WebSocketConfig::default()
+            };
+            let ws = tokio_tungstenite::accept_async_with_config(stream, Some(config))
+                .await
+                .expect("Error during the websocket handshake occurred");
+
+            Connection::new(addr, RawStream::WebSocket(ws))
+        }
+    };
 
     // Display the logo.
     let logo = tokio::fs::read_to_string("game/logo.txt").await;
@@ -100,30 +119,18 @@ pub async fn telnet_connection_loop(
                 }
             }
             // Handles messages received from the peer (via telnet)
-            result = conn.frame_mut().next() => match result {
-                Some(Ok(msg)) => {
+            result = conn.try_next() => match result {
+                Some(msg) => {
                     tracing::trace!("Received message: {:?}", msg);
 
-                    match msg {
-                        TelnetEvent::Message(msg) => {
-
-                            if msg.trim().is_empty() {
-                                tx_broker.send(Event::Client(id, ClientEvent::Ping))?;
-                                continue;
-                            }
-                            tx_broker.send(Event::Client(id, ClientEvent::Command(Input::from(msg))))?;
-                        }
-                        _ => continue,
+                    if msg.trim().is_empty() {
+                        tx_broker.send(Event::Client(id, ClientEvent::Ping))?;
+                        continue;
                     }
-
-
+                    tx_broker.send(Event::Client(id, ClientEvent::Command(Input::from(msg))))?;
                 },
-                Some(Err(e)) => {
-                    tracing::error!(%e, "Error reading from connection: {}", addr);
-                    break;
-                }
                 None => {
-                    tracing::info!("Telnet connection closed: {}", addr);
+                    tracing::info!("Connection closed: {}", addr);
                     break;
                 }
             }

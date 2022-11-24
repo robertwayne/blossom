@@ -2,7 +2,6 @@ use argon2::{
     password_hash::{rand_core::OsRng, PasswordHasher, SaltString},
     Argon2, PasswordHash, PasswordVerifier,
 };
-use futures::StreamExt;
 use iridescent::{constants::RED, Styled};
 use nectar::{event::TelnetEvent, option::TelnetOption};
 use sqlx::postgres::PgPool;
@@ -251,7 +250,7 @@ async fn get_name(conn: &mut Connection) -> Result<String> {
         conn.send_message("What is your name? If you are new, enter the name you wish to use.")
             .await?;
 
-        if let Some(Ok(TelnetEvent::Message(msg))) = conn.frame_mut().next().await {
+        if let Some(msg) = conn.try_next().await {
             // Because this is the first frame we receive from the client, we
             // have to check if it contains HTTP traffic, and if so, drop it
             // silently.
@@ -302,7 +301,7 @@ async fn get_password(conn: &mut Connection) -> Result<String> {
 
         conn.send_message("What is your password?").await?;
 
-        if let Some(Ok(TelnetEvent::Message(msg))) = conn.frame_mut().next().await {
+        if let Some(msg) = conn.try_next().await {
             let msg = msg.trim();
 
             if msg.is_empty() {
@@ -335,7 +334,7 @@ async fn set_password(conn: &mut Connection) -> Result<String> {
         conn.send_message("Character not found. Create a new character with this name? [Y/n]")
             .await?;
 
-        if let Some(Ok(TelnetEvent::Message(msg))) = conn.frame_mut().next().await {
+        if let Some(msg) = conn.try_next().await {
             match msg.to_lowercase().as_str() {
                 "y" | "yes" | "" => break,
                 "n" | "no" => {
@@ -356,7 +355,7 @@ async fn set_password(conn: &mut Connection) -> Result<String> {
         conn.send_message("What will your password be? [`q` to quit]")
             .await?;
 
-        if let Some(Ok(TelnetEvent::Message(msg))) = conn.frame_mut().next().await {
+        if let Some(msg) = conn.try_next().await {
             let msg = msg.trim();
 
             if msg == "exit" {

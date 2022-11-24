@@ -5,9 +5,14 @@ use tokio::net::TcpListener;
 use tracing_subscriber::{fmt::format::FmtSpan, EnvFilter};
 
 use crate::{
-    broker::Broker, error::Result, event::Event, game::Game,
-    telnet_handler::telnet_connection_loop, world::World,
+    broker::Broker, connection_handler::connection_loop, error::Result, event::Event, game::Game,
+    world::World,
 };
+
+pub enum StreamType {
+    Telnet,
+    WebSocket,
+}
 
 /// Entry point of every Blossom game.
 pub struct Server;
@@ -37,6 +42,7 @@ impl Server {
 
         // Creates our connection listener
         let telnet_listener = TcpListener::bind(config.game_addr()).await?;
+        let websocket_listener = TcpListener::bind("127.0.0.1:9000").await?;
 
         if config.web.enabled {
             let web_addr = config.web_addr();
@@ -68,9 +74,18 @@ impl Server {
             tokio::select! {
                 Ok((stream, addr)) = telnet_listener.accept() => {
                     tokio::spawn(async move {
-                        tracing::info!("New connection from {}", addr);
-                        if let Err(e) = telnet_connection_loop(stream, addr, pg, tx_broker).await {
+                        tracing::info!("New Telnet connection from {}", addr);
+
+                        if let Err(e) = connection_loop(StreamType::Telnet, addr, stream, pg, tx_broker).await {
                             tracing::error!(%e, "Error handling telnet connection");
+                        }
+                    });
+                }
+                Ok((stream, addr)) = websocket_listener.accept() => {
+                    tokio::spawn(async move {
+                        tracing::info!("New WebSocket connection from {}", addr);
+                        if let Err(e) = connection_loop(StreamType::WebSocket, addr, stream, pg, tx_broker).await {
+                            tracing::error!(%e, "Error handling websocket connection");
                         }
                     });
                 }
