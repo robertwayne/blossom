@@ -57,7 +57,7 @@ Prerequesites:
 - PostgreSQL 14
 - *(optional)* Python 3 (tooling)
 - *(optional)* SQLx CLI (migrations)
-- *(optional)* Node 19 (dashboard / content creation tools)
+- *(optional)* Node 19 (dashboard / content creation tools / web client)
 
 1. `git clone https://github.com/robertwayne/blossom`
 2. Modify the `.env.TEMPLATE` file in the root directory with your local
