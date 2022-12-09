@@ -10,7 +10,7 @@ publish = false
 [dev-dependencies]
 blossom = { path = ".." }
 rand = "0.8"
-criterion = "0.3"
+criterion = "0.4"
 
 [[bench]]
 name = "quickmap"
