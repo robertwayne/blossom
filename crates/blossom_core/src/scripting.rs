@@ -25,17 +25,27 @@ where
         .filter_map(Result::ok);
 
     for item in walker {
-        tracing::debug!("Trying to load script: {:?}", item.path());
+        let path = item.path().display();
+        tracing::debug!("Trying to load script: {}", path);
+
         match engine.eval_file::<Dynamic>(item.path().into()) {
             Ok(result) => {
-                tracing::debug!("Successfully loaded {:?}", item.path().file_name());
-                objects.push(from_dynamic::<T>(&result)?);
+                tracing::debug!("Successfully parsed {}", path);
+
+                if let Ok(object) = from_dynamic::<T>(&result) {
+                    tracing::debug!("Loaded {}", path);
+                    objects.push(object);
+                } else {
+                    tracing::error!("Failed to load {}", path);
+                }
             }
             Err(err) => {
-                tracing::error!("Failed to load {}: {}", item.path().display(), err);
+                tracing::error!("Failed to parse {}: {}", path, err);
             }
         }
     }
+
+    tracing::debug!("Loaded {} objects.", objects.len());
 
     Ok(objects)
 }
