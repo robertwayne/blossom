@@ -2,3 +2,4 @@ node_modules
 *.min.css
 *.min.js
 *.webmanifest
+package-lock.json

@@ -10,23 +10,23 @@ const DARK_MODE_BUTTON = String.raw`<svg xmlns="http://www.w3.org/2000/svg" clas
 </svg>`
 
 // Toggles between light and dark color themes.
-const toggle = document.getElementById('toggle-btn')
+const toggle = document.getElementById("toggle-btn")
 
 if (toggle) {
     toggle.onclick = () => {
-        const current = document.documentElement.getAttribute('data-theme')
-        const target = current === 'dark' ? 'light' : 'dark'
+        const current = document.documentElement.getAttribute("data-theme")
+        const target = current === "dark" ? "light" : "dark"
 
-        document.documentElement.setAttribute('data-theme', target)
+        document.documentElement.setAttribute("data-theme", target)
         swap_icons(target)
-        localStorage.setItem('theme', target)
+        localStorage.setItem("theme", target)
     }
 }
 
 export const swap_icons = (next: string) => {
-    const button = document.getElementById('toggle-btn')
+    const button = document.getElementById("toggle-btn")
     if (button) {
         button.innerHTML =
-            next === 'dark' ? LIGHT_MODE_BUTTON : DARK_MODE_BUTTON
+            next === "dark" ? LIGHT_MODE_BUTTON : DARK_MODE_BUTTON
     }
 }

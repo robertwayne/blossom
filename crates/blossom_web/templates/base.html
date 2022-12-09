@@ -1,68 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1,
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="x-ua-compatible" content="ie=edge" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1,
     shrink-to-fit=no"
-    />
+        />
 
-    <title>{% block title %}{{ title }} - {{ game_name }} {% endblock %}</title>
+        <title>
+            {% block title %}{{ title }} - {{ game_name }} {% endblock %}
+        </title>
 
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg
     xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text
     y=%22.9em%22 font-size=%2290%22>🌸</text></svg>"
-    />
+        />
 
-    <link rel="stylesheet" type="text/css" href="dist/bundle.css" />
-  </head>
-  <body class="container">
-    <nav>
-      <div id="navbar">
-        <div id="logo">
-          <h1>
-            <a
-              href="https://github.com/robertwayne/blossom"
-              target="_blank"
-              rel="noopener"
-              >🌸</a
+        <link rel="stylesheet" type="text/css" href="dist/index.css" />
+    </head>
+
+    <body class="container">
+        <nav>
+            <div id="navbar">
+                <div id="logo">
+                    <h1>
+                        <a
+                            href="https://github.com/robertwayne/blossom"
+                            target="_blank"
+                            rel="noopener"
+                            >🌸</a
+                        >
+                    </h1>
+                    <h1><a href="/">{{ game_name }}</a></h1>
+                </div>
+
+                <ul>
+                    <li>
+                        <a href="/players">Players</a>
+                    </li>
+                    <li>
+                        <a href="/creation">Creation Kit</a>
+                    </li>
+                    <li>
+                        <button id="toggle-btn"></button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="column-container">{% block content %}{% endblock %}</main>
+
+        <footer id="footer">
+            <span
+                ><a href="https://github.com/robertwayne/blossom" target="_blank" rel="noopener"
+                    >GitHub</a
+                ></span
             >
-          </h1>
-          <h1><a href="/">{{ game_name }}</a></h1>
-        </div>
+            <span>© 2022 Sombia</span>
+        </footer>
 
-        <ul>
-          <li>
-            <a href="/players">Players</a>
-          </li>
-          <li>
-            <a href="/creation">Creation Kit</a>
-          </li>
-          <li>
-            <button id="toggle-btn"></button>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <main class="column-container">{% block content %}{% endblock %}</main>
-
-    <footer id="footer">
-      <span
-        ><a
-          href="https://github.com/robertwayne/blossom"
-          target="_blank"
-          rel="noopener"
-          >GitHub</a
-        ></span
-      >
-      <span>© Rob Wagner 2022</span>
-    </footer>
-
-    <script src="dist/bundle.js"></script>
-  </body>
+        <script src="dist/index.js"></script>
+    </body>
 </html>

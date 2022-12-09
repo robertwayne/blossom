@@ -3,13 +3,32 @@ module.exports = {
         browser: true,
         node: true,
     },
-    parser: '@typescript-eslint/parser',
-    plugins: ['@typescript-eslint'],
+    parser: "@typescript-eslint/parser",
+    plugins: ["@typescript-eslint"],
     overrides: [
         {
-            files: ['*.ts'],
-            extends: ['plugin:@typescript-eslint/recommended'],
+            files: ["*.ts"],
+            extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+            rules: {
+                "@typescript-eslint/array-type": [
+                    "error",
+                    {
+                        default: "generic",
+                    },
+                ],
+                "no-undef": "off",
+                "no-unused-vars": "off",
+                "@typescript-eslint/no-unused-vars": [
+                    "error",
+                    {
+                        argsIgnorePattern: "^_",
+                        varsIgnorePattern: "^_",
+                    },
+                ],
+                "@typescript-eslint/no-empty-function": "warn",
+            },
         },
     ],
     rules: {},
+    settings: {},
 }

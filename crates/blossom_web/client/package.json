@@ -1,29 +1,32 @@
 {
-    "name": "public",
-    "version": "1.0.0",
+    "name": "blossom-web",
+    "version": "0.1.0",
+    "repository": "https://github.com/robertwayne/blossom",
+    "author": "Rob Wagner <rob@sombia.com>",
+    "private": true,
     "main": "src/index.ts",
-    "license": "MIT",
+    "license": "MIT OR Apache-2.0",
     "scripts": {
         "build": "node build.js",
         "watch": "nodemon build.js -e js,ts,css,html",
-        "fmt": "prettier --write **/*.{js,ts,svelte,html,css,cjs,mjs,json}",
-        "lint": "eslint src/**/*.{js,ts,svelte}",
-        "lint:fix": "eslint --fix --fix-type problem,suggestion src/**/*.{js,ts,svelte}",
-        "types": "tsc --noEmit",
-        "types:watch": "tsc --noEmit --watch"
+        "fmt": "prettier --write ../**/*.{ts,html,css,json} --config .prettierrc",
+        "lint": "eslint src/**/*.ts",
+        "lint:fix": "eslint --fix --fix-type problem,suggestion src/**/*.ts",
+        "tsc": "tsc --noEmit",
+        "tsc:watch": "tsc --noEmit --watch"
     },
-    "private": true,
     "devDependencies": {
-        "@deanc/esbuild-plugin-postcss": "^1.0.2",
-        "@typescript-eslint/eslint-plugin": "^5.33.0",
-        "@typescript-eslint/parser": "^5.33.0",
-        "autoprefixer": "^10.4.8",
-        "cssnano": "^5.1.12",
-        "esbuild": "^0.15.0",
-        "eslint": "^8.21.0",
-        "nodemon": "^2.0.19",
-        "postcss": "^8.4.16",
-        "prettier": "^2.7.1",
-        "typescript": "^4.7.4"
+        "@typescript-eslint/eslint-plugin": "^5.46.0",
+        "@typescript-eslint/parser": "^5.46.0",
+        "autoprefixer": "^10.4.13",
+        "cssnano": "^5.1.14",
+        "dotenv": "^16.0.3",
+        "esbuild": "^0.16.3",
+        "eslint": "^8.29.0",
+        "nodemon": "^2.0.20",
+        "postcss": "^8.4.19",
+        "prettier": "^2.8.1",
+        "typescript": "^4.9.4",
+        "postcss-load-config": "^4.0.1"
     }
 }

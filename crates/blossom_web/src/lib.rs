@@ -72,7 +72,7 @@ async fn not_found(Extension(config): Extension<Arc<Config>>) -> impl IntoRespon
 }
 
 #[derive(Template)]
-#[template(path = "404.html")]
+#[template(path = "not_found.html")]
 struct NotFoundTemplate {
     title: &'static str,
     game_name: String,

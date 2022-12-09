@@ -1,0 +1,44 @@
+*:where(:not(iframe, canvas, img, svg, video):not(svg *, symbol *)) {
+    all: unset;
+    display: revert;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    line-height: 1.5;
+}
+
+body {
+    height: 100vh;
+    overflow: hidden;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+textarea {
+    white-space: revert;
+}
+
+a {
+    cursor: pointer;
+}
+
+:where([contenteditable]) {
+    -webkit-user-modify: read-write;
+    overflow-wrap: break-word;
+    line-break: auto;
+    -webkit-line-break: after-white-space;
+}

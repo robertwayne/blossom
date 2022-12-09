@@ -1,3 +1,39 @@
+*:where(:not(iframe, canvas, img, svg, video):not(svg *, symbol *)) {
+    all: unset;
+    display: revert;
+}
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+    line-height: 1.5;
+}
+body {
+    height: 100vh;
+    overflow: hidden;
+}
+ol,
+ul {
+    list-style: none;
+}
+img {
+    max-width: 100%;
+}
+table {
+    border-collapse: collapse;
+}
+textarea {
+    white-space: revert;
+}
+a {
+    cursor: pointer;
+}
+:where([contenteditable]) {
+    -webkit-user-modify: read-write;
+    overflow-wrap: break-word;
+    line-break: auto;
+    -webkit-line-break: after-white-space;
+}
 :root {
     --background-color: #f7fbfc;
     --accent-color: #769fcd;
@@ -5,7 +41,6 @@
     --text-color: #121416d8;
     --link-color: #314b72;
 }
-
 html[data-theme="light"] {
     --background-color: #f7fbfc;
     --accent-color: #769fcd;
@@ -13,7 +48,6 @@ html[data-theme="light"] {
     --text-color: #121416d8;
     --link-color: #314b72;
 }
-
 html[data-theme="dark"] {
     --background-color: #151515;
     --accent-color: #3c415c;
@@ -21,71 +55,57 @@ html[data-theme="dark"] {
     --text-color: #f7f8f8;
     --link-color: #b4a5a5;
 }
-
 html,
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-        "Segoe UI Symbol";
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica,
+        Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+        Segoe UI Symbol;
     background: var(--background-color);
     color: var(--text-color);
 }
-
 a {
-    font-weight: bold;
+    font-weight: 700;
     color: var(--link-color);
 }
-
 a:hover {
     text-decoration: underline;
     filter: brightness(70%);
 }
-
 #logo > h1 > a,
 #navbar > ul > li > a {
     color: var(--text-color);
 }
-
 #logo > h1 > a:hover {
     text-decoration: none;
     filter: none;
 }
-
 nav {
     grid-area: nav;
     min-width: 100%;
     background: var(--header-color);
 }
-
 main {
     grid-area: main;
     min-width: 100%;
 }
-
 footer {
     grid-area: footer;
     min-width: 100%;
     background: var(--header-color);
 }
-
 .container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 65px 1fr 65px;
-    grid-template-areas:
-        "nav nav nav"
-        "main main main"
-        "footer footer footer";
+    grid-template-areas: "nav nav nav" "main main main" "footer footer footer";
     grid-gap: 0;
     justify-items: center;
 }
-
 .column-container {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-
 #footer {
     display: flex;
     flex-direction: column;
@@ -94,7 +114,6 @@ footer {
     height: 100%;
     padding: 4px 0;
 }
-
 #navbar {
     display: flex;
     flex-direction: row;
@@ -104,7 +123,6 @@ footer {
     height: 100%;
     padding: 0 12px;
 }
-
 #navbar > ul {
     display: flex;
     flex-direction: row;
@@ -112,18 +130,15 @@ footer {
     justify-content: center;
     gap: 12px;
 }
-
 #toggle-btn {
     display: flex;
     align-items: center;
     text-align: center;
 }
-
 #logo {
     display: flex;
     flex-direction: row;
 }
-
 #logo > h1 {
     padding-right: 6px;
 }
