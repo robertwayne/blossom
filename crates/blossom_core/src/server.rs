@@ -45,10 +45,9 @@ impl Server {
         let websocket_listener = TcpListener::bind(config.websocket_addr()).await?;
 
         if config.web.enabled {
-            let web_addr = config.web_addr();
             let pg = db.clone();
             tokio::spawn(async move {
-                blossom_web::listen(web_addr, pg)
+                blossom_web::listen(pg)
                     .await
                     .expect("Failed to bind to address");
             });

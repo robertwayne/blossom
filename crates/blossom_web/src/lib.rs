@@ -1,44 +1,51 @@
+mod api;
 mod asset;
 mod template;
 
-use std::{net::SocketAddr, sync::Arc};
+use std::sync::Arc;
 
 use askama::Template;
+use asset::StaticFile;
 use axum::{
     extract::Extension,
-    handler::Handler,
+    handler::HandlerWithoutStateExt,
     http::{StatusCode, Uri},
     response::IntoResponse,
     routing::get,
-    Router,
+    Router, Server,
 };
 use blossom_config::Config;
 use sqlx::PgPool;
 use tower_http::trace::TraceLayer;
 
-use crate::{asset::StaticFile, template::HtmlTemplate};
+use crate::template::Html;
 
-pub async fn listen(addr: SocketAddr, pg: PgPool) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn listen(pg: PgPool) -> Result<(), Box<dyn std::error::Error>> {
     let config = Arc::new(Config::load().await?);
+    let addr = config.web_addr();
 
-    let router = Router::new()
+    let api_route_handler = Router::new().route("/health", get(api::health));
+
+    let app = Router::new()
         .route("/", get(index))
-        .route("/dist/*file", static_handler.into_service())
-        .layer(TraceLayer::new_for_http())
-        .fallback(not_found.into_service())
+        .nest("/api/v1", api_route_handler)
+        .route_service("/dist/*file", static_file_handler.into_service())
         .layer(Extension(pg))
-        .layer(Extension(config));
+        .layer(Extension(config))
+        .layer(TraceLayer::new_for_http());
+
+    let app = app.fallback(not_found);
 
     tracing::info!("Web server listening on {}", addr);
-    axum::Server::bind(&addr)
-        .serve(router.into_make_service())
-        .await
-        .expect("Failed to bind to address");
+
+    if let Ok(_) = Server::bind(&addr).serve(app.into_make_service()).await {
+        tracing::info!("Web server stopped");
+    }
 
     Ok(())
 }
 
-async fn static_handler(uri: Uri) -> impl IntoResponse {
+async fn static_file_handler(uri: Uri) -> impl IntoResponse {
     let mut path = uri.path().trim_start_matches('/').to_string();
 
     if path.starts_with("dist/") {
@@ -53,7 +60,7 @@ async fn index(Extension(config): Extension<Arc<Config>>) -> impl IntoResponse {
         title: "Home",
         game_name: config.game.name.clone(),
     };
-    HtmlTemplate(template)
+    Html(template)
 }
 
 async fn not_found(Extension(config): Extension<Arc<Config>>) -> impl IntoResponse {
@@ -61,7 +68,7 @@ async fn not_found(Extension(config): Extension<Arc<Config>>) -> impl IntoRespon
         title: "Not Found",
         game_name: config.game.name.clone(),
     };
-    (StatusCode::NOT_FOUND, HtmlTemplate(template))
+    (StatusCode::NOT_FOUND, Html(template))
 }
 
 #[derive(Template)]

@@ -12,7 +12,7 @@ keywords = ["blossom", "mud"]
 
 [dependencies]
 askama = "0.11"
-axum = "0.5"
+axum = "0.6"
 blossom_config = { path = "../blossom_config" }
 blossom_db = { path = "../blossom_db" }
 mime_guess = "2"

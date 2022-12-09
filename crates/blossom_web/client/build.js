@@ -1,16 +1,16 @@
-const esbuild = require('esbuild')
-const autoprefixer = require('autoprefixer')
-const postcss = require('@deanc/esbuild-plugin-postcss')
-const cssnano = require('cssnano')
+const esbuild = require("esbuild")
+const autoprefixer = require("autoprefixer")
+const postcss = require("@deanc/esbuild-plugin-postcss")
+const cssnano = require("cssnano")
 
-console.log('Minifying and bundling assets...')
+console.log("Minifying and bundling assets...")
 
 esbuild
     .build({
-        entryPoints: ['src/index.ts'],
+        entryPoints: ["src/index.ts"],
         bundle: true,
         minify: true,
-        outfile: '../dist/bundle.js',
+        outfile: "../dist/bundle.js",
         plugins: [
             postcss({
                 plugins: [autoprefixer, cssnano],
