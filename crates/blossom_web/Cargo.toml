@@ -16,7 +16,7 @@ axum = "0.5"
 blossom_config = { path = "../blossom_config" }
 blossom_db = { path = "../blossom_db" }
 mime_guess = "2"
-rust-embed = { version = "6.3", features = [
+rust-embed = { version = "6", features = [
     "interpolate-folder-path",
     "compression",
 ] }
