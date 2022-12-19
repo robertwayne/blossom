@@ -38,7 +38,7 @@ impl GameCommand for Say {
         let name = player.name.as_str();
         let position = player.position;
 
-        let msg = format!("{} {}, \"{}\"", name, verb, message,);
+        let msg = format!("{name} {verb}, \"{message}\"");
 
         let players_in_room = ctx
             .world

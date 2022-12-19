@@ -38,8 +38,8 @@ pub async fn listen(pg: PgPool) -> Result<(), Box<dyn std::error::Error>> {
 
     tracing::info!("Web server listening on {}", addr);
 
-    if let Ok(_) = Server::bind(&addr).serve(app.into_make_service()).await {
-        tracing::info!("Web server stopped");
+    if let Err(e) = Server::bind(&addr).serve(app.into_make_service()).await {
+        tracing::info!("Web server stopped\n{}", e);
     }
 
     Ok(())

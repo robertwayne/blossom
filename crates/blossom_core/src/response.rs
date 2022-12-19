@@ -24,7 +24,7 @@ impl std::fmt::Display for Response {
         match self {
             Response::Empty => write!(f, "Empty"),
             Response::Close => write!(f, "Close"),
-            Response::Client(s) => write!(f, "Client {}", s),
+            Response::Client(s) => write!(f, "Client {s}"),
             Response::Channel(players, s) => write!(
                 f,
                 "Channel {} {}",

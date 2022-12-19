@@ -49,10 +49,12 @@ impl GameCommand for Shutdown {
                 sleep(Duration::from_secs(30));
 
                 tracing::info!("Running global save...");
-                let _ = tx.send_async(Event::Game(
-                    -1, // this ID doesn't actually matter
-                    GameEvent::GlobalSave(players),
-                ));
+                let _ = tx
+                    .send_async(Event::Game(
+                        -1, // this ID doesn't actually matter
+                        GameEvent::GlobalSave(players),
+                    ))
+                    .await;
                 tracing::info!("Global save complete.");
 
                 sleep(Duration::from_secs(10));

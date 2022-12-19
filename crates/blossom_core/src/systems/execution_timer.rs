@@ -51,7 +51,7 @@ impl ExecutionTimer {
         let time = self.average_tick_execution_time();
 
         if time < 1000 {
-            format!("{}ns", time)
+            format!("{time}ns",)
         } else if time < 1_000_000 {
             format!("{}µs", time / 1000)
         } else if time < 1_000_000_000 {

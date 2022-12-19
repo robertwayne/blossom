@@ -30,13 +30,13 @@ impl Display for Prompt {
         let mut prompt = String::new();
 
         if let (Some(health), Some(max_health)) = (self.health, self.max_health) {
-            let hp = format!("{}/{}hp", health, max_health).foreground(theme::RED);
-            prompt.push_str(&format!("{}", hp));
+            let hp = format!("{health}/{max_health}hp").foreground(theme::RED);
+            prompt.push_str(&format!("{hp}"));
         }
 
         if let (Some(mana), Some(max_mana)) = (self.mana, self.max_mana) {
-            let mp = format!(" {}/{}mp", mana, max_mana).foreground(theme::BLUE);
-            prompt.push_str(&format!("{}", mp));
+            let mp = format!(" {mana}/{max_mana}mp").foreground(theme::BLUE);
+            prompt.push_str(&format!("{mp}"));
         }
 
         writeln!(f, "\n[{}]", &prompt.dim())

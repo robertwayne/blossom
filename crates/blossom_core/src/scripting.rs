@@ -16,7 +16,7 @@ where
     let mut objects: Vec<T> = Vec::new();
 
     let root = env::current_dir()?;
-    let pattern = format!("**/{}/**/*.rhai", module_type);
+    let pattern = format!("**/{module_type}/**/*.rhai");
 
     let walker = globwalk::GlobWalkerBuilder::from_patterns(root, &[pattern])
         .max_depth(5)

@@ -46,19 +46,14 @@ pub async fn log(
     conn: &Connection,
     pg: &PgPool,
 ) -> Result<(), sqlx::Error> {
-    let id = match account_id {
-        Some(id) => id,
-        None => -1,
-    };
-
     let _ = sqlx::query!(
         "INSERT INTO action_logs (account_id, action, ip_address, details) VALUES ($1, $2, $3, $4)",
-        id,
+        account_id.unwrap_or(-1),
         action.kind(),
         IpNetwork::from(conn.ip()),
         action.details()
     )
-    .execute(&*pg)
+    .execute(pg)
     .await?;
 
     Ok(())

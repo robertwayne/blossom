@@ -14,7 +14,7 @@ impl From<String> for Role {
             "moderator" => Role::Moderator,
             "builder" => Role::Builder,
             "player" => Role::Player,
-            _ => panic!("Invalid role: {}", role),
+            _ => panic!("Invalid role: {role}"),
         }
     }
 }

@@ -53,9 +53,9 @@ the code and game data for Coven, the example game above, it is also
 
 Prerequesites:
 
-- Rust Nightly 1.66
+- Rust Nightly 1.68
 - PostgreSQL 14
-- *(optional)* Python 3 (tooling)
+- *(optional)* Python 3.10 (tooling)
 - *(optional)* SQLx CLI (migrations)
 - *(optional)* Node 19 (dashboard / content creation tools / web client)
 

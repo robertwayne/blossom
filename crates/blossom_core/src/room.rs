@@ -55,11 +55,11 @@ impl Room {
         let exit_string = self
             .exits
             .iter()
-            .map(|exit| format!("{}", exit))
+            .map(|exit| format!("{exit}"))
             .collect::<Vec<String>>()
             .join(", ");
 
-        let exits = format!("[Exits: {}]", exit_string);
+        let exits = format!("[Exits: {exit_string}]");
 
         exits.foreground(theme::GREEN)
     }
@@ -94,7 +94,7 @@ impl Room {
                 .join(", ");
 
             if !monsters_here.is_empty() {
-                text.push_str(&format!("\nNearby you see a {}.\n", monsters_here));
+                text.push_str(&format!("\nNearby you see a {monsters_here}.\n"));
             }
 
             // Get all players in the players current room except the current

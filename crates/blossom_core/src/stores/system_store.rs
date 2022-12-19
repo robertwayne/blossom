@@ -96,7 +96,7 @@ impl std::fmt::Display for SystemStore {
                 .join(", "),
         );
 
-        write!(f, "{}", text)
+        write!(f, "{text}",)
     }
 }
 

@@ -42,10 +42,7 @@ impl<'de> Deserialize<'de> for Direction {
             "west" => Ok(Direction::West),
             "up" => Ok(Direction::Up),
             "down" => Ok(Direction::Down),
-            _ => Err(serde::de::Error::custom(format!(
-                "Invalid direction: {}",
-                s
-            ))),
+            _ => Err(serde::de::Error::custom(format!("Invalid direction: {s}"))),
         }
     }
 }

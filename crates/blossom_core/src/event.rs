@@ -19,8 +19,8 @@ pub enum Event {
 impl std::fmt::Display for Event {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Event::Game(id, game) => write!(f, "Game: [{}] {:#?}", id, game),
-            Event::Client(id, client) => write!(f, "Client: [{}] {:#?}", id, client),
+            Event::Game(id, game) => write!(f, "Game: [{id}] {game:#?}"),
+            Event::Client(id, client) => write!(f, "Client: [{id}] {client:#?}"),
         }
     }
 }
@@ -47,7 +47,7 @@ impl std::fmt::Display for ClientEvent {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             ClientEvent::Connect(p, _) => write!(f, "Connect {}", p.id),
-            ClientEvent::Command(t) => write!(f, "Command {}", t),
+            ClientEvent::Command(t) => write!(f, "Command {t}"),
             ClientEvent::Ping => write!(f, "Ping"),
             ClientEvent::Disconnect => write!(f, "Disconnect"),
         }
@@ -73,9 +73,9 @@ pub enum ClientEvent {
 impl std::fmt::Display for GameEvent {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            GameEvent::Accepted(response) => write!(f, "Accepted {}", response),
-            GameEvent::Command(response) => write!(f, "Command {}", response),
-            GameEvent::Pong(response) => write!(f, "Pong {}", response),
+            GameEvent::Accepted(response) => write!(f, "Accepted {response}"),
+            GameEvent::Command(response) => write!(f, "Command {response}"),
+            GameEvent::Pong(response) => write!(f, "Pong {response}"),
             GameEvent::Save(player) => write!(f, "Save {}", player.id),
             GameEvent::GlobalSave(players) => {
                 write!(

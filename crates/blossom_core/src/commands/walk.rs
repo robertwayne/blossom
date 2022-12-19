@@ -46,8 +46,7 @@ impl GameCommand for Walk {
             // just break early and let the player know.
             if !current_room.exits.contains(&direction) {
                 return Ok(Response::Client(format!(
-                    "You can't go {} from here.",
-                    direction
+                    "You can't go {direction} from here."
                 )));
             }
 
@@ -65,16 +64,16 @@ impl GameCommand for Walk {
             // for a more natural sounding message.
             let formatted_direction: String =
                 if direction == Direction::Up || direction == Direction::Down {
-                    format!("{}wards", direction)
+                    format!("{direction}wards")
                 } else {
-                    format!("{}", direction)
+                    format!("{direction}")
                 };
 
             ctx.world.send_event(
                 player.id,
                 GameEvent::Command(Response::Channel(
                     players_here,
-                    format!("{} leaves {}.", player.name, formatted_direction),
+                    format!("{} leaves {formatted_direction}.", player.name),
                 )),
             );
 

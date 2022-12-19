@@ -36,16 +36,14 @@ impl GameCommand for SystemsControl {
 
                         if result {
                              Ok(Response::Client(format!(
-                                "Starting system `{}`.",
-                                command
+                                "Starting system `{command}`.",
                             )))
                          }else { Ok(Response::Client(format!(
-                                "Could not find a system named `{}`.",
-                                command
+                                "Could not find a system named `{command}`.",
                             )))
                         }
                         } else {
-                            Ok(Response::Client(format!("No system named {}", token)))
+                            Ok(Response::Client(format!("No system named {token}", )))
                         }
                     }
                     "stop" => {
@@ -56,16 +54,14 @@ impl GameCommand for SystemsControl {
                                 .set_status(command.as_str(), SystemStatus::Stopped);
 
                             if result { Ok(Response::Client(format!(
-                                    "Stopping system `{}`.",
-                                    command
+                                    "Stopping system `{command}`."
                                 )))
                              } else { Ok(Response::Client(format!(
-                                    "Could not find a system named `{}`.",
-                                    command
+                                    "Could not find a system named `{command}`."
                                 )))
                             }
                         } else {
-                            Ok(Response::Client(format!("No system named {}", token)))
+                            Ok(Response::Client(format!("No system named {token}")))
                         }
                     }
                     "pause" => {
@@ -76,17 +72,15 @@ impl GameCommand for SystemsControl {
                                 .set_status(command.as_str(), SystemStatus::Paused);
 
                             if result { Ok(Response::Client(format!(
-                                    "Pausing system `{}`.",
-                                    command
+                                    "Pausing system `{command}`."
                                 )))
                             } else {
                                 Ok(Response::Client(format!(
-                                    "Could not find a system named `{}`.",
-                                    command
+                                    "Could not find a system named `{command}`."
                                 )))
                             }
                         } else {
-                            Ok(Response::Client(format!("No system named {}", token)))
+                            Ok(Response::Client(format!("No system named {token}")))
                         }
                     }
                     "restart" => Ok(Response::Client("Not implemented.".to_string())),

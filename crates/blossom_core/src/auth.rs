@@ -180,12 +180,12 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
         let partial_player = login(&name, &password, &pg).await;
 
         if let Ok(player) = partial_player {
-            log(Action::Join, Some(player.account.id), &conn, &pg).await?;
+            log(Action::Join, Some(player.account.id), conn, &pg).await?;
 
             Ok(Some(player))
         } else {
             conn.send_message("Invalid credentials.").await?;
-            log(Action::FailedJoin, None, &conn, &pg).await?;
+            log(Action::FailedJoin, None, conn, &pg).await?;
 
             Ok(None)
         }
@@ -230,7 +230,7 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
         log(
             Action::CreateAccount,
             Some(partial_player.account.id),
-            &conn,
+            conn,
             &pg,
         )
         .await?;
