@@ -10,23 +10,23 @@
 
 -----
 
-Blossom is an opinionated MUD engine written in Rust.
+Blossom is a MUD engine written in Rust.
 
-**This is still a VERY early work-in-progress and there will be sweeping,
-breaking changes constantly as I refine the architecture and API.** If you
+This is still a VERY early work-in-progress and there will be sweeping,
+breaking changes constantly as I refine the architecture and API. If you
 actually want to build a MUD, you'd be best off using an existing codebase. Any
 of the old C-bases, Evennia *(Python)*, or Ranvier *(JavaScript)* are excellent
 options.
 
 ## Live Game
 
-The test server listed at the top of the README should be online most of the time.
+The test server listed at the top of the README should be online most of the
+time. Be warned that the database may be reset at any time.
 
 Connecting via Telnet: `telnet blossom.sombia.com 5080`
 
-*It is recommended to always connect with the secure option. Your traffic
-will be encrypted with modern TLS. You will need an actual MUD client to connect
-this way. I recommend [Mudlet](https://www.mudlet.org/) for a powerful,
+*In order to connect to the secure port, you must use a MUD client which support
+TLS encryption. I recommend [Mudlet](https://www.mudlet.org/) for a
 cross-platform option!*
 
 ## Usage
@@ -44,10 +44,6 @@ fn main() -> Result<(), Box dyn std::error::Error>> {
     Ok(())
 }
 ```
-
-*This is a minimal working example; it has no game content. If you want to see
-the code and game data for Coven, the example game above, it is also
-**[open-source](https://github.com/robertwayne/coven)**.*
 
 ## Contributing
 
