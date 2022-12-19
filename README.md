@@ -2,9 +2,9 @@
 
 <!-- markdownlint-disable -->
 <div>
-  <strong>Secure:</strong> blossom-engine.com:5443
+  <strong>Secure:</strong> blossom.sombia.com:5443
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <strong>Unsecure:</strong> blossom-engine.com:5080
+  <strong>Unsecure:</strong> blossom.sombia.com:5080
 </div>
 <!-- markdownlint-enable -->
 
@@ -20,13 +20,13 @@ options.
 
 ## Live Game
 
-The test server listed at the top of the README should be online most of the time. 
+The test server listed at the top of the README should be online most of the time.
 
-Connecting via Telnet: `telnet blossom-engine.com 5080`
+Connecting via Telnet: `telnet blossom.sombia.com 5080`
 
-*It is recommended to always connect with the secure connection. Your traffic
-will be encrypted with modern TLS. You will need an actual MUD client to connect 
-securely. I recommend [Mudlet](https://www.mudlet.org/) for a powerful, 
+*It is recommended to always connect with the secure option. Your traffic
+will be encrypted with modern TLS. You will need an actual MUD client to connect
+this way. I recommend [Mudlet](https://www.mudlet.org/) for a powerful,
 cross-platform option!*
 
 ## Usage
