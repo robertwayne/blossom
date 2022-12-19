@@ -55,9 +55,12 @@ Prerequesites:
 
 - Rust Nightly 1.68
 - PostgreSQL 14
-- *(optional)* Python 3.10 (tooling)
-- *(optional)* SQLx CLI (migrations)
-- *(optional)* Node 19 (dashboard / content creation tools / web client)
+
+In addition, these are recommended, **optional** dev dependencies:
+
+- Python 3.10 *(tooling)*
+- SQLx CLI *(migrations)*
+- Node 19 *(dashboard / content creation tools / web client)*
 
 1. `git clone https://github.com/robertwayne/blossom`
 2. Modify the `.env.TEMPLATE` file in the root directory with your local
