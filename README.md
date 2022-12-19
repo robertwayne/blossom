@@ -62,6 +62,8 @@ In addition, these are recommended, **optional** dev dependencies:
 - SQLx CLI *(migrations)*
 - Node 19 *(dashboard / content creation tools / web client)*
 
+Instructions to build:
+
 1. `git clone https://github.com/robertwayne/blossom`
 2. Modify the `.env.TEMPLATE` file in the root directory with your local
    Postgres details. *(This is neccesary for SQLx to do compile-time SQL
