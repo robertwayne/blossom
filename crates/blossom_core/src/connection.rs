@@ -1,7 +1,8 @@
-use std::net::SocketAddr;
+use std::net::{IpAddr, SocketAddr};
 
 use futures::{SinkExt, StreamExt};
 use nectar::{event::TelnetEvent, TelnetCodec};
+
 use tokio::net::TcpStream;
 use tokio_tungstenite::{tungstenite::Message, WebSocketStream};
 use tokio_util::codec::Framed;
@@ -26,6 +27,10 @@ pub struct Connection {
 impl Connection {
     pub fn new(addr: SocketAddr, stream: RawStream) -> Self {
         Self { addr, stream }
+    }
+
+    pub fn ip(&self) -> IpAddr {
+        self.addr.ip()
     }
 
     pub async fn try_next(&mut self) -> Option<String> {

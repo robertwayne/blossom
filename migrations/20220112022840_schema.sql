@@ -50,6 +50,16 @@ create table if not exists tickets
     deleted     boolean     default false not null
 );
 
+create table if not exists action_logs
+(
+    action_log_id serial primary key,
+    account_id    int references accounts (id) not null,
+    ip_address    inet                         not null,
+    action        varchar(255)                 not null,
+    details       text default ''              not null,
+    created       timestamptz default now()    not null
+);
+
 create or replace function update_modified_on()
     returns trigger as
 $$ begin

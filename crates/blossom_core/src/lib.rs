@@ -18,6 +18,7 @@ pub mod error;
 pub mod event;
 pub mod game;
 pub mod input;
+pub mod logging;
 pub mod monster;
 pub mod player;
 pub mod prompt;

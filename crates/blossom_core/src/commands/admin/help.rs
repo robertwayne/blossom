@@ -14,6 +14,7 @@ BLOSSOM ADMIN HELP
 
 Commands:
     @help, @?                 - show this help menu
+    @version                  - show the server version
     @world                    - display world information
     @player <name>            - display information about a player
     @system <command> <name>  - run a system command

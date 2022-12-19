@@ -13,6 +13,7 @@ use crate::{
     error::Result,
     event::{ClientEvent, Event, GameEvent},
     input::Input,
+    logging::{log, Action},
     response::Response,
     server::StreamType,
 };
@@ -63,8 +64,9 @@ pub async fn connection_loop(
     // indent).
     let player = maybe_player.expect("This should never happen.");
 
-    // Retain player ID as a marker for their connection
+    // Retain account & player ID as a marker for their connection
     let id = player.id;
+    let account_id = player.account.id;
 
     // Create a channel for a connection
     let (tx, rx) = unbounded::<Event>();
@@ -127,6 +129,8 @@ pub async fn connection_loop(
                         tx_broker.send(Event::Client(id, ClientEvent::Ping))?;
                         continue;
                     }
+
+                    log(Action::Message(msg.clone()), Some(account_id), &conn, &pg).await?;
                     tx_broker.send(Event::Client(id, ClientEvent::Command(Input::from(msg))))?;
                 },
                 None => {
@@ -137,6 +141,7 @@ pub async fn connection_loop(
         }
     }
 
+    log(Action::Leave, Some(account_id), &conn, &pg).await?;
     tx_broker.send(Event::Client(id, ClientEvent::Disconnect))?;
     conn.send_message("\nGoodbye!\n").await?;
 
