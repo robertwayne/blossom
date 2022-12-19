@@ -77,18 +77,19 @@ impl Server {
             tokio::select! {
                 Ok((stream, addr)) = telnet_listener.accept() => {
                     tokio::spawn(async move {
-                        tracing::info!("New Telnet connection from {}", addr);
+                        tracing::info!("New connection from {}", addr);
 
                         if let Err(e) = connection_loop(StreamType::Telnet, addr, stream, pg, tx_broker).await {
-                            tracing::error!(%e, "Error handling telnet connection");
+                            tracing::error!(%e, "Failed to establish Telnet stream");
                         }
                     });
                 }
                 Ok((stream, addr)) = websocket_listener.accept() => {
                     tokio::spawn(async move {
-                        tracing::info!("New WebSocket connection from {}", addr);
+                        tracing::info!("New connection from {}", addr);
+
                         if let Err(e) = connection_loop(StreamType::WebSocket, addr, stream, pg, tx_broker).await {
-                            tracing::error!(%e, "Error handling websocket connection");
+                            tracing::error!(%e, "Failed to establish WebSocket stream");
                         }
                     });
                 }
