@@ -1,4 +1,7 @@
 node_modules
+benches
+benchmarks
+static
 *.min.css
 *.min.js
 *.webmanifest
