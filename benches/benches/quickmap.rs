@@ -1,4 +1,4 @@
-use blossom::{quickmap::QuickMap, room::Room, vec3::Vec3};
+use blossom::{entity::EntityId, quickmap::QuickMap, room::Room, vec3::Vec3};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use rand::{thread_rng, Rng};
 use std::{
@@ -86,6 +86,8 @@ fn generate_rooms_vec(x: i32, y: i32, z: i32) -> Vec<Room> {
         for y_val in 0..y {
             for z_val in -z..z {
                 let room = Room {
+                    entity_id: EntityId::default(),
+                    mob_pool: Vec::new(),
                     name: format!("{}-{}-{}", x_val, y_val, z_val),
                     position: Vec3::new(x_val, y_val, z_val),
                     description: "This is a room.".to_string(),
@@ -107,6 +109,8 @@ fn generate_rooms_hashmap(x: i32, y: i32, z: i32) -> HashMap<Vec3, Room> {
         for y_val in 0..y {
             for z_val in -z..z {
                 let room = Room {
+                    entity_id: EntityId::default(),
+                    mob_pool: Vec::new(),
                     name: format!("{}-{}-{}", x_val, y_val, z_val),
                     position: Vec3::new(x_val, y_val, z_val),
                     description: "This is a room.".to_string(),
@@ -128,13 +132,15 @@ fn generate_rooms_quickmap(x: i32, y: i32, z: i32) -> QuickMap<Vec3, Room> {
         for y_val in 0..y {
             for z_val in -z..z {
                 let room = Room {
+                    entity_id: EntityId::default(),
+                    mob_pool: Vec::new(),
                     name: format!("{}-{}-{}", x_val, y_val, z_val),
                     position: Vec3::new(x_val, y_val, z_val),
                     description: "This is a room.".to_string(),
                     exits: Vec::new(),
                 };
 
-                rooms.spawn(room);
+                rooms.insert(room);
             }
         }
     }

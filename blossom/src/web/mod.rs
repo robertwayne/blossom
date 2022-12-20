@@ -6,12 +6,8 @@ use std::sync::Arc;
 
 use askama::Template;
 use axum::{
-    extract::Extension,
-    handler::HandlerWithoutStateExt,
-    http::{StatusCode, Uri},
-    response::IntoResponse,
-    routing::get,
-    Router, Server,
+    extract::Extension, handler::HandlerWithoutStateExt, http::Uri, response::IntoResponse,
+    routing::get, Router, Server,
 };
 use sqlx::PgPool;
 use tower_http::trace::TraceLayer;
