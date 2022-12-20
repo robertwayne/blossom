@@ -67,7 +67,8 @@ Instructions to build:
 3. *(requires SQLx CLI)* From the root directory, run `sqlx migrate run` to
    apply the schema.
 4. Hack away!
-5. Run `./check.sh` before you open a PR.
+5. *(requires SQLx CLI & Node)* Run `./check.sh` before you open a PR. If you do
+   not have the optional dependencies, run the commands manually.
 
 *By contributing, you agree that any code submitted by you shall be
 dual-licensed under MIT and Apache-2.0.*
