@@ -34,10 +34,7 @@ pub struct SystemWatcher {
 
 impl SystemWatcher {
     pub fn new() -> Self {
-        Self {
-            mode: WatchMode::Sleep,
-            interval: 300,
-        }
+        Self { mode: WatchMode::Sleep, interval: 300 }
     }
 }
 

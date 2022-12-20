@@ -53,18 +53,12 @@ async fn static_file_handler(uri: Uri) -> impl IntoResponse {
 }
 
 async fn index(config: Extension<Arc<Config>>) -> impl IntoResponse {
-    let template = IndexTemplate {
-        title: "Home",
-        game_name: config.game.name.clone(),
-    };
+    let template = IndexTemplate { title: "Home", game_name: config.game.name.clone() };
     Html(template)
 }
 
 async fn not_found(config: Extension<Arc<Config>>) -> impl IntoResponse {
-    let template = NotFoundTemplate {
-        title: "Not Found",
-        game_name: config.game.name.clone(),
-    };
+    let template = NotFoundTemplate { title: "Not Found", game_name: config.game.name.clone() };
     Html(template)
 }
 

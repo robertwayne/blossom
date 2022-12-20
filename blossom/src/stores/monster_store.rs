@@ -17,10 +17,7 @@ pub struct MonsterStore {
 
 impl MonsterStore {
     pub fn new() -> Self {
-        Self {
-            map: QuickMap::new(),
-            templates: HashMap::new(),
-        }
+        Self { map: QuickMap::new(), templates: HashMap::new() }
     }
 
     pub fn insert(&mut self, monster: Monster) -> EntityId {
@@ -74,11 +71,7 @@ impl std::fmt::Display for MonsterStore {
             f,
             "Monsters: {} actual, {} templates",
             self.map.len().to_string().foreground(theme::GREEN).bold(),
-            self.templates
-                .len()
-                .to_string()
-                .foreground(theme::YELLOW)
-                .bold()
+            self.templates.len().to_string().foreground(theme::YELLOW).bold()
         )
     }
 }

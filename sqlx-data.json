@@ -18,21 +18,6 @@
     },
     "query": "select exists (select 1 from players)"
   },
-  "6c6341b66d2007245bfa2a85d4acb86b985f8f559b05a44d1d9ccbd878b82ddc": {
-    "describe": {
-      "columns": [],
-      "nullable": [],
-      "parameters": {
-        "Left": [
-          "Int4",
-          "Varchar",
-          "Inet",
-          "Text"
-        ]
-      }
-    },
-    "query": "INSERT INTO action_logs (account_id, action, ip_address, details) VALUES ($1, $2, $3, $4)"
-  },
   "9442f5443dd12024d46270168754be5b521973531b64416de899205b775597b2": {
     "describe": {
       "columns": [

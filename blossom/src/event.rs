@@ -81,11 +81,7 @@ impl std::fmt::Display for GameEvent {
                 write!(
                     f,
                     "GlobalSave [{}]",
-                    players
-                        .iter()
-                        .map(|p| p.id.to_string())
-                        .collect::<Vec<_>>()
-                        .join(", ")
+                    players.iter().map(|p| p.id.to_string()).collect::<Vec<_>>().join(", ")
                 )
             }
         }

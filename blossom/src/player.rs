@@ -1,8 +1,11 @@
+use std::net::IpAddr;
+
 use sqlx::PgPool;
 
 use crate::{
     account::Account,
     entity::{Entity, EntityId},
+    logging::Loggable,
     quickmap::QuickMapKey,
     vec3::Vec3,
 };
@@ -33,6 +36,7 @@ impl PartialPlayer {
 #[derive(Clone, Debug)]
 pub struct Player {
     pub _entityid: EntityId,
+    pub _addr: IpAddr,
     pub id: PlayerId,
     pub account: Account,
     pub name: String,
@@ -51,9 +55,10 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(id: PlayerId) -> Player {
+    pub fn new(id: PlayerId, addr: IpAddr) -> Player {
         Player {
             _entityid: EntityId::default(),
+            _addr: addr,
             id,
             account: Account::default(),
             name: String::new(),
@@ -107,9 +112,13 @@ impl Player {
     }
 }
 
-impl Default for Player {
-    fn default() -> Self {
-        Player::new(0)
+impl Loggable for Player {
+    fn ip(&self) -> IpAddr {
+        self._addr
+    }
+
+    fn id(&self) -> Option<i32> {
+        Some(self.account.id)
     }
 }
 

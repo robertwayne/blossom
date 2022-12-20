@@ -22,9 +22,6 @@ impl GameCommand for Afk {
         player.afk = !player.afk;
         player.dirty = true;
 
-        Ok(Response::Client(format!(
-            "AFK mode is now {}.",
-            if player.afk { "on" } else { "off" }
-        )))
+        Ok(Response::Client(format!("AFK mode is now {}.", if player.afk { "on" } else { "off" })))
     }
 }

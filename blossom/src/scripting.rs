@@ -73,28 +73,19 @@ impl std::fmt::Display for ScriptError {
 
 impl From<globwalk::GlobError> for ScriptError {
     fn from(err: globwalk::GlobError) -> Self {
-        Self {
-            kind: ScriptErrorType::BadPattern,
-            message: err.to_string(),
-        }
+        Self { kind: ScriptErrorType::BadPattern, message: err.to_string() }
     }
 }
 
 impl From<std::io::Error> for ScriptError {
     fn from(err: std::io::Error) -> Self {
-        Self {
-            kind: ScriptErrorType::InvalidPath,
-            message: err.to_string(),
-        }
+        Self { kind: ScriptErrorType::InvalidPath, message: err.to_string() }
     }
 }
 
 impl From<Box<rhai::EvalAltResult>> for ScriptError {
     fn from(err: Box<rhai::EvalAltResult>) -> Self {
-        Self {
-            kind: ScriptErrorType::InvalidSyntax,
-            message: err.to_string(),
-        }
+        Self { kind: ScriptErrorType::InvalidSyntax, message: err.to_string() }
     }
 }
 

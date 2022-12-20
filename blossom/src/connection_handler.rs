@@ -13,7 +13,7 @@ use crate::{
     error::Result,
     event::{ClientEvent, Event, GameEvent},
     input::Input,
-    logging::{log, Action},
+    logging::{Action, Kind},
     response::Response,
     server::StreamType,
 };
@@ -24,12 +24,13 @@ pub async fn connection_loop(
     stream: TcpStream,
     pg: PgPool,
     tx_broker: Sender<Event>,
+    tx_logger: Sender<Action>,
 ) -> Result<()> {
     let mut conn = match stream_type {
         StreamType::Telnet => {
             let frame = Framed::new(stream, TelnetCodec::new(1024));
 
-            Connection::new(addr, RawStream::Telnet(frame))
+            Connection::new(addr, RawStream::Telnet(frame), tx_logger.clone())
         }
         StreamType::WebSocket => {
             let config = WebSocketConfig {
@@ -41,7 +42,7 @@ pub async fn connection_loop(
                 .await
                 .expect("Error during the websocket handshake occurred");
 
-            Connection::new(addr, RawStream::WebSocket(ws))
+            Connection::new(addr, RawStream::WebSocket(ws), tx_logger.clone())
         }
     };
 
@@ -64,21 +65,18 @@ pub async fn connection_loop(
     // indent).
     let player = maybe_player.expect("This should never happen.");
 
-    // Retain account & player ID as a marker for their connection
+    // Keep a copy of the player ID for event handling.
     let id = player.id;
-    let account_id = player.account.id;
+
+    // Store a copy of the account ID on the connection for logging.
+    conn.account_id = Some(player.account.id);
 
     // Create a channel for a connection
     let (tx, rx) = unbounded::<Event>();
 
     // Move the player off into the game thread
     tracing::trace!("{} authenticated: moving to game thread", player.name);
-    tx_broker
-        .send_async(Event::Client(
-            player.id,
-            ClientEvent::Connect(player, Some(tx)),
-        ))
-        .await?;
+    tx_broker.send_async(Event::Client(player.id, ClientEvent::Connect(player, Some(tx)))).await?;
 
     loop {
         tokio::select! {
@@ -130,7 +128,9 @@ pub async fn connection_loop(
                         continue;
                     }
 
-                    log(Action::Message(msg.clone()), Some(account_id), &conn, &pg).await?;
+                    let action = Action::with_detail(Kind::Message, msg.clone(), &conn);
+                    let _ = tx_logger.send(action);
+
                     tx_broker.send(Event::Client(id, ClientEvent::Command(Input::from(msg))))?;
                 },
                 None => {
@@ -141,7 +141,9 @@ pub async fn connection_loop(
         }
     }
 
-    log(Action::Leave, Some(account_id), &conn, &pg).await?;
+    let action = Action::new(Kind::Leave, &conn);
+    let _ = conn.tx_logger.send(action);
+
     tx_broker.send(Event::Client(id, ClientEvent::Disconnect))?;
     conn.send_message("\nGoodbye!\n").await?;
 

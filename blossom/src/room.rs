@@ -52,12 +52,8 @@ impl Room {
 
     /// Returns all of the exits in the room as a styled string.
     pub fn exits(&self) -> StyledString {
-        let exit_string = self
-            .exits
-            .iter()
-            .map(|exit| format!("{exit}"))
-            .collect::<Vec<String>>()
-            .join(", ");
+        let exit_string =
+            self.exits.iter().map(|exit| format!("{exit}")).collect::<Vec<String>>().join(", ");
 
         let exits = format!("[Exits: {exit_string}]");
 
@@ -114,11 +110,7 @@ impl Room {
                     if players_here.len() > 4 {
                         format!(
                             "{}, and {} others",
-                            players_here
-                                .split(", ")
-                                .take(4)
-                                .collect::<Vec<_>>()
-                                .join(", "),
+                            players_here.split(", ").take(4).collect::<Vec<_>>().join(", "),
                             players_here.split(", ").count() - 4
                         )
                     } else {

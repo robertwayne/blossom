@@ -53,10 +53,10 @@ create table if not exists tickets
 create table if not exists action_logs
 (
     action_log_id serial primary key,
-    account_id    int references accounts (id) not null,
+    account_id    int references accounts (id),
     ip_address    inet                         not null,
     action        varchar(255)                 not null,
-    details       text default ''              not null,
+    details       text,
     created       timestamptz default now()    not null
 );
 

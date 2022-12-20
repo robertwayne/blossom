@@ -45,9 +45,7 @@ impl GameCommand for Look {
         if let Some(view) = view {
             Ok(Response::Client(view))
         } else {
-            Ok(Response::Client(
-                "You are lost in the void. There is nowhere to go.".to_string(),
-            ))
+            Ok(Response::Client("You are lost in the void. There is nowhere to go.".to_string()))
         }
     }
 }

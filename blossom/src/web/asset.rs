@@ -23,10 +23,7 @@ where
                 let body = boxed(Full::from(content.data));
                 let mime = mime_guess::from_path(path).first_or_octet_stream();
 
-                Response::builder()
-                    .header(header::CONTENT_TYPE, mime.as_ref())
-                    .body(body)
-                    .unwrap()
+                Response::builder().header(header::CONTENT_TYPE, mime.as_ref()).body(body).unwrap()
             }
             None => Response::builder()
                 .status(StatusCode::NOT_FOUND)

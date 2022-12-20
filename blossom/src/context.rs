@@ -8,11 +8,7 @@ pub struct Context<'a> {
 
 impl<'a> Context<'a> {
     pub fn new(id: PlayerId, tokens: Input, world: &'a mut World) -> Self {
-        Self {
-            id,
-            input: tokens,
-            world,
-        }
+        Self { id, input: tokens, world }
     }
 
     pub fn args(&self) -> &[String] {

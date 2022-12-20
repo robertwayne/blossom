@@ -35,19 +35,13 @@ impl GameCommand for Walk {
     fn run(ctx: Context) -> Result<Response> {
         let direction = Direction::from(ctx.input.command);
         let player = ctx.world.get_player(ctx.id)?;
-        let current_room = ctx
-            .world
-            .rooms
-            .iter()
-            .find(|r| r.position == player.position);
+        let current_room = ctx.world.rooms.iter().find(|r| r.position == player.position);
 
         if let Some(current_room) = current_room {
             // If the current room cannot be exited in the given direction, we
             // just break early and let the player know.
             if !current_room.exits.contains(&direction) {
-                return Ok(Response::Client(format!(
-                    "You can't go {direction} from here."
-                )));
+                return Ok(Response::Client(format!("You can't go {direction} from here.")));
             }
 
             // We get all the players in the current room and broadcast a
@@ -98,8 +92,7 @@ impl GameCommand for Walk {
                 _ => format!("{} walks {}.", player.name, formatted_direction),
             };
 
-            ctx.world
-                .send_command(ctx.id, Response::Channel(players_there, broadcast_message));
+            ctx.world.send_command(ctx.id, Response::Channel(players_there, broadcast_message));
 
             // We have to get a new mutable reference to the player here because
             // we're mutating this time, and we can't start with a mutable
@@ -129,8 +122,6 @@ impl GameCommand for Walk {
             }
         }
 
-        Ok(Response::Client(
-            "You are lost in the void. There is nowhere to go.".to_string(),
-        ))
+        Ok(Response::Client("You are lost in the void. There is nowhere to go.".to_string()))
     }
 }

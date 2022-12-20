@@ -26,12 +26,7 @@ impl Broker {
         rx: Receiver<Event>,
         tx_game: Sender<Event>,
     ) -> Result<BrokerHandle> {
-        let broker = Broker {
-            pg,
-            tx_peers: DashMap::new(),
-            tx_game,
-            rx,
-        };
+        let broker = Broker { pg, tx_peers: DashMap::new(), tx_game, rx };
 
         let handle = Arc::new(broker);
 
@@ -72,8 +67,7 @@ impl Broker {
                 // Some value. However, because the game should NOT know about
                 // the peer connection or have its send channel, we need to make
                 // this an option so we can forward as a None.
-                self.tx_peers
-                    .insert(id, tx.expect("This should never happen."));
+                self.tx_peers.insert(id, tx.expect("This should never happen."));
                 self.to_game(id, ClientEvent::Connect(player, None)).await?;
             }
             ClientEvent::Command(msg) => {
@@ -101,8 +95,7 @@ impl Broker {
             }
             GameEvent::Command(response) => match &response {
                 Response::Channel(here, _) => {
-                    self.broadcast(here.clone(), GameEvent::Command(response))
-                        .await?;
+                    self.broadcast(here.clone(), GameEvent::Command(response)).await?;
                 }
                 _ => self.to_client(id, GameEvent::Command(response)).await?,
             },

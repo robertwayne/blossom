@@ -1,10 +1,8 @@
 use blossom::{entity::EntityId, quickmap::QuickMap, room::Room, vec3::Vec3};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use rand::{thread_rng, Rng};
-use std::{
-    collections::{BTreeMap, HashMap},
-    hash::Hash,
-};
+
+use std::collections::HashMap;
 
 fn bench_comparisons(c: &mut Criterion) {
     let x = 1000;
@@ -17,13 +15,7 @@ fn bench_comparisons(c: &mut Criterion) {
 
     let mut rng = thread_rng();
     let random_positions = (0..100)
-        .map(|_| {
-            Vec3::new(
-                rng.gen_range(-x..x),
-                rng.gen_range(-y..y),
-                rng.gen_range(-z..z),
-            )
-        })
+        .map(|_| Vec3::new(rng.gen_range(-x..x), rng.gen_range(-y..y), rng.gen_range(-z..z)))
         .collect::<Vec<_>>();
 
     let mut group_get = c.benchmark_group("get");

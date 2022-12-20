@@ -65,10 +65,7 @@ impl From<String> for Input {
         let tokens = message.split_whitespace().collect::<Vec<_>>();
         Input {
             command: tokens[0].to_string(),
-            args: tokens[1..]
-                .iter()
-                .map(std::string::ToString::to_string)
-                .collect(),
+            args: tokens[1..].iter().map(std::string::ToString::to_string).collect(),
         }
     }
 }

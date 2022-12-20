@@ -54,16 +54,8 @@ impl Default for SystemStore {
 
 impl std::fmt::Display for SystemStore {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let s1 = self
-            .write
-            .iter()
-            .map(|s| (s.name, s.status))
-            .collect::<Vec<_>>();
-        let s2 = self
-            .readonly
-            .iter()
-            .map(|s| (s.name, s.status))
-            .collect::<Vec<_>>();
+        let s1 = self.write.iter().map(|s| (s.name, s.status)).collect::<Vec<_>>();
+        let s2 = self.readonly.iter().map(|s| (s.name, s.status)).collect::<Vec<_>>();
 
         let system_set = s1.iter().chain(s2.iter()).copied().collect::<Vec<_>>();
 
@@ -71,11 +63,7 @@ impl std::fmt::Display for SystemStore {
             "{} ({}, {} readonly)\n  Running: [{}]\n  Paused: [{}]\n  Stopped: [{}]",
             system_set.len().to_string().foreground(theme::GREEN).bold(),
             self.write.len().to_string().foreground(theme::GREEN).bold(),
-            self.readonly
-                .len()
-                .to_string()
-                .foreground(theme::GREEN)
-                .bold(),
+            self.readonly.len().to_string().foreground(theme::GREEN).bold(),
             system_set
                 .iter()
                 .filter(|s| s.1 == SystemStatus::Running)

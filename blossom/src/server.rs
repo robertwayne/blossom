@@ -3,8 +3,15 @@ use tokio::net::TcpListener;
 use tracing_subscriber::{fmt::format::FmtSpan, EnvFilter};
 
 use crate::{
-    broker::Broker, config::Config, connection_handler::connection_loop, database::Database,
-    error::Result, event::Event, game::Game, world::World,
+    broker::Broker,
+    config::Config,
+    connection_handler::connection_loop,
+    database::Database,
+    error::Result,
+    event::Event,
+    game::Game,
+    logging::{Action, Logger},
+    world::World,
 };
 
 pub enum StreamType {
@@ -45,15 +52,18 @@ impl Server {
         if config.web.enabled {
             let pg = db.clone();
             tokio::spawn(async move {
-                crate::web::listen(pg)
-                    .await
-                    .expect("Failed to bind to address");
+                crate::web::listen(pg).await.expect("Failed to bind to address");
             });
         }
 
-        // Create the broker and game channels for bidirectional communication
+        // Create the broker, game, and logger channels for bidirectional
+        // communication
         let (tx_broker, rx_broker) = unbounded::<Event>();
         let (tx_game, rx_game) = unbounded::<Event>();
+        let (tx_logger, rx_logger) = unbounded::<Action>();
+
+        // Create the global logger
+        let _logger_handle = Logger::start(db.clone(), rx_logger).await?;
 
         // Starts the broker loop
         let _broker_handle = Broker::start(db.clone(), rx_broker, tx_game).await?;
@@ -71,13 +81,14 @@ impl Server {
         loop {
             let pg = db.clone();
             let tx_broker = tx_broker.clone();
+            let tx_logger = tx_logger.clone();
 
             tokio::select! {
                 Ok((stream, addr)) = telnet_listener.accept() => {
                     tokio::spawn(async move {
                         tracing::info!("New connection from {}", addr);
 
-                        if let Err(e) = connection_loop(StreamType::Telnet, addr, stream, pg, tx_broker).await {
+                        if let Err(e) = connection_loop(StreamType::Telnet, addr, stream, pg, tx_broker, tx_logger).await {
                             tracing::error!(%e, "Failed to establish Telnet stream");
                         }
                     });
@@ -86,7 +97,7 @@ impl Server {
                     tokio::spawn(async move {
                         tracing::info!("New connection from {}", addr);
 
-                        if let Err(e) = connection_loop(StreamType::WebSocket, addr, stream, pg, tx_broker).await {
+                        if let Err(e) = connection_loop(StreamType::WebSocket, addr, stream, pg, tx_broker, tx_logger).await {
                             tracing::error!(%e, "Failed to establish WebSocket stream");
                         }
                     });

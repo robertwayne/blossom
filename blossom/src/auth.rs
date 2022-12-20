@@ -1,3 +1,5 @@
+use std::net::IpAddr;
+
 use argon2::{
     password_hash::{rand_core::OsRng, PasswordHasher, SaltString},
     Argon2, PasswordHash, PasswordVerifier,
@@ -11,7 +13,7 @@ use crate::{
     connection::Connection,
     entity::EntityId,
     error::{Error, ErrorType, Result},
-    logging::{log, Action},
+    logging::{Action, Kind},
     player::{PartialPlayer, Player},
     role::Role,
     theme,
@@ -35,9 +37,7 @@ async fn create(
     let salt = SaltString::generate(&mut OsRng);
     let argon = Argon2::default();
 
-    let hash = argon
-        .hash_password(password.as_bytes(), salt.as_ref())?
-        .to_string();
+    let hash = argon.hash_password(password.as_bytes(), salt.as_ref())?.to_string();
 
     let is_first = is_first_account(pg).await?;
     let roles = if is_first { vec![Role::Admin] } else { vec![] };
@@ -65,14 +65,11 @@ async fn create(
     .fetch_one(pg)
     .await?;
 
-    Ok(PartialPlayer::new(
-        player_record.id,
-        Account::new(account_record.id, roles),
-    ))
+    Ok(PartialPlayer::new(player_record.id, Account::new(account_record.id, roles)))
 }
 
 /// Attempts to log a player in by validating their password.
-async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
+async fn login(name: &str, password: &str, addr: IpAddr, pg: &PgPool) -> Result<Player> {
     let name = name.trim();
     let password = password.trim();
 
@@ -97,6 +94,7 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
 
         Ok(Player {
             _entityid: EntityId::empty(),
+            _addr: addr,
             id: record.id,
             account: Account {
                 id: record.account_id,
@@ -118,10 +116,7 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
             seen: true,
         })
     } else {
-        Err(Error {
-            kind: ErrorType::Authentication,
-            message: "Invalid credentials".to_string(),
-        })
+        Err(Error { kind: ErrorType::Authentication, message: "Invalid credentials".to_string() })
     }
 }
 
@@ -129,12 +124,9 @@ async fn login(name: &str, password: &str, pg: &PgPool) -> Result<Player> {
 async fn name_exists(name: &str, pg: &PgPool) -> Result<bool> {
     let name = name.trim();
 
-    let record = sqlx::query!(
-        r#"select exists (select 1 from players where name = $1)"#,
-        name
-    )
-    .fetch_one(pg)
-    .await;
+    let record = sqlx::query!(r#"select exists (select 1 from players where name = $1)"#, name)
+        .fetch_one(pg)
+        .await;
 
     match record {
         Ok(record) => Ok(matches!(record.exists, Some(true))),
@@ -177,15 +169,17 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
 
     if exists {
         let password = get_password(conn).await?;
-        let partial_player = login(&name, &password, &pg).await;
+        let partial_player = login(&name, &password, conn.ip(), &pg).await;
 
         if let Ok(player) = partial_player {
-            log(Action::Join, Some(player.account.id), conn, &pg).await?;
+            let action = Action::new(Kind::Join, &player);
+            let _ = conn.tx_logger.send(action);
 
             Ok(Some(player))
         } else {
             conn.send_message("Invalid credentials.").await?;
-            log(Action::FailedJoin, None, conn, &pg).await?;
+            let action = Action::new(Kind::FailedJoin, conn);
+            let _ = conn.tx_logger.send(action);
 
             Ok(None)
         }
@@ -205,9 +199,7 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
 
         conn.send_message(&format!(
             "{} {} {} {} {}",
-            "You can view all the commands by typing"
-                .foreground(theme::YELLOW)
-                .bold(),
+            "You can view all the commands by typing".foreground(theme::YELLOW).bold(),
             "help".foreground(theme::BLUE).bold(),
             "or".foreground(theme::YELLOW).bold(),
             "?".foreground(theme::BLUE).bold(),
@@ -227,16 +219,9 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
             .await?;
         }
 
-        log(
-            Action::CreateAccount,
-            Some(partial_player.account.id),
-            conn,
-            &pg,
-        )
-        .await?;
-
-        Ok(Some(Player {
+        let player = Player {
             _entityid: EntityId::empty(),
+            _addr: conn.ip(),
             id: partial_player.id,
             account: partial_player.account,
             name,
@@ -252,7 +237,12 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
             afk: false,
             dirty: false,
             seen: false,
-        }))
+        };
+
+        let action = Action::new(Kind::CreateAccount, &player);
+        let _ = conn.tx_logger.send(action);
+
+        Ok(Some(player))
     }
 }
 
@@ -317,11 +307,8 @@ async fn get_password(conn: &mut Connection) -> Result<String> {
             let msg = msg.trim();
 
             if msg.is_empty() {
-                conn.send_message(&format!(
-                    "{}",
-                    "Invalid credentials.".foreground(theme::RED)
-                ))
-                .await?;
+                conn.send_message(&format!("{}", "Invalid credentials.".foreground(theme::RED)))
+                    .await?;
 
                 failure_count += 1;
                 continue;
@@ -364,8 +351,7 @@ async fn set_password(conn: &mut Connection) -> Result<String> {
     conn.send_iac(TelnetEvent::Will(TelnetOption::Echo)).await?;
 
     let password = loop {
-        conn.send_message("What will your password be? [`q` to quit]")
-            .await?;
+        conn.send_message("What will your password be? [`q` to quit]").await?;
 
         if let Some(msg) = conn.try_next().await {
             let msg = msg.trim();

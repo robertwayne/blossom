@@ -1,7 +1,6 @@
 /// This is used for matching against HTTP traffic on the telnet stream.
-pub const HTTP_METHODS: &[&str] = &[
-    "GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH",
-];
+pub const HTTP_METHODS: &[&str] =
+    &["GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"];
 
 /// This is used for matching against HTTP traffic on the telnet stream. Telnet
 /// is only accessible with HTTP/0.9.
