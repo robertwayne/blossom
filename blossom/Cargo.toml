@@ -1,22 +1,16 @@
 [package]
-name = "blossom_core"
+name = "blossom"
 authors = ["Rob Wagner <rob@sombia.com>"]
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-description = "Core components of the Blossom MUD engine."
+description = "An opinionated MUD game engine written in Rust."
 homepage = "https://robertwayne.github.io/blossom"
 repository = "https://github.com/robertwayne/blossom/crates/blossom_core"
 categories = ["game-engines", "game-development"]
 keywords = ["blossom", "mud"]
 
 [dependencies]
-# Internal Crates
-blossom_config = { path = "../blossom_config", version = "0.1" }
-blossom_db = { path = "../blossom_db", version = "0.1" }
-blossom_web = { path = "../blossom_web", version = "0.1" }
-
-# Third-Party Crates
 argon2 = "0.4"
 nectar = { git = "https://github.com/robertwayne/nectar", version = "0.1" }
 dashmap = "5"
@@ -25,6 +19,22 @@ futures = { version = "0.3", features = ["thread-pool"] }
 globwalk = "0.8"
 iridescent = "0.2"
 rand = "0.8"
+askama = "0.11"
+axum = { git = "https://github.com/tokio-rs/axum/", features = [
+    "http1",
+    "http2",
+    "json",
+    "ws",
+    "headers",
+] }
+mime_guess = "2"
+rust-embed = { version = "6", features = [
+    "interpolate-folder-path",
+    "compression",
+] }
+tower = { version = "0.4", features = ["util"] }
+tower-http = { version = "0.3", features = ["fs", "trace"] }
+toml = "0.5"
 serde = { version = "1", features = ["derive"] }
 simsearch = "0.2"
 sqlx = { version = "0.6", features = [

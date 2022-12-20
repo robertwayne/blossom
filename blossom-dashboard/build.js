@@ -9,8 +9,8 @@ esbuild
         entryPoints: ["src/index.ts"],
         bundle: true,
         minify: true,
-        outfile: "../dist/index.js",
+        outfile: "../blossom/static/index.js",
     })
     .catch((e) => console.error(e.error))
 
-console.log('Created "index.js" and "index.css" in "dist" directory.')
+console.log('Created "index.js" and "index.css" in "blossom/static/" directory.')

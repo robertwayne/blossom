@@ -1,4 +1,3 @@
-use blossom_config::Config;
 use flume::{Receiver, Sender};
 
 use crate::{
@@ -18,6 +17,7 @@ use crate::{
         walk::Walk,
         who::Who,
     },
+    config::Config,
     event::Event,
     monster::MonsterTemplate,
     region::{AreaBuilder, RegionBuilder},

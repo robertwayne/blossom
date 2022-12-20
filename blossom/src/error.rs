@@ -1,8 +1,6 @@
-use blossom_config::ConfigError;
-use blossom_db::DatabaseError;
 use nectar::error::TelnetError;
 
-use crate::{event::Event, scripting::ScriptError};
+use crate::{config::ConfigError, database::DatabaseError, event::Event, scripting::ScriptError};
 
 pub type Result<T> = std::result::Result<T, Error>;
 

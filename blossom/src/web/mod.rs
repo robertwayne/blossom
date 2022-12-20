@@ -5,7 +5,6 @@ mod template;
 use std::sync::Arc;
 
 use askama::Template;
-use asset::StaticFile;
 use axum::{
     extract::Extension,
     handler::HandlerWithoutStateExt,
@@ -14,11 +13,14 @@ use axum::{
     routing::get,
     Router, Server,
 };
-use blossom_config::Config;
 use sqlx::PgPool;
 use tower_http::trace::TraceLayer;
 
-use crate::template::Html;
+use crate::config::Config;
+
+use template::Html;
+
+use asset::StaticFile;
 
 pub async fn listen(pg: PgPool) -> Result<(), Box<dyn std::error::Error>> {
     let config = Arc::new(Config::load().await?);
@@ -29,12 +31,11 @@ pub async fn listen(pg: PgPool) -> Result<(), Box<dyn std::error::Error>> {
     let app = Router::new()
         .route("/", get(index))
         .nest("/api/v1", api_route_handler)
-        .route_service("/dist/*file", static_file_handler.into_service())
+        .route_service("/static/*file", static_file_handler.into_service())
+        .fallback(not_found)
         .layer(Extension(pg))
         .layer(Extension(config))
         .layer(TraceLayer::new_for_http());
-
-    let app = app.fallback(not_found);
 
     tracing::info!("Web server listening on {}", addr);
 
@@ -48,14 +49,14 @@ pub async fn listen(pg: PgPool) -> Result<(), Box<dyn std::error::Error>> {
 async fn static_file_handler(uri: Uri) -> impl IntoResponse {
     let mut path = uri.path().trim_start_matches('/').to_string();
 
-    if path.starts_with("dist/") {
-        path = path.replace("dist/", "");
+    if path.starts_with("static/") {
+        path = path.replace("static/", "");
     }
 
     StaticFile(path)
 }
 
-async fn index(Extension(config): Extension<Arc<Config>>) -> impl IntoResponse {
+async fn index(config: Extension<Arc<Config>>) -> impl IntoResponse {
     let template = IndexTemplate {
         title: "Home",
         game_name: config.game.name.clone(),
@@ -63,12 +64,12 @@ async fn index(Extension(config): Extension<Arc<Config>>) -> impl IntoResponse {
     Html(template)
 }
 
-async fn not_found(Extension(config): Extension<Arc<Config>>) -> impl IntoResponse {
+async fn not_found(config: Extension<Arc<Config>>) -> impl IntoResponse {
     let template = NotFoundTemplate {
         title: "Not Found",
         game_name: config.game.name.clone(),
     };
-    (StatusCode::NOT_FOUND, Html(template))
+    Html(template)
 }
 
 #[derive(Template)]

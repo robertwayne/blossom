@@ -1,12 +1,10 @@
-use blossom_config::Config;
-use blossom_db::Database;
 use flume::unbounded;
 use tokio::net::TcpListener;
 use tracing_subscriber::{fmt::format::FmtSpan, EnvFilter};
 
 use crate::{
-    broker::Broker, connection_handler::connection_loop, error::Result, event::Event, game::Game,
-    world::World,
+    broker::Broker, config::Config, connection_handler::connection_loop, database::Database,
+    error::Result, event::Event, game::Game, world::World,
 };
 
 pub enum StreamType {
@@ -47,7 +45,7 @@ impl Server {
         if config.web.enabled {
             let pg = db.clone();
             tokio::spawn(async move {
-                blossom_web::listen(pg)
+                crate::web::listen(pg)
                     .await
                     .expect("Failed to bind to address");
             });

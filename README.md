@@ -10,7 +10,7 @@
 
 -----
 
-Blossom is a MUD engine written in Rust.
+Blossom is an opinionated MUD game engine written in Rust.
 
 This is still a VERY early work-in-progress and there will be sweeping,
 breaking changes constantly as I refine the architecture and API. If you

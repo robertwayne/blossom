@@ -8,12 +8,10 @@ description = "Blossom benchmark and performance testing."
 publish = false
 
 [dev-dependencies]
-blossom = { path = ".." }
+blossom = { path = "../blossom" }
 rand = "0.8"
 criterion = "0.4"
 
 [[bench]]
 name = "quickmap"
 harness = false
-
-[workspace]

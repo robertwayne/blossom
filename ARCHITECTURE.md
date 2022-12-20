@@ -7,10 +7,6 @@ within the engine.
 
 ## Project Structure
 
-Blossom is broken up into various smaller crates to enscapulate various
-functionality. Ideally, these crates are reusable outside of Blossom - but that
-is not a hard requirement.
-
 ### blossom_ansi
 
 Moved into a stand-alone crate: **[Iridescent](https://github.com/robertwayne/iridescent)**.
@@ -19,15 +15,7 @@ Moved into a stand-alone crate: **[Iridescent](https://github.com/robertwayne/ir
 
 Moved into a stand-alone crate: **[Nectar](https://github.com/robertwayne/nectar)**.
 
-### blossom_dynamic
-
-Used for enabling the `dylib` crate feature for dynamic linking.
-
-### blossom_internal
-
-Glue module which exposes the public API of all the crates under one name.
-
-### blossom_core
+### blossom
 
 Contains all core functionality, like connection handlers, the game loop,
 message handling, database querying, systems, etc. This module will often be
@@ -35,7 +23,7 @@ broken up into new crates as they outgrow the core.
 
 This is really just the 'hatchery' for new modules.
 
-### blossom_web
+### blossom-dashboard
 
 Web server which runs in the background as a management dashboard,
 log aggregator, analytics, and access to the content creation tools.

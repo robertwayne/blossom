@@ -1,11 +1,10 @@
+use blossom::{quickmap::QuickMap, room::Room, vec3::Vec3};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use rand::{thread_rng, Rng};
 use std::{
     collections::{BTreeMap, HashMap},
     hash::Hash,
 };
-
-use blossom::prelude::*;
 
 fn bench_comparisons(c: &mut Criterion) {
     let x = 1000;

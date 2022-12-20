@@ -1,5 +1,6 @@
-use blossom_config::{Config, ConfigError};
 use sqlx::postgres::PgPool;
+
+use crate::config::{Config, ConfigError};
 
 #[derive(Debug)]
 pub struct Database;
