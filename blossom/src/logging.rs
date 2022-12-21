@@ -27,8 +27,7 @@ pub type LoggerHandle = Arc<Logger>;
 ///
 /// A system event should return an IP of "127.0.0.1".
 pub trait Loggable {
-    fn ip(&self) -> IpAddr;
-    fn id(&self) -> Option<i32>;
+    fn identifier(&self) -> (IpAddr, Option<i32>);
     fn get_logger(&self) -> Sender<Action>;
 }
 
@@ -75,14 +74,14 @@ impl Logger {
         tracing::debug!("Logging {} actions", queue.len());
 
         let mut query_builder: sqlx::QueryBuilder<Postgres> = QueryBuilder::new(
-            "INSERT INTO action_logs (account_id, action, ip_address, details, created)",
+            "INSERT INTO action_logs (account_id, ip_address, kind, detail, created_on)",
         );
 
         let queue = queue.drain(..);
         query_builder.push_values(queue.take(65535 / 5), |mut b, action| {
-            b.push_bind(action.account_id)
+            b.push_bind(action.id)
+                .push_bind(action.addr)
                 .push_bind(action.kind.to_string())
-                .push_bind(action.ip_addr)
                 .push_bind(action.detail)
                 .push_bind(action.created_on);
         });
@@ -117,32 +116,36 @@ impl std::fmt::Display for Kind {
 /// Represents a "complete" action to be logged into the database at a later
 /// time.
 pub struct Action {
+    id: Option<i32>,
+    addr: IpNetwork,
     kind: Kind,
     detail: Option<String>,
-    ip_addr: IpNetwork,
-    account_id: Option<i32>,
     created_on: time::OffsetDateTime,
 }
 
 impl Action {
     /// Create a basic action that has no extraneous details.
     pub fn new(kind: Kind, target: &impl Loggable) -> Self {
+        let (ip, id) = target.identifier();
+
         Self {
+            id,
+            addr: IpNetwork::from(ip),
             kind,
             detail: None,
-            ip_addr: IpNetwork::from(target.ip()),
-            account_id: target.id(),
             created_on: time::OffsetDateTime::now_utc(),
         }
     }
 
     /// Create an action with a detail string.
     pub fn with_detail(kind: Kind, detail: String, target: &impl Loggable) -> Self {
+        let (ip, id) = target.identifier();
+
         Self {
+            id,
+            addr: IpNetwork::from(ip),
             kind,
             detail: Some(detail),
-            ip_addr: IpNetwork::from(target.ip()),
-            account_id: target.id(),
             created_on: time::OffsetDateTime::now_utc(),
         }
     }

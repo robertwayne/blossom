@@ -108,12 +108,8 @@ impl Connection {
 }
 
 impl Loggable for Connection {
-    fn ip(&self) -> IpAddr {
-        self.addr.ip()
-    }
-
-    fn id(&self) -> Option<i32> {
-        self.account_id
+    fn identifier(&self) -> (IpAddr, Option<i32>) {
+        (self.addr.ip(), self.account_id)
     }
 
     fn get_logger(&self) -> Sender<Action> {

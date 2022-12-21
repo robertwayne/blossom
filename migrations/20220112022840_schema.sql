@@ -52,12 +52,12 @@ create table if not exists tickets
 
 create table if not exists action_logs
 (
-    action_log_id serial primary key,
-    account_id    int references accounts (id),
-    ip_address    inet                         not null,
-    action        varchar(255)                 not null,
-    details       text,
-    created       timestamptz default now()    not null
+    action_log_id  serial primary key,
+    account_id     int references accounts (id),
+    ip_address     inet                         not null,
+    kind           varchar(255)                 not null,
+    detail         text,
+    created_on     timestamptz default now()    not null
 );
 
 create or replace function update_modified_on()
