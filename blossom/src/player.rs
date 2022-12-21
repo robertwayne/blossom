@@ -5,7 +5,6 @@ use sqlx::PgPool;
 use crate::{
     account::Account,
     entity::{Entity, EntityId},
-    logging::Loggable,
     quickmap::QuickMapKey,
     vec3::Vec3,
 };
