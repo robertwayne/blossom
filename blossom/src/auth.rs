@@ -10,10 +10,11 @@ use sqlx::postgres::PgPool;
 
 use crate::{
     account::Account,
+    blossom_log,
     connection::Connection,
     entity::EntityId,
     error::{Error, ErrorType, Result},
-    logging::{Action, Kind},
+    logging::{Action, Kind, Loggable},
     player::{PartialPlayer, Player},
     role::Role,
     theme,
@@ -172,14 +173,12 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
         let partial_player = login(&name, &password, conn.ip(), &pg).await;
 
         if let Ok(player) = partial_player {
-            let action = Action::new(Kind::Join, &player);
-            let _ = conn.tx_logger.send(action);
+            blossom_log!(Kind::Join, conn);
 
             Ok(Some(player))
         } else {
             conn.send_message("Invalid credentials.").await?;
-            let action = Action::new(Kind::FailedJoin, conn);
-            let _ = conn.tx_logger.send(action);
+            blossom_log!(Kind::FailedJoin, conn);
 
             Ok(None)
         }
@@ -239,8 +238,7 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
             seen: false,
         };
 
-        let action = Action::new(Kind::CreateAccount, &player);
-        let _ = conn.tx_logger.send(action);
+        blossom_log!(Kind::Join, conn);
 
         Ok(Some(player))
     }

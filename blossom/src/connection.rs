@@ -28,7 +28,7 @@ pub struct Connection {
     stream: RawStream,
     // Should only be None before the player has authenticated.
     pub account_id: Option<i32>,
-    pub tx_logger: Sender<Action>,
+    tx_logger: Sender<Action>,
 }
 
 impl Connection {
@@ -114,6 +114,10 @@ impl Loggable for Connection {
 
     fn id(&self) -> Option<i32> {
         self.account_id
+    }
+
+    fn get_logger(&self) -> Sender<Action> {
+        self.tx_logger.clone()
     }
 }
 

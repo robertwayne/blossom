@@ -112,16 +112,6 @@ impl Player {
     }
 }
 
-impl Loggable for Player {
-    fn ip(&self) -> IpAddr {
-        self._addr
-    }
-
-    fn id(&self) -> Option<i32> {
-        Some(self.account.id)
-    }
-}
-
 impl PartialEq for Player {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id

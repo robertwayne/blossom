@@ -9,11 +9,12 @@ use tokio_util::codec::Framed;
 
 use crate::{
     auth::authenticate,
+    blossom_log,
     connection::{Connection, RawStream},
     error::Result,
     event::{ClientEvent, Event, GameEvent},
     input::Input,
-    logging::{Action, Kind},
+    logging::{Action, Kind, Loggable},
     response::Response,
     server::StreamType,
 };
@@ -128,8 +129,7 @@ pub async fn connection_loop(
                         continue;
                     }
 
-                    let action = Action::with_detail(Kind::Message, msg.clone(), &conn);
-                    let _ = tx_logger.send(action);
+                    blossom_log!(Kind::Message, msg.clone(), &conn);
 
                     tx_broker.send(Event::Client(id, ClientEvent::Command(Input::from(msg))))?;
                 },
@@ -141,8 +141,7 @@ pub async fn connection_loop(
         }
     }
 
-    let action = Action::new(Kind::Leave, &conn);
-    let _ = conn.tx_logger.send(action);
+    blossom_log!(Kind::Leave, &conn);
 
     tx_broker.send(Event::Client(id, ClientEvent::Disconnect))?;
     conn.send_message("\nGoodbye!\n").await?;

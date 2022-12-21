@@ -1,8 +1,20 @@
 use std::net::IpAddr;
 
-use flume::Receiver;
+use flume::{Receiver, Sender};
 use sqlx::{types::ipnetwork::IpNetwork, PgPool, Postgres, QueryBuilder};
 use std::sync::Arc;
+
+#[macro_export]
+macro_rules! blossom_log {
+    ($kind:expr, $target:expr) => {{
+        let action = Action::new($kind, $target);
+        let _ = $target.get_logger().send(action);
+    }};
+    ($kind:expr, $detail:expr, $target:expr) => {{
+        let action = Action::with_detail($kind, $detail, $target);
+        let _ = $target.get_logger().send(action);
+    }};
+}
 
 pub type LoggerHandle = Arc<Logger>;
 
@@ -17,6 +29,7 @@ pub type LoggerHandle = Arc<Logger>;
 pub trait Loggable {
     fn ip(&self) -> IpAddr;
     fn id(&self) -> Option<i32>;
+    fn get_logger(&self) -> Sender<Action>;
 }
 
 /// Represents a logger containing a channel for receiving `Action` events.
