@@ -4,6 +4,8 @@ use flume::{Receiver, Sender};
 use sqlx::{types::ipnetwork::IpNetwork, PgPool, Postgres, QueryBuilder};
 use std::sync::Arc;
 
+const POSTGRES_BIND_LIMIT: usize = 65535;
+
 #[macro_export]
 macro_rules! blossom_log {
     ($kind:expr, $target:expr) => {{
@@ -77,8 +79,10 @@ impl Logger {
             "INSERT INTO action_logs (account_id, ip_address, kind, detail, created_on)",
         );
 
-        let queue = queue.drain(..);
-        query_builder.push_values(queue.take(65535 / 5), |mut b, action| {
+        // It's unlikely, but we need to make sure we never have more than the
+        // postgres bind limit / struct fields in a single query.
+        let queue = queue.drain(..POSTGRES_BIND_LIMIT / 5);
+        query_builder.push_values(queue, |mut b, action| {
             b.push_bind(action.id)
                 .push_bind(action.addr)
                 .push_bind(action.kind.to_string())
