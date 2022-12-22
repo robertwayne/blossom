@@ -25,7 +25,7 @@ time. Be warned that the database may be reset at any time.
 
 Connecting via Telnet: `telnet blossom.sombia.com 5080`
 
-*In order to connect to the secure port, you must use a MUD client which support
+*In order to connect to the secure port, you must use a MUD client which supports
 TLS encryption. I recommend [Mudlet](https://www.mudlet.org/) for a
 cross-platform option!*
 
