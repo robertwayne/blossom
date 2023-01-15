@@ -2,7 +2,7 @@ use crate::player::PlayerId;
 
 /// Represents the result of a command entered by the player. A `ClientOnly`
 /// response will be displayed to that connection only. A Broadcast takes a
-///  channel and a message to broadcast to that channel. A Private takes a
+/// channel and a message to broadcast to that channel. A Private takes a
 /// player name and a message to send to that player.
 #[derive(Clone, Debug)]
 pub enum Response {
