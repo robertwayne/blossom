@@ -81,7 +81,9 @@ impl Logger {
 
         // It's unlikely, but we need to make sure we never have more than the
         // postgres bind limit / struct fields in a single query.
-        let queue = queue.drain(..POSTGRES_BIND_LIMIT / 5);
+        let limit = POSTGRES_BIND_LIMIT / 5;
+        let queue = if queue.len() > limit { queue.drain(..limit) } else { queue.drain(..) };
+
         query_builder.push_values(queue, |mut b, action| {
             b.push_bind(action.id)
                 .push_bind(action.addr)
