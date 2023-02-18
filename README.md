@@ -10,53 +10,36 @@
 
 -----
 
-Blossom is an opinionated MUD game engine written in Rust.
+Blossom is a MUD (Multi-User Dungeon) game engine written in Rust.
 
-This is still a VERY early work-in-progress and there will be sweeping,
-breaking changes constantly as I refine the architecture and API. If you
-actually want to build a MUD, you'd be best off using an existing codebase. Any
-of the old C-bases, Evennia *(Python)*, or Ranvier *(JavaScript)* are excellent
-options.
+This is still an early work-in-progress and there will be sweeping, breaking
+changes often as I refine the architecture and API. If you actually want to
+build a MUD, you'd be best off using an existing codebase. Any of the old
+C-bases, Evennia *(Python)*, or Ranvier *(JavaScript)* are excellent options.
 
 ## Live Game
 
 The test server listed at the top of the README should be online most of the
-time. Be warned that the database may be reset at any time.
+timem, though the database may be reset at any time.
 
 Connecting via Telnet: `telnet blossom.sombia.com 5080`
 
-*In order to connect to the secure port, you must use a MUD client which supports
-TLS encryption. I recommend [Mudlet](https://www.mudlet.org/) for a
+*In order to connect to the secure port, you must use a MUD client which
+supports TLS encryption. I recommend [Mudlet](https://www.mudlet.org/) for a
 cross-platform option!*
-
-## Usage
-
-```rs
-// main.rs
-use blossom::prelude::*;
-
-fn main() -> Result<(), Box dyn std::error::Error>> {
-    let server = Server::new();
-    let world = World::new();
-
-    server.listen(world)?;
-
-    Ok(())
-}
-```
 
 ## Contributing
 
 Prerequesites:
 
-- Rust Nightly 1.68
-- PostgreSQL 14
+- Rust Nightly 1.69
+- PostgreSQL 15
 
 In addition, these are recommended, **optional** dev dependencies:
 
 - Python 3.10 *(tooling)*
 - SQLx CLI *(migrations)*
-- Node 19 *(dashboard / content creation tools / web client)*
+- NodeJS 19 *(dashboard / content creation tools / web client)*
 
 Instructions to build:
 
