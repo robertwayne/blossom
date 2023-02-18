@@ -21,7 +21,6 @@ where
     let walker = globwalk::GlobWalkerBuilder::from_patterns(root, &[pattern])
         .max_depth(5)
         .build()?
-        .into_iter()
         .filter_map(Result::ok);
 
     for item in walker {
