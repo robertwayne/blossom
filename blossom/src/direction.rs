@@ -21,7 +21,10 @@ impl From<String> for Direction {
             "west" | "w" => Direction::West,
             "up" | "u" => Direction::Up,
             "down" | "d" => Direction::Down,
-            _ => unreachable!(),
+            _ => {
+                tracing::warn!("Invalid string parsed as direction: {}", direction);
+                Direction::North
+            }
         }
     }
 }
