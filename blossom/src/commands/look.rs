@@ -10,9 +10,9 @@ pub struct Look;
 impl GameCommand for Look {
     fn create() -> Command {
         Command {
-            name: "look".to_string(),
-            description: "Lists all online players in the game.".to_string(),
-            aliases: Vec::from(["l".to_string()]),
+            name: "look",
+            description: "Lists all online players in the game.",
+            aliases: Vec::from(["l"]),
             ..Default::default()
         }
     }

@@ -90,10 +90,8 @@ async fn login(name: &str, password: &str, addr: IpAddr, pg: &PgPool) -> Result<
     let argon = Argon2::default();
     let hash = PasswordHash::new(&record.password_hash)?;
 
-    if argon.verify_password(password.as_bytes(), &hash).is_ok() {
-        tracing::trace!("Verified password.");
-
-        Ok(Player {
+    match argon.verify_password(password.as_bytes(), &hash) {
+        Ok(_) => Ok(Player {
             _entityid: EntityId::empty(),
             _addr: addr,
             id: record.id,
@@ -115,9 +113,8 @@ async fn login(name: &str, password: &str, addr: IpAddr, pg: &PgPool) -> Result<
             afk: record.afk,
             dirty: false,
             seen: true,
-        })
-    } else {
-        Err(Error { kind: ErrorType::Authentication, message: "Invalid credentials".to_string() })
+        }),
+        Err(_) => Err(Error::new(ErrorType::Authentication, "Invalid credentials")),
     }
 }
 

@@ -12,8 +12,8 @@ pub struct PlayerInfo;
 impl GameCommand for PlayerInfo {
     fn create() -> Command {
         Command {
-            name: "@player".to_string(),
-            description: "Information about a player.".to_string(),
+            name: "@player",
+            description: "Information about a player.",
             ..Default::default()
         }
     }

@@ -29,9 +29,9 @@ pub struct Help;
 impl GameCommand for Help {
     fn create() -> Command {
         Command {
-            name: "help".to_string(),
-            description: "Shows this help menu.".to_string(),
-            aliases: vec!["?".to_string()],
+            name: "help",
+            description: "Shows this help menu.",
+            aliases: vec!["?"],
             ..Default::default()
         }
     }

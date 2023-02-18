@@ -12,8 +12,8 @@ pub struct WorldInfo;
 impl GameCommand for WorldInfo {
     fn create() -> Command {
         Command {
-            name: "@world".to_string(),
-            description: "Information about the world state.".to_string(),
+            name: "@world",
+            description: "Information about the world state.",
             ..Default::default()
         }
     }

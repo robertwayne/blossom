@@ -10,9 +10,9 @@ pub struct Say;
 impl GameCommand for Say {
     fn create() -> Command {
         Command {
-            name: "say".to_string(),
-            description: "Sends a message to all players in the game.".to_string(),
-            aliases: Vec::from([",".to_string()]),
+            name: "say",
+            description: "Sends a message to all players in the game.",
+            aliases: Vec::from([","]),
             ..Default::default()
         }
     }

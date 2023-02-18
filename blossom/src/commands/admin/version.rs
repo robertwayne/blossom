@@ -14,8 +14,8 @@ pub struct Version;
 impl GameCommand for Version {
     fn create() -> Command {
         Command {
-            name: "@version".to_string(),
-            description: "Shows the internal version the game is running on.".to_string(),
+            name: "@version",
+            description: "Shows the internal version the game is running on.",
             permissions: vec![Role::Admin],
             ..Default::default()
         }

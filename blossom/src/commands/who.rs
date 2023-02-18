@@ -10,8 +10,8 @@ pub struct Who;
 impl GameCommand for Who {
     fn create() -> Command {
         Command {
-            name: "who".to_string(),
-            description: "Lists all online players in the game.".to_string(),
+            name: "who",
+            description: "Lists all online players in the game.",
             ..Default::default()
         }
     }

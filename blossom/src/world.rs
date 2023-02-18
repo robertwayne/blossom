@@ -410,7 +410,7 @@ mod tests {
     #[test]
     fn add_command() {
         let mut world = World::new();
-        let command = Command::new("test".to_string());
+        let command = Command::new("test");
         let func = |_: Context| -> Result<Response> { Ok(Response::Empty) };
 
         world.add_command(command, func);

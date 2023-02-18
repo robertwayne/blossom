@@ -13,21 +13,9 @@ pub struct Walk;
 impl GameCommand for Walk {
     fn create() -> Command {
         Command {
-            name: "north".to_string(),
-            description: "Moves you in the specified direction.".to_string(),
-            aliases: vec![
-                "south".to_string(),
-                "east".to_string(),
-                "west".to_string(),
-                "up".to_string(),
-                "down".to_string(),
-                "n".to_string(),
-                "s".to_string(),
-                "e".to_string(),
-                "w".to_string(),
-                "u".to_string(),
-                "d".to_string(),
-            ],
+            name: "north",
+            description: "Moves you in the specified direction.",
+            aliases: vec!["south", "east", "west", "up", "down", "n", "s", "e", "w", "u", "d"],
             ..Default::default()
         }
     }

@@ -10,8 +10,8 @@ pub struct Brief;
 impl GameCommand for Brief {
     fn create() -> Command {
         Command {
-            name: "brief".to_string(),
-            description: "Lists all online players in the game.".to_string(),
+            name: "brief",
+            description: "Lists all online players in the game.",
             ..Default::default()
         }
     }

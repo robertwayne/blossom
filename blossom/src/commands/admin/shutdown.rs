@@ -14,8 +14,8 @@ pub struct Shutdown;
 impl GameCommand for Shutdown {
     fn create() -> Command {
         Command {
-            name: "@shutdown".to_string(),
-            description: "Shuts down the game after a 30 second countdown.".to_string(),
+            name: "@shutdown",
+            description: "Shuts down the game after a 30 second countdown.",
             ..Default::default()
         }
     }

@@ -28,8 +28,8 @@ pub struct AdminHelp;
 impl GameCommand for AdminHelp {
     fn create() -> Command {
         Command {
-            name: "@help".to_string(),
-            description: "Shows the admin help menu.".to_string(),
+            name: "@help",
+            description: "Shows the admin help menu.",
             permissions: vec![Role::Admin],
             ..Default::default()
         }

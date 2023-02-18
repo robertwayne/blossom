@@ -10,9 +10,9 @@ pub struct Quit;
 impl GameCommand for Quit {
     fn create() -> Command {
         Command {
-            name: "quit".to_string(),
-            description: "Quits the game.".to_string(),
-            aliases: vec!["logout".to_string(), "exit".to_string()],
+            name: "quit",
+            description: "Quits the game.",
+            aliases: vec!["logout", "exit"],
             ..Default::default()
         }
     }

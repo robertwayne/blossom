@@ -13,8 +13,8 @@ pub struct SystemsControl;
 impl GameCommand for SystemsControl {
     fn create() -> Command {
         Command {
-            name: "@systems".to_string(),
-            description: "Information about game systems.".to_string(),
+            name: "@systems",
+            description: "Information about game systems.",
             ..Default::default()
         }
     }

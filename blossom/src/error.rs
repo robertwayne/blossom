@@ -22,6 +22,12 @@ pub struct Error {
     pub message: String,
 }
 
+impl Error {
+    pub fn new(kind: ErrorType, message: &str) -> Self {
+        Self { kind, message: message.to_string() }
+    }
+}
+
 impl std::error::Error for Error {}
 
 impl std::fmt::Display for Error {

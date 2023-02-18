@@ -13,9 +13,9 @@ pub struct GlobalChat;
 impl GameCommand for GlobalChat {
     fn create() -> Command {
         Command {
-            name: "global".to_string(),
-            description: "Sends a message to all players in the game.".to_string(),
-            aliases: vec!["ooc".to_string()],
+            name: "global",
+            description: "Sends a message to all players in the game.",
+            aliases: vec!["ooc"],
             ..Default::default()
         }
     }

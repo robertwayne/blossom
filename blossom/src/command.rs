@@ -20,15 +20,15 @@ pub struct CommandHandle {
 /// should ALWAYS return a meaningful Response to the player.
 #[derive(Debug, Default)]
 pub struct Command {
-    pub name: String,
-    pub arguments: Vec<String>,
-    pub description: String,
-    pub aliases: Vec<String>,
+    pub name: &'static str,
+    pub arguments: Vec<&'static str>,
+    pub description: &'static str,
+    pub aliases: Vec<&'static str>,
     pub permissions: Vec<Role>,
 }
 
 impl Command {
-    pub fn new(name: String) -> Self {
+    pub fn new(name: &'static str) -> Self {
         Self { name, ..Default::default() }
     }
 }
