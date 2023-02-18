@@ -23,12 +23,15 @@ where
                 let body = boxed(Full::from(content.data));
                 let mime = mime_guess::from_path(path).first_or_octet_stream();
 
-                Response::builder().header(header::CONTENT_TYPE, mime.as_ref()).body(body).unwrap()
+                let Ok(response) = Response::builder()
+                    .header(header::CONTENT_TYPE, mime.as_ref())
+                    .body(body) else {
+                    return StatusCode::INTERNAL_SERVER_ERROR.into_response();
+                    };
+
+                response
             }
-            None => Response::builder()
-                .status(StatusCode::NOT_FOUND)
-                .body(boxed(Full::from("404")))
-                .unwrap(),
+            None => StatusCode::NOT_FOUND.into_response(),
         }
     }
 }
