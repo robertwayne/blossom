@@ -12,6 +12,7 @@ impl GameCommand for Quit {
         Command {
             name: "quit".to_string(),
             description: "Quits the game.".to_string(),
+            aliases: vec!["logout".to_string(), "exit".to_string()],
             ..Default::default()
         }
     }

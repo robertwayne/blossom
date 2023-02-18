@@ -19,7 +19,7 @@ Commands:
     who                     - list all online players
     afk                     - toggle AFK mode
     brief                   - toggle brief mode
-    quit, logout            - quit the game
+    exit, logout, quit      - quit the game
 
 ================================================================================
 "#;
