@@ -1,4 +1,6 @@
 #![forbid(unsafe_code)]
+#![forbid(clippy::unwrap_unused)]
+#![forbid(clippy::indexing_slicing)]
 
 pub mod account;
 pub mod auth;
