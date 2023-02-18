@@ -16,7 +16,6 @@ pub fn capitalize(s: &str) -> String {
 /// version, and if it is, drops it silently.
 pub fn is_http(message: &str) -> bool {
     zip(HTTP_METHODS, INVALID_HTTP_VERSIONS)
-        .into_iter()
         .any(|(method, version)| message.starts_with(method) || message.ends_with(version))
 }
 

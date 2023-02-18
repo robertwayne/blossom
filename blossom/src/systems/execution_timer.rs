@@ -59,8 +59,10 @@ impl ExecutionTimer {
     }
 
     pub fn update(&mut self, start: Instant) {
-        self.times[self.count as usize] = start.elapsed().as_nanos();
-        self.count = (self.count + 1) % 100;
+        if let Some(time) = self.times.get_mut(self.count as usize) {
+            *time = start.elapsed().as_nanos();
+            self.count = (self.count + 1) % 100;
+        }
 
         if self.count == 1 {
             tracing::debug!("Average Execution Time: {}", self.average());
