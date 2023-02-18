@@ -148,11 +148,15 @@ impl World {
                     let result = match self.command_map.get(&tokens.command) {
                         Some(i) => {
                             let mut commands = std::mem::take(&mut self.commands);
-                            let func = &mut commands[*i].func;
-                            let result = (func)(Context::new(id, tokens, self));
-                            self.commands = commands;
 
-                            result
+                            if let Some(c) = commands.get_mut(*i) {
+                                let result = (c.func)(Context::new(id, tokens, self));
+
+                                self.commands = commands;
+                                result
+                            } else {
+                                World::unknown(id)
+                            }
                         }
                         None => World::unknown(id),
                     };
