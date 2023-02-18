@@ -36,7 +36,9 @@ impl ExecutionTimer {
         let mut sum = 0;
 
         for i in 0..self.times.len() {
-            sum += self.times[i];
+            if let Some(time) = self.times.get(i) {
+                sum += *time;
+            }
         }
 
         sum / self.times.len() as u128
