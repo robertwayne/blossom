@@ -103,7 +103,7 @@ async fn login(name: &str, password: &str, addr: IpAddr, pg: &PgPool) -> Result<
                 roles: Role::list(&record.roles),
             },
             name: record.name.to_string(),
-            position: Vec3::from(record.position),
+            position: Vec3::from(record.position.as_slice()),
             health: record.health,
             max_health: record.max_health,
             mana: record.mana,

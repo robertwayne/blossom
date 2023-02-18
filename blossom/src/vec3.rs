@@ -27,9 +27,13 @@ impl Vec3 {
     }
 }
 
-impl From<Vec<i32>> for Vec3 {
-    fn from(data: Vec<i32>) -> Self {
-        Self { x: data[0], y: data[1], z: data[2] }
+impl From<&[i32]> for Vec3 {
+    fn from(data: &[i32]) -> Self {
+        Self {
+            x: data.first().copied().unwrap_or_default(),
+            y: data.get(1).copied().unwrap_or_default(),
+            z: data.get(2).copied().unwrap_or_default(),
+        }
     }
 }
 
