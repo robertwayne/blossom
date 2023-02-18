@@ -20,7 +20,7 @@ C-bases, Evennia *(Python)*, or Ranvier *(JavaScript)* are excellent options.
 ## Live Game
 
 The test server listed at the top of the README should be online most of the
-timem, though the database may be reset at any time.
+time, though the database may be reset at any time.
 
 Connecting via Telnet: `telnet blossom.sombia.com 5080`
 
