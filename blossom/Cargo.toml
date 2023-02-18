@@ -6,7 +6,7 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "An opinionated MUD game engine written in Rust."
 homepage = "https://robertwayne.github.io/blossom"
-repository = "https://github.com/robertwayne/blossom/crates/blossom_core"
+repository = "https://github.com/robertwayne/blossom/"
 categories = ["game-engines", "game-development"]
 keywords = ["blossom", "mud"]
 
@@ -56,7 +56,7 @@ tokio = { version = "1", default-features = false, features = [
 ] }
 tokio-tungstenite = "0.18"
 tokio-util = { version = "0.7", default-features = false, features = ["codec"] }
-toml = "0.5"
+toml = "0.7"
 tower = { version = "0.4", features = ["util"] }
 tower-http = { version = "0.3", features = ["fs", "trace"] }
 tracing = "0.1"
