@@ -1,4 +1,4 @@
-create table if not exists accounts
+create table if not exists blossom.accounts
 (
     id                 serial primary key unique                not null,
     email              text,
@@ -11,7 +11,7 @@ create table if not exists accounts
     deleted            boolean       default false              not null
 );
 
-create table if not exists players
+create table if not exists blossom.players
 (
     id          serial primary key unique not null,
     account_id  int                       not null,
@@ -35,7 +35,7 @@ create table if not exists players
     deleted     boolean     default false not null
 );
 
-create table if not exists tickets
+create table if not exists blossom.tickets
 (
     id          serial primary key unique not null,
     author      varchar(16)               not null,
@@ -50,7 +50,7 @@ create table if not exists tickets
     deleted     boolean     default false not null
 );
 
-create table if not exists action_logs
+create table if not exists blossom.action_logs
 (
     action_log_id  serial primary key,
     account_id     int references accounts (id),
@@ -68,7 +68,7 @@ $$ begin
         return new;
 end; $$ language plpgsql;
 
-drop trigger if exists on_update_account ON "public"."accounts";
+drop trigger if exists on_update_account ON "blossom"."accounts";
 
 create trigger on_modify_account
     before insert or update
@@ -76,7 +76,7 @@ create trigger on_modify_account
     for each row
 execute procedure update_modified_on();
 
-drop trigger if exists on_update_account ON "public"."players";
+drop trigger if exists on_update_account ON "blossom"."players";
 
 create trigger on_modify_account
     before insert or update
@@ -84,7 +84,7 @@ create trigger on_modify_account
     for each row
 execute procedure update_modified_on();
 
-drop trigger if exists on_update_account ON "public"."tickets";
+drop trigger if exists on_update_account ON "blossom"."tickets";
 
 create trigger on_modify_account
     before insert or update
