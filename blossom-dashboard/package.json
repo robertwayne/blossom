@@ -9,24 +9,25 @@
     "scripts": {
         "build": "node build.js",
         "watch": "nodemon build.js -e js,ts,css,html",
-        "fmt": "prettier --write ../**/*.{ts,html,css,json} --config .prettierrc",
-        "lint": "eslint src/**/*.ts",
-        "lint:fix": "eslint --fix --fix-type problem,suggestion src/**/*.ts",
+        "fmt": "prettier --write --plugin-search-dir=. \"**/*.{ts,html,css,cjs,json,tsx}\"",
+        "lint": "eslint \"src/**/*.{ts,tsx}\"",
+        "lint:fix": "eslint --fix --fix-type problem,suggestion \"**/*.{ts,tsx}\"",
         "tsc": "tsc --noEmit",
-        "tsc:watch": "tsc --noEmit --watch"
+        "tsc:watch": "tsc --noEmit --watch",
+        "check": "npm run tsc && npm run lint:fix && npm run fmt"
     },
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^5.48.1",
-        "@typescript-eslint/parser": "^5.48.1",
+        "@typescript-eslint/eslint-plugin": "^5.52.0",
+        "@typescript-eslint/parser": "^5.52.0",
         "autoprefixer": "^10.4.13",
-        "cssnano": "^5.1.14",
+        "cssnano": "^5.1.15",
         "dotenv": "^16.0.3",
-        "esbuild": "^0.17.0",
-        "eslint": "^8.31.0",
+        "esbuild": "^0.17.8",
+        "eslint": "^8.34.0",
         "nodemon": "^2.0.20",
         "postcss": "^8.4.21",
-        "prettier": "^2.8.3",
-        "typescript": "^4.9.4",
+        "prettier": "^2.8.4",
+        "typescript": "^4.9.5",
         "postcss-load-config": "^4.0.1"
     }
 }

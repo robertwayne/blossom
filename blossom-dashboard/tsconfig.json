@@ -3,7 +3,7 @@
         "target": "esnext",
         "module": "esnext",
         "moduleResolution": "node",
-        "lib": ["esnext", "DOM"],
+        "lib": ["ESNext", "DOM", "Dom.Iterable"],
         "rootDir": "src",
         "outDir": "dist",
         "strict": true,
