@@ -71,11 +71,19 @@ where
     }
 
     pub fn get(&self, key: &T) -> Option<&U> {
-        self.map.get(key).map(|index| &self.array[*index])
+        if let Some(key) = self.map.get(key) {
+            self.array.get(*key)
+        } else {
+            None
+        }
     }
 
     pub fn get_mut(&mut self, key: &T) -> Option<&mut U> {
-        self.map.get(key).map(|index| &mut self.array[*index])
+        if let Some(key) = self.map.get(key) {
+            self.array.get_mut(*key)
+        } else {
+            None
+        }
     }
 
     pub fn get_by_id(&self, id: EntityId) -> Option<&U> {

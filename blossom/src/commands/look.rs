@@ -27,9 +27,9 @@ impl GameCommand for Look {
             let index = ctx.input.fuzzy_match(&monsters[..]);
 
             if let Some(index) = index {
-                let monster = &monsters[index];
-
-                return Ok(Response::Client(format!("{monster}")));
+                if let Some(monster) = monsters.get(index) {
+                    return Ok(Response::Client(format!("{monster}")));
+                }
             }
 
             return Ok(Response::Client("Monster not found.".to_string()));

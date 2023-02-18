@@ -45,16 +45,7 @@ impl Input {
         });
 
         match self.args.get(0) {
-            Some(arg) => {
-                let results = engine.search(arg);
-
-                if results.is_empty() {
-                    return None;
-                }
-
-                // return index of the most relevant match
-                Some(results[0])
-            }
+            Some(arg) => engine.search(arg).first().copied(),
             None => None,
         }
     }
@@ -63,9 +54,14 @@ impl Input {
 impl From<String> for Input {
     fn from(message: String) -> Self {
         let tokens = message.split_whitespace().collect::<Vec<_>>();
+
+        let (Some(command), Some(args)) = (tokens.first(), tokens.get(1..)) else {
+            return Input::default();
+        };
+
         Input {
-            command: tokens[0].to_string(),
-            args: tokens[1..].iter().map(std::string::ToString::to_string).collect(),
+            command: command.to_string(),
+            args: args.iter().map(std::string::ToString::to_string).collect(),
         }
     }
 }
