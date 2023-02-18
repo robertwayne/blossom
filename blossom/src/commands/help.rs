@@ -37,6 +37,6 @@ impl GameCommand for Help {
     }
 
     fn run(_ctx: Context) -> Result<Response> {
-        Ok(Response::Client(HELP_TEXT.to_string()))
+        Ok(Response::client_message(HELP_TEXT))
     }
 }

@@ -41,6 +41,6 @@ impl GameCommand for AdminHelp {
             return World::unknown(player.id);
         }
 
-        Ok(Response::Client(HELP_TEXT.to_string()))
+        Ok(Response::client_message(HELP_TEXT))
     }
 }

@@ -34,3 +34,17 @@ impl std::fmt::Display for Response {
         }
     }
 }
+
+impl Response {
+    /// Utility function for creating a `Response::Client` variant with less
+    /// boilerplate.
+    pub fn client_message(s: impl Into<String>) -> Self {
+        Self::Client(s.into())
+    }
+
+    /// Utility function for creating a `Response::Channel` variant with less
+    /// boilerplate.
+    pub fn channel_message(players: Vec<PlayerId>, s: impl Into<String>) -> Self {
+        Self::Channel(players, s.into())
+    }
+}

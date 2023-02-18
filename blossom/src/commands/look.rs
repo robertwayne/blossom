@@ -28,11 +28,11 @@ impl GameCommand for Look {
 
             if let Some(index) = index {
                 if let Some(monster) = monsters.get(index) {
-                    return Ok(Response::Client(format!("{monster}")));
+                    return Ok(Response::client_message(format!("{monster}")));
                 }
             }
 
-            return Ok(Response::Client("Monster not found.".to_string()));
+            return Ok(Response::client_message("Monster not found."));
         }
 
         let view = ctx
@@ -43,9 +43,9 @@ impl GameCommand for Look {
             .map(|r| r.view(player.id, ctx.world));
 
         if let Some(view) = view {
-            Ok(Response::Client(view))
+            Ok(Response::client_message(view))
         } else {
-            Ok(Response::Client("You are lost in the void. There is nowhere to go.".to_string()))
+            Ok(Response::client_message("You are lost in the void. There is nowhere to go."))
         }
     }
 }

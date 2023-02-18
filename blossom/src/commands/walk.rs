@@ -22,14 +22,22 @@ impl GameCommand for Walk {
 
     fn run(ctx: Context) -> Result<Response> {
         let direction = Direction::from(ctx.input.command);
-        let player = ctx.world.get_player(ctx.id)?;
-        let current_room = ctx.world.rooms.iter().find(|r| r.position == player.position);
 
-        if let Some(current_room) = current_room {
+        // We get the player's name, id and position so we can use them later.
+        // We do this inside a tight scope so we can borrow the world
+        // immediately after.
+        let (player_name, player_id, player_position) = {
+            let player = ctx.world.get_player(ctx.id)?;
+            (player.name.clone(), player.id, player.position)
+        };
+
+        if let Some(room) = ctx.world.rooms.iter().find(|r| r.position == player_position) {
             // If the current room cannot be exited in the given direction, we
             // just break early and let the player know.
-            if !current_room.exits.contains(&direction) {
-                return Ok(Response::Client(format!("You can't go {direction} from here.")));
+            if !room.exits.contains(&direction) {
+                return Ok(Response::client_message(format!(
+                    "You can't go {direction} from here."
+                )));
             }
 
             // We get all the players in the current room and broadcast a
@@ -38,7 +46,7 @@ impl GameCommand for Walk {
                 .world
                 .players
                 .iter()
-                .filter(|p| p.position == player.position && p.id != player.id)
+                .filter(|p| p.position == player_position && p.id != player_id)
                 .map(|p| p.id)
                 .collect();
 
@@ -52,64 +60,59 @@ impl GameCommand for Walk {
                 };
 
             ctx.world.send_event(
-                player.id,
+                player_id,
                 GameEvent::Command(Response::Channel(
                     players_here,
-                    format!("{} leaves {formatted_direction}.", player.name),
+                    format!("{} leaves {formatted_direction}.", player_name),
                 )),
             );
 
-            let new_position = Vec3::from(direction) + player.position;
+            let new_position = Vec3::from(direction) + player_position;
 
             // We get all the players in the new room and broadcast a 'entering'
             // message to them.
-            let players_there = ctx
+            let players_in_next_room = ctx
                 .world
                 .players
                 .iter()
-                .filter(|p| p.position == new_position && p.id != player.id)
+                .filter(|p| p.position == new_position && p.id != player_id)
                 .map(|p| p.id)
                 .collect();
 
             // Modify the message based on the direction the player is moving;
             // similarly to above, we adjust 'up' and 'down' to use 'climbs'
             // instead of 'walks' for a natural sounding message.
-            let broadcast_message: String = match direction {
-                Direction::Up => format!("{} climbs up from below.", player.name),
-                Direction::Down => format!("{} climbs down from above.", player.name),
-                _ => format!("{} walks {}.", player.name, formatted_direction),
+            let broadcast_message = match direction {
+                Direction::Up => format!("{} climbs up from below.", player_name),
+                Direction::Down => format!("{} climbs down from above.", player_name),
+                _ => format!("{} walks {}.", player_name, formatted_direction),
             };
 
-            ctx.world.send_command(ctx.id, Response::Channel(players_there, broadcast_message));
+            ctx.world
+                .send_command(ctx.id, Response::Channel(players_in_next_room, broadcast_message));
 
-            // We have to get a new mutable reference to the player here because
-            // we're mutating this time, and we can't start with a mutable
-            // reference as it is immutably borrowed many times throughout the
-            // rest of the function.
+            // We have to get a new mutable reference to the player here, as we
+            // only needed an immutable reference in the beginning, which
+            // couldn't be held while we were borrowing the world mutably.
             //
-            // We know the player exists as we did get a reference to it in the
-            // first place.
-            let player = ctx
-                .world
-                .players
-                .iter_mut()
-                .find(|p| p.id == ctx.id)
-                .expect("This should never happen.");
-            player.position = new_position;
-            player.dirty = true;
+            // We need to rework the way the world works, probably with some
+            // serious interior mutability, to avoid this.
+            if let Some(player) = ctx.world.players.get_mut(&ctx.id) {
+                player.position = new_position;
+                player.dirty = true;
+            }
 
-            let room_view = ctx
+            if let Some(view) = ctx
                 .world
                 .rooms
                 .iter()
-                .find(|r| r.position == player.position)
-                .map(|r| r.view(ctx.id, ctx.world));
-
-            if let Some(view) = room_view {
-                return Ok(Response::Client(view));
+                .find(|r| r.position == player_position)
+                .map(|r| r.view(ctx.id, ctx.world))
+            {
+                return Ok(Response::client_message(view));
             }
         }
 
-        Ok(Response::Client("You are lost in the void. There is nowhere to go.".to_string()))
+        Ok(Response::client_message("You are lost in the void. There is nowhere to go."))
     }
 }

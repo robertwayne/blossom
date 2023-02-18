@@ -22,7 +22,7 @@ impl GameCommand for WorldInfo {
         let player = ctx.world.get_player(ctx.id)?;
 
         if player.account.roles.contains(&Role::Admin) {
-            Ok(Response::Client(format!("{}", ctx.world)))
+            Ok(Response::client_message(format!("{}", ctx.world)))
         } else {
             World::unknown(player.id)
         }

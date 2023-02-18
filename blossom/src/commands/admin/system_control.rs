@@ -35,15 +35,15 @@ impl GameCommand for SystemsControl {
                                 .set_status(command.as_str(), SystemStatus::Running);
 
                         if result {
-                             Ok(Response::Client(format!(
+                             Ok(Response::client_message(format!(
                                 "Starting system `{command}`.",
                             )))
-                         }else { Ok(Response::Client(format!(
+                         }else { Ok(Response::client_message(format!(
                                 "Could not find a system named `{command}`.",
                             )))
                         }
                         } else {
-                            Ok(Response::Client(format!("No system named {token}", )))
+                            Ok(Response::client_message(format!("No system named {token}", )))
                         }
                     }
                     "stop" => {
@@ -53,15 +53,15 @@ impl GameCommand for SystemsControl {
                                 .systems
                                 .set_status(command.as_str(), SystemStatus::Stopped);
 
-                            if result { Ok(Response::Client(format!(
+                            if result { Ok(Response::client_message(format!(
                                     "Stopping system `{command}`."
                                 )))
-                             } else { Ok(Response::Client(format!(
+                             } else { Ok(Response::client_message(format!(
                                     "Could not find a system named `{command}`."
                                 )))
                             }
                         } else {
-                            Ok(Response::Client(format!("No system named {token}")))
+                            Ok(Response::client_message(format!("No system named {token}")))
                         }
                     }
                     "pause" => {
@@ -71,22 +71,22 @@ impl GameCommand for SystemsControl {
                                 .systems
                                 .set_status(command.as_str(), SystemStatus::Paused);
 
-                            if result { Ok(Response::Client(format!(
+                            if result { Ok(Response::client_message(format!(
                                     "Pausing system `{command}`."
                                 )))
                             } else {
-                                Ok(Response::Client(format!(
+                                Ok(Response::client_message(format!(
                                     "Could not find a system named `{command}`."
                                 )))
                             }
                         } else {
-                            Ok(Response::Client(format!("No system named {token}")))
+                            Ok(Response::client_message(format!("No system named {token}")))
                         }
                     }
-                    "restart" => Ok(Response::Client("Not implemented.".to_string())),
-                    _ => Ok(Response::Client("Invalid system command. Options are ['start', 'stop', 'pause', 'restart'].".to_string())),
+                    "restart" => Ok(Response::client_message("Not implemented.")),
+                    _ => Ok(Response::client_message("Invalid system command. Options are ['start', 'stop', 'pause', 'restart'].")),
                 },
-                None => Ok(Response::Client("Various system control commands.".to_string())),
+                None => Ok(Response::client_message("Various system control commands.")),
             }
         } else {
             World::unknown(player.id)

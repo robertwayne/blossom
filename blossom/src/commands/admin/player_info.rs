@@ -25,14 +25,14 @@ impl GameCommand for PlayerInfo {
             match ctx.input.args.get(0) {
                 Some(name) => {
                     if let Some(target) = ctx.world.players.iter().find(|p| p.name == *name) {
-                        return Ok(Response::Client(format!("{target:#?}",)));
+                        return Ok(Response::client_message(format!("{target:#?}",)));
                     }
 
-                    Ok(Response::Client("Player not found.".to_string()))
+                    Ok(Response::client_message("Player not found."))
                 }
-                None => Ok(Response::Client(
-                    "View player information. Usage: @player <name>".to_string(),
-                )),
+                None => {
+                    Ok(Response::client_message("View player information. Usage: @player <name>"))
+                }
             }
         } else {
             World::unknown(player.id)

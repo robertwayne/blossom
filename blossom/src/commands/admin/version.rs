@@ -27,6 +27,6 @@ impl GameCommand for Version {
             return World::unknown(player.id);
         }
 
-        Ok(Response::Client(VERSION.to_string()))
+        Ok(Response::client_message(VERSION))
     }
 }

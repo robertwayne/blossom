@@ -22,7 +22,7 @@ impl GameCommand for Brief {
         player.brief = !player.brief;
         player.dirty = true;
 
-        Ok(Response::Client(format!(
+        Ok(Response::client_message(format!(
             "Brief mode is now {}.",
             if player.brief { "on" } else { "off" }
         )))
