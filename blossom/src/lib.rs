@@ -1,5 +1,5 @@
 #![forbid(unsafe_code)]
-#![forbid(clippy::unwrap_unused)]
+#![forbid(clippy::unwrap_used)]
 #![forbid(clippy::indexing_slicing)]
 
 pub mod account;
