@@ -6,6 +6,12 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <strong>Unsecure:</strong> blossom.sombia.com:5080
 </div>
+
+<br>
+
+<div align="center">
+    <img src="assets/example.png" alt="terminal screenshot showing off styled output">
+</div>
 <!-- markdownlint-enable -->
 
 -----
