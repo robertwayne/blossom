@@ -1,7 +1,7 @@
 # 🌸 Blossom
 
 <!-- markdownlint-disable -->
-<div>
+<div align="center">
   <strong>Secure:</strong> blossom.sombia.com:5443
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <strong>Unsecure:</strong> blossom.sombia.com:5080
