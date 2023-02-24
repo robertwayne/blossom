@@ -63,7 +63,7 @@ impl GameCommand for Walk {
                 player_id,
                 GameEvent::Command(Response::Channel(
                     players_here,
-                    format!("{} leaves {formatted_direction}.", player_name),
+                    format!("{} walks {formatted_direction}.", player_name),
                 )),
             );
 
@@ -85,7 +85,7 @@ impl GameCommand for Walk {
             let broadcast_message = match direction {
                 Direction::Up => format!("{} climbs up from below.", player_name),
                 Direction::Down => format!("{} climbs down from above.", player_name),
-                _ => format!("{} walks {}.", player_name, formatted_direction),
+                _ => format!("{} walks in from the {}.", player_name, formatted_direction),
             };
 
             ctx.world
