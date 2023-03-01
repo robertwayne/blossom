@@ -36,7 +36,13 @@ impl GameCommand for Shutdown {
             );
 
             let tx = ctx.world.broker.clone();
-            let players = ctx.world.players.iter().filter(|p| p.dirty).cloned().collect();
+            let players = ctx
+                .world
+                .players
+                .iter()
+                .filter(|p| p.dirty)
+                .cloned()
+                .collect();
 
             // can we return from a task?
             tokio::spawn(async move {

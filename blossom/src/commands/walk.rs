@@ -15,7 +15,9 @@ impl GameCommand for Walk {
         Command {
             name: "north",
             description: "Moves you in the specified direction.",
-            aliases: vec!["south", "east", "west", "up", "down", "n", "s", "e", "w", "u", "d"],
+            aliases: vec![
+                "south", "east", "west", "up", "down", "n", "s", "e", "w", "u", "d",
+            ],
             ..Default::default()
         }
     }
@@ -31,7 +33,12 @@ impl GameCommand for Walk {
             (player.name.clone(), player.id, player.position)
         };
 
-        if let Some(room) = ctx.world.rooms.iter().find(|r| r.position == player_position) {
+        if let Some(room) = ctx
+            .world
+            .rooms
+            .iter()
+            .find(|r| r.position == player_position)
+        {
             // If the current room cannot be exited in the given direction, we
             // just break early and let the player know.
             if !room.exits.contains(&direction) {
@@ -88,8 +95,10 @@ impl GameCommand for Walk {
                 _ => format!("{player_name} walks in from the {formatted_direction}."),
             };
 
-            ctx.world
-                .send_command(ctx.id, Response::Channel(players_in_next_room, broadcast_message));
+            ctx.world.send_command(
+                ctx.id,
+                Response::Channel(players_in_next_room, broadcast_message),
+            );
 
             // We have to get a new mutable reference to the player here, as we
             // only needed an immutable reference in the beginning, which
@@ -113,6 +122,8 @@ impl GameCommand for Walk {
             }
         }
 
-        Ok(Response::client_message("You are lost in the void. There is nowhere to go."))
+        Ok(Response::client_message(
+            "You are lost in the void. There is nowhere to go.",
+        ))
     }
 }

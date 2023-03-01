@@ -9,7 +9,10 @@ pub struct Spawner {
 
 impl Spawner {
     pub fn new(interval: u64) -> Self {
-        Self { interval, last_run: 0 }
+        Self {
+            interval,
+            last_run: 0,
+        }
     }
 }
 

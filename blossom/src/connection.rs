@@ -3,7 +3,6 @@ use std::net::{IpAddr, SocketAddr};
 use flume::Sender;
 use futures::{SinkExt, StreamExt};
 use nectar::{event::TelnetEvent, TelnetCodec};
-
 use tokio::net::TcpStream;
 use tokio_tungstenite::{tungstenite::Message, WebSocketStream};
 use tokio_util::codec::Framed;
@@ -33,7 +32,12 @@ pub struct Connection {
 
 impl Connection {
     pub fn new(addr: SocketAddr, stream: RawStream, tx_logger: Sender<Action>) -> Self {
-        Self { addr, stream, account_id: None, tx_logger }
+        Self {
+            addr,
+            stream,
+            account_id: None,
+            tx_logger,
+        }
     }
 
     pub fn ip(&self) -> IpAddr {
@@ -67,15 +71,19 @@ impl Connection {
             RawStream::Telnet(frame) => {
                 let event = TelnetEvent::Message(string.to_string());
 
-                frame
-                    .send(event)
-                    .await
-                    .map_err(|e| Error { kind: ErrorType::Internal, message: e.to_string() })
+                frame.send(event).await.map_err(|e| Error {
+                    kind: ErrorType::Internal,
+                    message: e.to_string(),
+                })
             }
-            RawStream::WebSocket(ws) => ws
-                .send(Message::Text(string.to_string()))
-                .await
-                .map_err(|e| Error { kind: ErrorType::Internal, message: e.to_string() }),
+            RawStream::WebSocket(ws) => {
+                ws.send(Message::Text(string.to_string()))
+                    .await
+                    .map_err(|e| Error {
+                        kind: ErrorType::Internal,
+                        message: e.to_string(),
+                    })
+            }
         }
     }
 
@@ -89,7 +97,10 @@ impl Connection {
                     Some(Ok(response)) => response,
                     Some(Err(e)) => {
                         tracing::error!(%e, "Error sending IAC");
-                        return Err(Error { kind: ErrorType::Internal, message: e.to_string() });
+                        return Err(Error {
+                            kind: ErrorType::Internal,
+                            message: e.to_string(),
+                        });
                     }
                     None => {
                         tracing::error!("No response from IAC");

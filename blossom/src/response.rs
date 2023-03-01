@@ -28,7 +28,11 @@ impl std::fmt::Display for Response {
             Response::Channel(players, s) => write!(
                 f,
                 "Channel {} {}",
-                players.iter().map(std::string::ToString::to_string).collect::<Vec<_>>().join(", "),
+                players
+                    .iter()
+                    .map(std::string::ToString::to_string)
+                    .collect::<Vec<_>>()
+                    .join(", "),
                 s
             ),
         }

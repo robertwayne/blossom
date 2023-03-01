@@ -40,7 +40,10 @@ where
     U: QuickMapKey<T> + Entity,
 {
     pub fn new() -> Self {
-        Self { array: Vec::new(), map: HashMap::new() }
+        Self {
+            array: Vec::new(),
+            map: HashMap::new(),
+        }
     }
 
     pub fn insert(&mut self, value: U) -> T {

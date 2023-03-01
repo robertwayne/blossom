@@ -29,7 +29,9 @@ async fn create(name: &str, password: &str, pg: &PgPool) -> Result<PartialPlayer
 
     let salt = SaltString::generate(&mut OsRng);
     let argon = Argon2::default();
-    let hash = argon.hash_password(password.as_bytes(), salt.as_ref())?.to_string();
+    let hash = argon
+        .hash_password(password.as_bytes(), salt.as_ref())?
+        .to_string();
 
     let is_first = is_first_account(pg).await?;
     let roles = if is_first { vec![Role::Admin] } else { vec![] };
@@ -57,7 +59,10 @@ async fn create(name: &str, password: &str, pg: &PgPool) -> Result<PartialPlayer
     .fetch_one(pg)
     .await?;
 
-    Ok(PartialPlayer::new(player_record.id, Account::new(account_record.id, roles)))
+    Ok(PartialPlayer::new(
+        player_record.id,
+        Account::new(account_record.id, roles),
+    ))
 }
 
 /// Attempts to log a player in by validating their password.
@@ -114,9 +119,12 @@ async fn login(name: &str, password: &str, addr: IpAddr, pg: &PgPool) -> Result<
 async fn name_exists(name: &str, pg: &PgPool) -> Result<bool> {
     let name = name.trim();
 
-    let record = sqlx::query!(r#"select exists (select 1 from players where name = $1)"#, name)
-        .fetch_one(pg)
-        .await;
+    let record = sqlx::query!(
+        r#"select exists (select 1 from players where name = $1)"#,
+        name
+    )
+    .fetch_one(pg)
+    .await;
 
     match record {
         Ok(record) => Ok(matches!(record.exists, Some(true))),
@@ -187,7 +195,9 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
         // Send some helpful information to the player.
         conn.send_message(&format!(
             "{} {} {} {} {}",
-            "You can view all the commands by typing".foreground(theme::YELLOW).bold(),
+            "You can view all the commands by typing"
+                .foreground(theme::YELLOW)
+                .bold(),
             "help".foreground(theme::BLUE).bold(),
             "or".foreground(theme::YELLOW).bold(),
             "?".foreground(theme::BLUE).bold(),
@@ -290,8 +300,11 @@ async fn get_password(conn: &mut Connection) -> Result<String> {
             let msg = msg.trim();
 
             if msg.is_empty() {
-                conn.send_message(&format!("{}", "Invalid credentials.".foreground(theme::RED)))
-                    .await?;
+                conn.send_message(&format!(
+                    "{}",
+                    "Invalid credentials.".foreground(theme::RED)
+                ))
+                .await?;
 
                 failure_count += 1;
                 continue;
@@ -334,7 +347,8 @@ async fn set_password(conn: &mut Connection) -> Result<String> {
     conn.send_iac(TelnetEvent::Will(TelnetOption::Echo)).await?;
 
     let password = loop {
-        conn.send_message("What will your password be? [`q` to quit]").await?;
+        conn.send_message("What will your password be? [`q` to quit]")
+            .await?;
 
         if let Some(msg) = conn.try_next().await {
             let msg = msg.trim();

@@ -77,20 +77,29 @@ impl Config {
 
     pub fn telnet_addr(&self) -> SocketAddr {
         SocketAddr::new(
-            self.game.telnet_host.parse().expect("Failed to parse telnet hostname"),
+            self.game
+                .telnet_host
+                .parse()
+                .expect("Failed to parse telnet hostname"),
             self.game.telnet_port,
         )
     }
 
     pub fn websocket_addr(&self) -> SocketAddr {
         SocketAddr::new(
-            self.game.websocket_host.parse().expect("Failed to parse websocket hostname"),
+            self.game
+                .websocket_host
+                .parse()
+                .expect("Failed to parse websocket hostname"),
             self.game.websocket_port,
         )
     }
 
     pub fn web_addr(&self) -> SocketAddr {
-        SocketAddr::new(self.web.host.parse().expect("Failed to parse web hostname"), self.web.port)
+        SocketAddr::new(
+            self.web.host.parse().expect("Failed to parse web hostname"),
+            self.web.port,
+        )
     }
 
     pub fn db_url(&self) -> String {
@@ -122,7 +131,11 @@ impl Default for GameSettings {
 
 impl Default for WebSettings {
     fn default() -> Self {
-        WebSettings { enabled: true, host: "127.0.0.1".to_string(), port: 8080 }
+        WebSettings {
+            enabled: true,
+            host: "127.0.0.1".to_string(),
+            port: 8080,
+        }
     }
 }
 
@@ -161,18 +174,27 @@ impl std::fmt::Display for ConfigError {
 
 impl From<std::io::Error> for ConfigError {
     fn from(err: std::io::Error) -> Self {
-        Self { kind: ConfigErrorType::Parse, message: err.to_string() }
+        Self {
+            kind: ConfigErrorType::Parse,
+            message: err.to_string(),
+        }
     }
 }
 
 impl From<toml::de::Error> for ConfigError {
     fn from(err: toml::de::Error) -> Self {
-        Self { kind: ConfigErrorType::Deserialize, message: err.to_string() }
+        Self {
+            kind: ConfigErrorType::Deserialize,
+            message: err.to_string(),
+        }
     }
 }
 
 impl From<toml::ser::Error> for ConfigError {
     fn from(err: toml::ser::Error) -> Self {
-        Self { kind: ConfigErrorType::Serialize, message: err.to_string() }
+        Self {
+            kind: ConfigErrorType::Serialize,
+            message: err.to_string(),
+        }
     }
 }

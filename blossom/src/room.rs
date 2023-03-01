@@ -116,7 +116,11 @@ impl Room {
             let names = if player_list.len() > 4 {
                 // If there are more than 4 players in the room, we only display
                 // the first 4 and then the count of how many others.
-                let first = player_list.get(..4).unwrap().join(", ");
+                let Some(first) = player_list.get(..4) else {
+                    return "This room has no description.".to_string();
+                };
+                let first = first.join(", ");
+
                 let remaining = player_list.len().saturating_sub(4);
 
                 if remaining == 1 {

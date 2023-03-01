@@ -105,7 +105,9 @@ impl Game {
         // Load all monster templates
         if let Ok(monsters) = get_game_objects::<MonsterTemplate>(&engine, "monsters") {
             for template in monsters {
-                world.monsters.insert_template(template.create_key(), template);
+                world
+                    .monsters
+                    .insert_template(template.create_key(), template);
             }
         }
 

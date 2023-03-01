@@ -77,7 +77,12 @@ pub async fn connection_loop(
 
     // Move the player off into the game thread
     tracing::trace!("{} authenticated: moving to game thread", player.name);
-    tx_broker.send_async(Event::Client(player.id, ClientEvent::Connect(player, Some(tx)))).await?;
+    tx_broker
+        .send_async(Event::Client(
+            player.id,
+            ClientEvent::Connect(player, Some(tx)),
+        ))
+        .await?;
 
     loop {
         tokio::select! {

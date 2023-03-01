@@ -39,12 +39,18 @@ impl std::fmt::Display for DatabaseError {
 
 impl From<ConfigError> for DatabaseError {
     fn from(err: ConfigError) -> Self {
-        Self { kind: DatabaseErrorType::Config, message: err.to_string() }
+        Self {
+            kind: DatabaseErrorType::Config,
+            message: err.to_string(),
+        }
     }
 }
 
 impl From<sqlx::Error> for DatabaseError {
     fn from(err: sqlx::Error) -> Self {
-        Self { kind: DatabaseErrorType::Connection, message: err.to_string() }
+        Self {
+            kind: DatabaseErrorType::Connection,
+            message: err.to_string(),
+        }
     }
 }

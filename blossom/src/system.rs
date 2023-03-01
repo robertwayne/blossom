@@ -48,7 +48,12 @@ pub struct SystemHandle {
 /// parent struct.
 impl SystemHandle {
     pub fn new(name: &'static str, inner: Box<dyn System>) -> Self {
-        Self { status: SystemStatus::Running, watch: WatchStatus::Automatic, name, inner }
+        Self {
+            status: SystemStatus::Running,
+            watch: WatchStatus::Automatic,
+            name,
+            inner,
+        }
     }
 }
 
@@ -75,7 +80,12 @@ pub struct SystemReadOnlyHandle {
 
 impl SystemReadOnlyHandle {
     pub fn new(name: &'static str, inner: Box<dyn SystemReadOnly>) -> Self {
-        Self { status: SystemStatus::Running, watch: WatchStatus::Automatic, name, inner }
+        Self {
+            status: SystemStatus::Running,
+            watch: WatchStatus::Automatic,
+            name,
+            inner,
+        }
     }
 }
 

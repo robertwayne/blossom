@@ -5,18 +5,16 @@ mod template;
 use std::sync::Arc;
 
 use askama::Template;
+use asset::StaticFile;
 use axum::{
     extract::Extension, handler::HandlerWithoutStateExt, http::Uri, response::IntoResponse,
     routing::get, Router, Server,
 };
 use sqlx::PgPool;
+use template::Html;
 use tower_http::trace::TraceLayer;
 
 use crate::config::Config;
-
-use template::Html;
-
-use asset::StaticFile;
 
 pub async fn listen(pg: PgPool) -> Result<(), Box<dyn std::error::Error>> {
     let config = Arc::new(Config::load().await?);
@@ -53,12 +51,18 @@ async fn static_file_handler(uri: Uri) -> impl IntoResponse {
 }
 
 async fn index(config: Extension<Arc<Config>>) -> impl IntoResponse {
-    let template = IndexTemplate { title: "Home", game_name: config.game.name.clone() };
+    let template = IndexTemplate {
+        title: "Home",
+        game_name: config.game.name.clone(),
+    };
     Html(template)
 }
 
 async fn not_found(config: Extension<Arc<Config>>) -> impl IntoResponse {
-    let template = NotFoundTemplate { title: "Not Found", game_name: config.game.name.clone() };
+    let template = NotFoundTemplate {
+        title: "Not Found",
+        game_name: config.game.name.clone(),
+    };
     Html(template)
 }
 

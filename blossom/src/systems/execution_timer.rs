@@ -26,7 +26,10 @@ pub struct ExecutionTimer {
 
 impl ExecutionTimer {
     pub fn new() -> Self {
-        Self { times: [0; 100], count: 0 }
+        Self {
+            times: [0; 100],
+            count: 0,
+        }
     }
 
     /// Returns the average time for a tick, or otherwise all the functions

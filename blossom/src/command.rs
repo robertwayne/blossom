@@ -29,6 +29,9 @@ pub struct Command {
 
 impl Command {
     pub fn new(name: &'static str) -> Self {
-        Self { name, ..Default::default() }
+        Self {
+            name,
+            ..Default::default()
+        }
     }
 }

@@ -1,8 +1,7 @@
-use std::net::IpAddr;
+use std::{net::IpAddr, sync::Arc};
 
 use flume::{Receiver, Sender};
 use sqlx::{types::ipnetwork::IpNetwork, PgPool, Postgres, QueryBuilder};
-use std::sync::Arc;
 
 const POSTGRES_BIND_LIMIT: usize = 65535;
 
@@ -82,7 +81,11 @@ impl Logger {
         // It's unlikely, but we need to make sure we never have more than the
         // postgres bind limit / struct fields in a single query.
         let limit = POSTGRES_BIND_LIMIT / 5;
-        let queue = if queue.len() > limit { queue.drain(..limit) } else { queue.drain(..) };
+        let queue = if queue.len() > limit {
+            queue.drain(..limit)
+        } else {
+            queue.drain(..)
+        };
 
         query_builder.push_values(queue, |mut b, action| {
             b.push_bind(action.id)

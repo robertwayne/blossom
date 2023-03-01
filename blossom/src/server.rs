@@ -52,7 +52,9 @@ impl Server {
         if config.web.enabled {
             let pg = db.clone();
             tokio::spawn(async move {
-                crate::web::listen(pg).await.expect("Failed to bind to address");
+                crate::web::listen(pg)
+                    .await
+                    .expect("Failed to bind to address");
             });
         }
 

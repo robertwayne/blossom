@@ -9,7 +9,11 @@ pub struct Afk;
 
 impl GameCommand for Afk {
     fn create() -> Command {
-        Command { name: "afk", description: "Marks you as AFK.", ..Default::default() }
+        Command {
+            name: "afk",
+            description: "Marks you as AFK.",
+            ..Default::default()
+        }
     }
 
     fn run(ctx: Context) -> Result<Response> {

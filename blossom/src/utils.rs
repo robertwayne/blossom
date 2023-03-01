@@ -20,7 +20,10 @@ pub fn is_http(message: &str) -> bool {
 }
 
 pub fn as_comma_separated_list<T: std::fmt::Display>(list: &[T]) -> String {
-    list.iter().map(|item| format!("{}", item)).collect::<Vec<_>>().join(", ")
+    list.iter()
+        .map(|item| format!("{}", item))
+        .collect::<Vec<_>>()
+        .join(", ")
 }
 
 #[cfg(test)]

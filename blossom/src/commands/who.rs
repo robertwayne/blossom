@@ -21,9 +21,18 @@ impl GameCommand for Who {
             .world
             .players
             .iter()
-            .map(|p| if p.afk { format!("{} (AFK)", p.name) } else { p.name.clone() })
+            .map(|p| {
+                if p.afk {
+                    format!("{} (AFK)", p.name)
+                } else {
+                    p.name.clone()
+                }
+            })
             .collect::<Vec<_>>();
 
-        Ok(Response::client_message(format!("Online: {}", players.join(", "))))
+        Ok(Response::client_message(format!(
+            "Online: {}",
+            players.join(", ")
+        )))
     }
 }

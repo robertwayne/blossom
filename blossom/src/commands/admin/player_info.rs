@@ -30,9 +30,9 @@ impl GameCommand for PlayerInfo {
 
                     Ok(Response::client_message("Player not found."))
                 }
-                None => {
-                    Ok(Response::client_message("View player information. Usage: @player <name>"))
-                }
+                None => Ok(Response::client_message(
+                    "View player information. Usage: @player <name>",
+                )),
             }
         } else {
             World::unknown(player.id)

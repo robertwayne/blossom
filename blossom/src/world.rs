@@ -123,8 +123,9 @@ impl World {
                     player._entityid = self.next_id();
 
                     self.players.insert(player);
-                    self.timer.last_action =
-                        Instant::now().duration_since(self.timer.start_time).as_secs();
+                    self.timer.last_action = Instant::now()
+                        .duration_since(self.timer.start_time)
+                        .as_secs();
                 }
                 ClientEvent::Disconnect => {
                     let Ok(player) = self.get_player(id) else {
@@ -142,8 +143,9 @@ impl World {
 
                     // Remove the player from the world
                     self.players.remove(&id);
-                    self.timer.last_action =
-                        Instant::now().duration_since(self.timer.start_time).as_secs();
+                    self.timer.last_action = Instant::now()
+                        .duration_since(self.timer.start_time)
+                        .as_secs();
                 }
                 ClientEvent::Ping => self.send_prompt(id),
                 ClientEvent::Command(tokens) => {
@@ -169,8 +171,9 @@ impl World {
 
                     self.send_prompt(id);
 
-                    self.timer.last_action =
-                        Instant::now().duration_since(self.timer.start_time).as_secs();
+                    self.timer.last_action = Instant::now()
+                        .duration_since(self.timer.start_time)
+                        .as_secs();
                 }
             }
         }
@@ -204,7 +207,9 @@ impl World {
     // parent struct. Systems run once per server tick and run in the order they
     // were added.
     pub fn add_system(&mut self, name: &'static str, system: impl System + 'static) -> &mut Self {
-        self.systems.write.push(SystemHandle::new(name, Box::new(system)));
+        self.systems
+            .write
+            .push(SystemHandle::new(name, Box::new(system)));
 
         self
     }
@@ -217,7 +222,9 @@ impl World {
         name: &'static str,
         system: impl SystemReadOnly + 'static,
     ) -> &mut Self {
-        self.systems.readonly.push(SystemReadOnlyHandle::new(name, Box::new(system)));
+        self.systems
+            .readonly
+            .push(SystemReadOnlyHandle::new(name, Box::new(system)));
 
         self
     }
@@ -231,11 +238,18 @@ impl World {
     ) -> &mut Self {
         // Combine the command name and aliases into a single array so we can
         // map them later.
-        let mut keys: Vec<String> = command.aliases.iter().map(|s| s.to_lowercase()).collect::<_>();
+        let mut keys: Vec<String> = command
+            .aliases
+            .iter()
+            .map(|s| s.to_lowercase())
+            .collect::<_>();
         keys.push(command.name.to_lowercase());
 
         // Create the handle; we move the command and func at this point.
-        self.commands.push(CommandHandle { inner: command, func: Box::new(func) });
+        self.commands.push(CommandHandle {
+            inner: command,
+            func: Box::new(func),
+        });
 
         // Create a mapping from each key (name or alias) to the index that the
         // command handle is stored at. This lets us access commands later
@@ -286,9 +300,10 @@ impl World {
     pub fn get_player(&self, id: PlayerId) -> Result<&Player> {
         match self.players.iter().find(|p| p.id == id) {
             Some(p) => Ok(p),
-            None => {
-                Err(Error { kind: ErrorType::Internal, message: "Player not found".to_string() })
-            }
+            None => Err(Error {
+                kind: ErrorType::Internal,
+                message: "Player not found".to_string(),
+            }),
         }
     }
 
@@ -296,9 +311,10 @@ impl World {
     pub fn get_player_mut(&mut self, id: PlayerId) -> Result<&mut Player> {
         match self.players.iter_mut().find(|p| p.id == id) {
             Some(p) => Ok(p),
-            None => {
-                Err(Error { kind: ErrorType::Internal, message: "Player not found".to_string() })
-            }
+            None => Err(Error {
+                kind: ErrorType::Internal,
+                message: "Player not found".to_string(),
+            }),
         }
     }
 
@@ -321,20 +337,27 @@ impl World {
     pub fn get_monster(&self, id: EntityId) -> Result<&Monster> {
         match self.monsters.iter().find(|m| m.id == id) {
             Some(m) => Ok(m),
-            None => {
-                Err(Error { kind: ErrorType::Internal, message: "Monster not found".to_string() })
-            }
+            None => Err(Error {
+                kind: ErrorType::Internal,
+                message: "Monster not found".to_string(),
+            }),
         }
     }
 
     pub fn get_monsters(&self, position: Vec3) -> Vec<&Monster> {
-        self.monsters.iter().filter(|m| m.position == position).collect::<Vec<_>>()
+        self.monsters
+            .iter()
+            .filter(|m| m.position == position)
+            .collect::<Vec<_>>()
     }
 
     pub fn next_id(&mut self) -> EntityId {
         self.active_entities += 1;
         self.spawned_entities += 1;
-        EntityId { id: self.spawned_entities, tick: self.timer.count }
+        EntityId {
+            id: self.spawned_entities,
+            tick: self.timer.count,
+        }
     }
 }
 
