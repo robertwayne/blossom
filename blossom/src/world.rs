@@ -127,21 +127,23 @@ impl World {
                         Instant::now().duration_since(self.timer.start_time).as_secs();
                 }
                 ClientEvent::Disconnect => {
-                    if let Ok(player) = self.get_player(id) {
-                        // Sends a Save event to the broker which will handle
-                        // the actual database update. We only send this if the
-                        // player is marked for saving; same as global save.
-                        if player.dirty {
-                            self.send_event(id, GameEvent::Save(player.clone()));
-                        }
+                    let Ok(player) = self.get_player(id) else {
+                        continue;
+                    };
 
-                        self.active_entities -= 1;
-
-                        // Remove the player from the world
-                        self.players.remove(&id);
-                        self.timer.last_action =
-                            Instant::now().duration_since(self.timer.start_time).as_secs();
+                    // Sends a Save event to the broker which will handle
+                    // the actual database update. We only send this if the
+                    // player is marked for saving; same as global save.
+                    if player.dirty {
+                        self.send_event(id, GameEvent::Save(player.clone()));
                     }
+
+                    self.active_entities -= 1;
+
+                    // Remove the player from the world
+                    self.players.remove(&id);
+                    self.timer.last_action =
+                        Instant::now().duration_since(self.timer.start_time).as_secs();
                 }
                 ClientEvent::Ping => self.send_prompt(id),
                 ClientEvent::Command(tokens) => {
