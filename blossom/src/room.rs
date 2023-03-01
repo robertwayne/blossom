@@ -95,26 +95,25 @@ impl Room {
 
             // Get all players in the players current room except the current
             // player.
-            let players_here = world
+            let players_here_list = world
                 .players
                 .iter()
                 .filter(|p| p.position == player.position && p.id != id)
                 .map(|p| p.name.clone())
-                .collect::<Vec<_>>()
-                .join(", ");
+                .collect::<Vec<_>>();
 
             // If there is anyone else in the room, we add them to the text.
-            if !players_here.is_empty() {
+            if !players_here_list.is_empty() {
                 text.push_str(&format!(
                     "\nPlayers here: {}\n",
-                    if players_here.len() > 4 {
+                    if players_here_list.len() > 4 {
                         format!(
                             "{}, and {} others",
-                            players_here.split(", ").take(4).collect::<Vec<_>>().join(", "),
-                            players_here.split(", ").count() - 4
+                            players_here_list[0..4].join(", "),
+                            players_here_list.len().saturating_sub(4)
                         )
                     } else {
-                        players_here
+                        players_here_list.join(", ")
                     }
                 ));
             }
