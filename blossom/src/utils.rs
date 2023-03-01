@@ -19,6 +19,10 @@ pub fn is_http(message: &str) -> bool {
         .any(|(method, version)| message.starts_with(method) || message.ends_with(version))
 }
 
+pub fn as_comma_separated_list<T: std::fmt::Display>(list: &[T]) -> String {
+    list.iter().map(|item| format!("{}", item)).collect::<Vec<_>>().join(", ")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

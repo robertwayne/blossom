@@ -7,6 +7,7 @@ use crate::{
     player::PlayerId,
     quickmap::QuickMapKey,
     theme,
+    utils::as_comma_separated_list,
     vec3::Vec3,
     world::World,
 };
@@ -52,9 +53,7 @@ impl Room {
 
     /// Returns all of the exits in the room as a styled string.
     pub fn exits(&self) -> StyledString {
-        let exit_string =
-            self.exits.iter().map(|exit| format!("{exit}")).collect::<Vec<String>>().join(", ");
-
+        let exit_string = as_comma_separated_list(&self.exits);
         let exits = format!("[Exits: {exit_string}]");
 
         exits.foreground(theme::GREEN)
@@ -65,66 +64,78 @@ impl Room {
     /// else relevant to the room. Generally invoked when using commands like
     /// `look` or when moving into a room.
     pub fn view(&self, id: PlayerId, world: &World) -> String {
-        let player = world.get_player(id);
+        let Ok(player) = world.get_player(id) else {
+            return "This room has no description.".to_string();
+        };
 
-        if let Ok(player) = player {
-            let mut text = String::new();
+        // We always display the room name first.
+        let mut text = String::new();
+        text.push_str(&format!("{}", self.name()));
 
-            // We always display the room name first.
-            text.push_str(&format!("{}", self.name()));
-
-            // Add the room description if force is true. This is true when the
-            // `look` command is called explicitly by a player, as opposed to
-            // implicitly when the walk command is used.
-            if !player.brief {
-                text.push_str(&format!("\n{}\n", self.description));
-            }
-
-            // Display any monsters in this room.
-            let monsters_here = world
-                .monsters
-                .iter()
-                .filter(|m| m.position == player.position)
-                .map(|m| format!("{}", m.name.clone().foreground(theme::RED).bold()))
-                .collect::<Vec<_>>()
-                .join(", ");
-
-            if !monsters_here.is_empty() {
-                text.push_str(&format!("\nNearby you see a {monsters_here}.\n"));
-            }
-
-            // Get all players in the players current room except the current
-            // player.
-            let players_here_list = world
-                .players
-                .iter()
-                .filter(|p| p.position == player.position && p.id != id)
-                .map(|p| p.name.clone())
-                .collect::<Vec<_>>();
-
-            // If there is anyone else in the room, we add them to the text.
-            if !players_here_list.is_empty() {
-                text.push_str(&format!(
-                    "\nPlayers here: {}\n",
-                    if players_here_list.len() > 4 {
-                        format!(
-                            "{}, and {} others",
-                            players_here_list[0..4].join(", "),
-                            players_here_list.len().saturating_sub(4)
-                        )
-                    } else {
-                        players_here_list.join(", ")
-                    }
-                ));
-            }
-
-            // Add the exits list.
-            text.push_str(&format!("\n{}", self.exits()));
-
-            return text;
+        // Add the room description if force is true. This is true when the
+        // `look` command is called explicitly by a player, as opposed to
+        // implicitly when the walk command is used.
+        if !player.brief {
+            text.push_str(&format!("\n{}\n", self.description));
         }
 
-        "This room has no description.".to_string()
+        // Display any monsters in this room.
+        let monster_list = world
+            .monsters
+            .iter()
+            .filter_map(|m| {
+                if m.position == player.position {
+                    Some(format!("{}", m.name.clone().foreground(theme::RED).bold()))
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<_>>();
+
+        if !monster_list.is_empty() {
+            let monsters = as_comma_separated_list(&monster_list);
+            text.push_str(&format!("\nNearby you see a {monsters}.\n"))
+        }
+
+        // Get all players in the players current room except the current
+        // player.
+        let player_list = world
+            .players
+            .iter()
+            .filter_map(|p| {
+                if p.position == player.position && p.id != id {
+                    Some(p.name.clone())
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<_>>();
+
+        // If there is anyone else in the room, we add them to the text.
+        if !player_list.is_empty() {
+            let names = if player_list.len() > 4 {
+                // If there are more than 4 players in the room, we only display
+                // the first 4 and then the count of how many others.
+                let first = player_list.get(..4).unwrap().join(", ");
+                let remaining = player_list.len().saturating_sub(4);
+
+                if remaining == 1 {
+                    format!("{first}, and 1 other.")
+                } else {
+                    format!("{first}, and {remaining} others.")
+                }
+            } else {
+                // Otherwise, we just display all the names.
+                as_comma_separated_list(&player_list)
+            };
+
+            text.push_str(&format!("\nPlayers here: {names}\n"));
+        }
+
+        // Add the exits.
+        text.push_str(&format!("\n{}", self.exits()));
+
+        text
     }
 }
 

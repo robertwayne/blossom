@@ -23,21 +23,12 @@ use crate::{
 };
 
 /// Creates a new account and character.
-async fn create(
-    name: &str,
-    password: &str,
-    confirm_password: &str,
-    email: Option<&str>,
-    pg: &PgPool,
-) -> Result<PartialPlayer> {
+async fn create(name: &str, password: &str, pg: &PgPool) -> Result<PartialPlayer> {
     let name = name.trim();
     let password = password.trim();
-    let _confirm_password = confirm_password.trim();
-    let _email = email.map(str::trim);
 
     let salt = SaltString::generate(&mut OsRng);
     let argon = Argon2::default();
-
     let hash = argon.hash_password(password.as_bytes(), salt.as_ref())?.to_string();
 
     let is_first = is_first_account(pg).await?;
@@ -90,8 +81,8 @@ async fn login(name: &str, password: &str, addr: IpAddr, pg: &PgPool) -> Result<
     let argon = Argon2::default();
     let hash = PasswordHash::new(&record.password_hash)?;
 
-    match argon.verify_password(password.as_bytes(), &hash) {
-        Ok(_) => Ok(Player {
+    if argon.verify_password(password.as_bytes(), &hash).is_ok() {
+        Ok(Player {
             _entityid: EntityId::empty(),
             _addr: addr,
             id: record.id,
@@ -113,8 +104,9 @@ async fn login(name: &str, password: &str, addr: IpAddr, pg: &PgPool) -> Result<
             afk: record.afk,
             dirty: false,
             seen: true,
-        }),
-        Err(_) => Err(Error::new(ErrorType::Authentication, "Invalid credentials")),
+        })
+    } else {
+        Err(Error::new(ErrorType::Authentication, "Invalid credentials"))
     }
 }
 
@@ -143,10 +135,9 @@ async fn is_first_account(pg: &PgPool) -> Result<bool> {
             message: "Failed to check if first account.".to_string(),
         })?;
 
-    if record.exists == Some(true) {
-        Ok(false)
-    } else {
-        Ok(true)
+    match record.exists {
+        Some(true) => Ok(false),
+        _ => Ok(true),
     }
 }
 
@@ -181,10 +172,10 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
         }
     } else {
         let password = set_password(conn).await?;
-        let partial_player = create(&name, &password, &password, None, &pg).await?;
-
+        let partial_player = create(&name, &password, &pg).await?;
         let colored_name = &name.foreground(theme::BLUE).bold();
 
+        // Send a welcome message to the player.
         conn.send_message(&format!(
             "{} {}{}",
             "\nWelcome,".foreground(theme::YELLOW).bold(),
@@ -193,6 +184,7 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
         ))
         .await?;
 
+        // Send some helpful information to the player.
         conn.send_message(&format!(
             "{} {} {} {} {}",
             "You can view all the commands by typing".foreground(theme::YELLOW).bold(),
@@ -203,6 +195,8 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
         ))
         .await?;
 
+        // If this is the first account on the server, we will let the player
+        // know that they have been granted the `admin` role.
         if partial_player.account.roles.contains(&Role::Admin) {
             conn.send_message(&format!(
                 "\n{} {} {}",
@@ -215,7 +209,9 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
             .await?;
         }
 
-        let player = Player {
+        blossom_log!(Kind::Join, conn);
+
+        Ok(Some(Player {
             _entityid: EntityId::empty(),
             _addr: conn.ip(),
             id: partial_player.id,
@@ -233,11 +229,7 @@ pub async fn authenticate(conn: &mut Connection, pg: PgPool) -> Result<Option<Pl
             afk: false,
             dirty: false,
             seen: false,
-        };
-
-        blossom_log!(Kind::Join, conn);
-
-        Ok(Some(player))
+        }))
     }
 }
 
@@ -259,11 +251,7 @@ async fn get_name(conn: &mut Connection) -> Result<String> {
             }
 
             let msg = msg.trim();
-            if msg.len() < 3
-                || msg.len() > 16
-                || msg.is_empty()
-                || msg.chars().any(|c| !c.is_ascii_alphabetic())
-            {
+            if !validate_username(msg) {
                 conn.send_message(&format!(
                     "{}",
                     "Name should be between 3 and 16 alphabetical characters.".foreground(RED)
@@ -376,4 +364,9 @@ async fn set_password(conn: &mut Connection) -> Result<String> {
     conn.send_iac(TelnetEvent::Wont(TelnetOption::Echo)).await?;
 
     Ok(password)
+}
+
+/// Returns a bool indicating whether or not the username is valid.
+fn validate_username(username: &str) -> bool {
+    username.len() >= 3 && username.len() <= 16 && username.chars().all(|c| c.is_ascii_alphabetic())
 }
