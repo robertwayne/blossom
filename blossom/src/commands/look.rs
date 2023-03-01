@@ -35,12 +35,13 @@ impl GameCommand for Look {
             return Ok(Response::client_message("Monster not found."));
         }
 
-        let view = ctx
-            .world
-            .rooms
-            .iter()
-            .find(|r| r.position == player.position)
-            .map(|r| r.view(player.id, ctx.world));
+        let view = ctx.world.rooms.iter().find_map(|r| {
+            if r.read().position == player.position {
+                Some(r.read().view(player.id, ctx.world))
+            } else {
+                None
+            }
+        });
 
         if let Some(view) = view {
             Ok(Response::client_message(view))

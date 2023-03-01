@@ -1,11 +1,13 @@
 use std::{
     collections::HashMap,
+    sync::Arc,
     thread::sleep,
     time::{Duration, Instant},
 };
 
 use flume::{Receiver, Sender};
 use iridescent::Styled;
+use parking_lot::RwLock;
 
 use crate::{
     command::{Command, CommandHandle},
@@ -27,6 +29,8 @@ use crate::{
     vec3::Vec3,
 };
 
+pub type WorldItem<T> = Arc<RwLock<T>>;
+
 /// Stateful representation of the game world, containing references to all game
 /// entities, channels needed for between the broker and the game loop, and all
 /// of the systems and commands added at startup.
@@ -36,7 +40,7 @@ pub struct World {
     pub players: QuickMap<PlayerId, Player>,
     pub regions: Vec<Region>,
     pub areas: Vec<Area>,
-    pub rooms: QuickMap<Vec3, Room>,
+    pub rooms: Vec<WorldItem<Room>>,
     pub monsters: MonsterStore,
     pub timer: Timer,
     pub systems: SystemStore,
@@ -56,7 +60,7 @@ impl World {
             players: QuickMap::new(),
             regions: Vec::new(),
             areas: Vec::new(),
-            rooms: QuickMap::new(),
+            rooms: Vec::new(),
             monsters: MonsterStore::new(),
             timer: Timer::new(),
             systems: SystemStore::new(),

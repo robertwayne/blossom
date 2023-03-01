@@ -1,4 +1,7 @@
+use std::sync::Arc;
+
 use flume::{Receiver, Sender};
+use parking_lot::RwLock;
 
 use crate::{
     command::GameCommand,
@@ -98,7 +101,7 @@ impl Game {
                 let id = world.next_id();
                 let room = builder.build(id);
 
-                world.rooms.insert(room);
+                world.rooms.push(Arc::new(RwLock::new(room)));
             }
         }
 

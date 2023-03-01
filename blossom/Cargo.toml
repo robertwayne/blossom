@@ -13,7 +13,7 @@ keywords = ["blossom", "mud"]
 [dependencies]
 argon2 = "0.4"
 askama = "0.11"
-axum = { git = "https://github.com/tokio-rs/axum/", features = [
+axum = { version = "0.6", features = [
     "http1",
     "http2",
     "json",
@@ -27,6 +27,8 @@ globwalk = "0.8"
 iridescent = "0.2"
 mime_guess = "2"
 nectar = { version = "0.1" }
+# We use parking_lot purely for the poison-free API.
+parking_lot = { version = "0.12", features = ["deadlock_detection", "nightly"] }
 rand = "0.8"
 rhai = { version = "1", features = [
     "serde",
