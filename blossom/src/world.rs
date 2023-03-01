@@ -138,7 +138,7 @@ impl World {
                         self.send_event(id, GameEvent::Save(player.clone()));
                     }
 
-                    self.active_entities -= 1;
+                    let _ = self.active_entities.saturating_sub(1);
 
                     // Remove the player from the world
                     self.players.remove(&id);
