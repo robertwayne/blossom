@@ -350,110 +350,64 @@ impl std::fmt::Display for World {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn get_single_player() {
-//         let mut world = World::new();
-//         let player = Player::new(1, std::net::IpAddr::from([127, 0, 0, 1]));
-//         world.players.write().push(player);
+    #[test]
+    fn add_command() {
+        let mut world = World::new();
+        let command = Command::new("test");
+        let func = |_: Context| -> Result<Response> { Ok(Response::Empty) };
 
-//         assert_eq!(world.get_player(1).unwrap(), &player);
-//     }
+        world.add_command(command, func);
 
-//     #[test]
-//     fn get_multiple_players() {
-//         let mut world = World::new();
-//         let player1 = Player::new(1, std::net::IpAddr::from([127, 0, 0, 1]));
-//         let player2 = Player::new(2, std::net::IpAddr::from([127, 0, 0, 1]));
-//         let player3 = Player::new(3, std::net::IpAddr::from([127, 0, 0, 1]));
-//         world
-//             .players
-//             .write()
-//             .extend(vec![player1, player2, player3]);
+        assert_eq!(world.commands.len(), 1);
+        assert_eq!(world.commands[0].inner.name, "test");
+    }
 
-//         let players = world.get_players(&[1, 3]).unwrap();
+    #[test]
+    fn add_system() {
+        let mut world = World::new();
 
-//         assert_eq!(players.len(), 2);
-//         assert_eq!(players[0], &player1);
-//         assert_eq!(players[1], &player3);
-//     }
+        struct TestSystem {
+            count: u8,
+        }
 
-//     #[test]
-//     fn get_all_players() {
-//         let mut world = World::new();
-//         let player1 = Player::new(1, std::net::IpAddr::from([127, 0, 0, 1]));
-//         let player2 = Player::new(2, std::net::IpAddr::from([127, 0, 0, 1]));
-//         let player3 = Player::new(3, std::net::IpAddr::from([127, 0, 0, 1]));
-//         world
-//             .players
-//             .write()
-//             .extend(vec![player1, player2, player3]);
+        impl System for TestSystem {
+            fn update(&mut self, _: &mut World) {
+                self.count += 1;
+            }
+        }
 
-//         let players = world.get_all_players().unwrap();
+        world.add_system("test_system", TestSystem { count: 0 });
 
-//         assert_eq!(players.len(), 3);
-//         assert_eq!(players[0], &player1);
-//         assert_eq!(players[1], &player2);
-//         assert_eq!(players[2], &player3);
-//     }
+        assert_eq!(world.systems.write.len(), 1);
+        assert_eq!(world.systems.write[0].name, "test_system");
+    }
 
-//     #[test]
-//     fn add_command() {
-//         let mut world = World::new();
-//         let command = Command::new("test");
-//         let func = |_: Context| -> Result<Response> { Ok(Response::Empty) };
+    #[test]
+    fn add_system_readonly() {
+        let mut world = World::new();
 
-//         world.add_command(command, func);
+        struct TestSystem;
 
-//         assert_eq!(world.commands.len(), 1);
-//         assert_eq!(world.commands[0].inner.name, "test");
-//     }
+        impl SystemReadOnly for TestSystem {
+            fn update(&self, _: &World) {}
+        }
 
-//     #[test]
-//     fn add_system() {
-//         let mut world = World::new();
+        world.add_system_readonly("test_system", TestSystem);
 
-//         struct TestSystem {
-//             count: u8,
-//         }
+        assert_eq!(world.systems.readonly.len(), 1);
+        assert_eq!(world.systems.readonly[0].name, "test_system");
+    }
 
-//         impl System for TestSystem {
-//             fn update(&mut self, _: &mut World) {
-//                 self.count += 1;
-//             }
-//         }
+    #[test]
+    fn advance_tick() {
+        let mut world = World::new();
+        world.tick();
 
-//         world.add_system("test_system", TestSystem { count: 0 });
-
-//         assert_eq!(world.systems.write.len(), 1);
-//         assert_eq!(world.systems.write[0].name, "test_system");
-//     }
-
-//     #[test]
-//     fn add_system_readonly() {
-//         let mut world = World::new();
-
-//         struct TestSystem;
-
-//         impl SystemReadOnly for TestSystem {
-//             fn update(&self, _: &World) {}
-//         }
-
-//         world.add_system_readonly("test_system", TestSystem);
-
-//         assert_eq!(world.systems.readonly.len(), 1);
-//         assert_eq!(world.systems.readonly[0].name, "test_system");
-//     }
-
-//     #[test]
-//     fn advance_tick() {
-//         let mut world = World::new();
-//         world.tick();
-
-//         assert_eq!(world.timer.count, 1);
-//     }
-// }
+        assert_eq!(world.timer.count, 1);
+    }
+}
