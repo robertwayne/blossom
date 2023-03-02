@@ -1,7 +1,8 @@
 use crate::{
     command::{Command, GameCommand},
     context::Context,
-    error::Result,
+    error::{ErrorType, Result},
+    prelude::Error,
     response::Response,
 };
 
@@ -17,7 +18,10 @@ impl GameCommand for Afk {
     }
 
     fn run(ctx: Context) -> Result<Response> {
-        let player = ctx.world.get_player_mut(ctx.id)?;
+        let mut binding = ctx.world.players.write();
+        let Some(player) = binding.get_mut(&ctx.id) else {
+            return Err(Error::new(ErrorType::Internal, "Player not found."));
+        };
 
         player.afk = !player.afk;
         player.dirty = true;

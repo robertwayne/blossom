@@ -49,7 +49,7 @@ impl Default for SystemWatcher {
 
 impl System for SystemWatcher {
     fn update(&mut self, world: &mut World) {
-        if self.mode == WatchMode::Wake && !world.players.is_empty() {
+        if self.mode == WatchMode::Wake && !world.players.read().is_empty() {
             tracing::debug!("New connection detected. Waking up all paused systems.");
 
             // Now we wait to put systems to sleep.
@@ -67,7 +67,7 @@ impl System for SystemWatcher {
                 }
             }
         } else if self.mode == WatchMode::Sleep
-            && world.players.is_empty()
+            && world.players.read().is_empty()
             && world.timer.last_action + self.interval < world.timer.seconds
         {
             tracing::debug!(

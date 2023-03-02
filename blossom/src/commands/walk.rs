@@ -2,8 +2,9 @@ use crate::{
     command::{Command, GameCommand},
     context::Context,
     direction::Direction,
-    error::Result,
+    error::{ErrorType, Result},
     event::GameEvent,
+    prelude::Error,
     response::Response,
     vec3::Vec3,
 };
@@ -31,21 +32,23 @@ impl GameCommand for Walk {
         // We do this inside a tight scope so we can borrow the world
         // immediately after.
         let (player_name, player_id, player_position) = {
-            let player = ctx.world.get_player(ctx.id)?;
+            let binding = ctx.world.players.write();
+            let Some(player) = binding.get(&ctx.id) else {
+            return Err(Error::new(ErrorType::Internal, "Player not found."));
+        };
             (player.name.clone(), player.id, player.position)
         };
 
-        let Some(current_room) = ctx
-            .world
-            .rooms
+        let r = ctx.world.rooms.read();
+        let Some(current_room) = r
             .iter()
-            .find(|r| r.read().position == player_position) else {
+            .find(|r| r.position == player_position) else {
             return Ok(Response::client_message(LOST_MESSAGE));
         };
 
         // If the current room cannot be exited in the given direction, we
         // just break early and let the player know.
-        if !current_room.read().exits.contains(&direction) {
+        if !current_room.exits.contains(&direction) {
             return Ok(Response::client_message(format!(
                 "You can't go {direction} from here."
             )));
@@ -56,9 +59,15 @@ impl GameCommand for Walk {
         let players_here = ctx
             .world
             .players
+            .read()
             .iter()
-            .filter(|p| p.position == player_position && p.id != player_id)
-            .map(|p| p.id)
+            .filter_map(|p| {
+                if p.position == player_position && p.id != player_id {
+                    Some(p.id)
+                } else {
+                    None
+                }
+            })
             .collect();
 
         // Append '-wards' to the direction (eg. 'downwards' or 'upwards')
@@ -85,9 +94,15 @@ impl GameCommand for Walk {
         let players_in_next_room = ctx
             .world
             .players
+            .read()
             .iter()
-            .filter(|p| p.position == new_position && p.id != player_id)
-            .map(|p| p.id)
+            .filter_map(|p| {
+                if p.position == new_position && p.id != player_id {
+                    Some(p.id)
+                } else {
+                    None
+                }
+            })
             .collect();
 
         // Modify the message based on the direction the player is moving;
@@ -110,14 +125,14 @@ impl GameCommand for Walk {
         //
         // We need to rework the way the world works, probably with some
         // serious interior mutability, to avoid this.
-        if let Some(player) = ctx.world.players.get_mut(&ctx.id) {
+        if let Some(player) = ctx.world.players.write().get_mut(&ctx.id) {
             player.position = new_position;
             player.dirty = true;
         }
 
-        let Some(view) = ctx.world.rooms.iter().find_map(|r| {
-            if r.read().position == new_position {
-                Some(r.read().view(player_id, ctx.world))
+        let Some(view) = ctx.world.rooms.read().iter().find_map(|r| {
+            if r.position == new_position {
+                Some(r.view(player_id, ctx.world))
             } else {
                 None
             }

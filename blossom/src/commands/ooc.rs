@@ -3,7 +3,8 @@ use iridescent::Styled;
 use crate::{
     command::{Command, GameCommand},
     context::Context,
-    error::Result,
+    error::{ErrorType, Result},
+    prelude::Error,
     response::Response,
     theme,
 };
@@ -37,7 +38,10 @@ impl GameCommand for GlobalChat {
             "says"
         };
 
-        let player = ctx.world.get_player_mut(ctx.id)?;
+        let binding = ctx.world.players.read();
+        let Some(player) = binding.get(&ctx.id) else {
+            return Err(Error::new(ErrorType::Internal, "Player not found."));
+        };
 
         let msg = format!(
             "{} {} {}, \"{}\"",
@@ -47,7 +51,13 @@ impl GameCommand for GlobalChat {
             message,
         );
 
-        let all = ctx.world.players.iter().map(|p| p.id).collect::<Vec<_>>();
+        let all = ctx
+            .world
+            .players
+            .read()
+            .iter()
+            .map(|p| p.id)
+            .collect::<Vec<_>>();
 
         Ok(Response::Channel(all, msg))
     }

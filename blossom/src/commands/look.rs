@@ -1,7 +1,8 @@
 use crate::{
     command::{Command, GameCommand},
     context::Context,
-    error::Result,
+    error::{ErrorType, Result},
+    prelude::Error,
     response::Response,
 };
 
@@ -18,7 +19,10 @@ impl GameCommand for Look {
     }
 
     fn run(ctx: Context) -> Result<Response> {
-        let player = ctx.world.get_player(ctx.id)?;
+        let binding = ctx.world.players.read();
+        let Some(player) = binding.get(&ctx.id) else {
+            return Err(Error::new(ErrorType::Internal, "Player not found."));
+        };
         let args = ctx.args();
 
         // Check if the player is looking at a monster.
@@ -35,9 +39,9 @@ impl GameCommand for Look {
             return Ok(Response::client_message("Monster not found."));
         }
 
-        let view = ctx.world.rooms.iter().find_map(|r| {
-            if r.read().position == player.position {
-                Some(r.read().view(player.id, ctx.world))
+        let view = ctx.world.rooms.read().iter().find_map(|r| {
+            if r.position == player.position {
+                Some(r.view(player.id, ctx.world))
             } else {
                 None
             }

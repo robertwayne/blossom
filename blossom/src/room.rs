@@ -64,7 +64,8 @@ impl Room {
     /// else relevant to the room. Generally invoked when using commands like
     /// `look` or when moving into a room.
     pub fn view(&self, id: PlayerId, world: &World) -> String {
-        let Ok(player) = world.get_player(id) else {
+        let binding = world.players.read();
+        let Some(player) = binding.get(&id) else {
             return "This room has no description.".to_string();
         };
 
@@ -101,6 +102,7 @@ impl Room {
         // player.
         let player_list = world
             .players
+            .read()
             .iter()
             .filter_map(|p| {
                 if p.position == player.position && p.id != id {

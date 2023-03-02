@@ -1,7 +1,8 @@
 use crate::{
     command::{Command, GameCommand},
     context::Context,
-    error::Result,
+    error::{ErrorType, Result},
+    prelude::Error,
     response::Response,
     role::Role,
     world::World,
@@ -22,7 +23,10 @@ impl GameCommand for Version {
     }
 
     fn run(ctx: Context) -> Result<Response> {
-        let player = ctx.world.get_player_mut(ctx.id)?;
+        let binding = ctx.world.players.read();
+        let Some(player) = binding.get(&ctx.id) else {
+            return Err(Error::new(ErrorType::Internal, "Player not found."));
+        };
         if !player.account.roles.contains(&Role::Admin) {
             return World::unknown(player.id);
         }

@@ -1,7 +1,8 @@
 use crate::{
     command::{Command, GameCommand},
     context::Context,
-    error::Result,
+    error::{ErrorType, Result},
+    prelude::Error,
     response::Response,
 };
 
@@ -34,7 +35,10 @@ impl GameCommand for Say {
             "says"
         };
 
-        let player = ctx.world.get_player_mut(ctx.id)?;
+        let binding = ctx.world.players.read();
+        let Some(player) = binding.get(&ctx.id) else {
+            return Err(Error::new(ErrorType::Internal, "Player not found."));
+        };
         let name = player.name.as_str();
         let position = player.position;
 
@@ -43,6 +47,7 @@ impl GameCommand for Say {
         let players_in_room = ctx
             .world
             .players
+            .read()
             .iter()
             .filter(|p| p.position == position)
             .map(|p| p.id)

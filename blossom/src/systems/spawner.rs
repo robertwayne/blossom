@@ -1,5 +1,3 @@
-use rand::prelude::IteratorRandom;
-
 use crate::{system::System, world::World};
 
 pub struct Spawner {
@@ -21,15 +19,15 @@ impl System for Spawner {
         if self.last_run + self.interval < world.timer.seconds {
             self.last_run = world.timer.seconds;
 
-            let mut rng = rand::thread_rng();
+            let _rng = rand::thread_rng();
 
             // @TODO: This needs to be replaced to avoid the mutable borrow
             // after an immutable borrow.
-            if let Some(room) = world.rooms.iter().choose(&mut rng) {
-                if let Some(key) = room.mob_pool.iter().choose(&mut rng) {
-                    world.spawn_monster(&key.to_lowercase().replace(' ', "_"), room.position);
-                }
-            }
+            // if let Some(room) = world.rooms.iter().choose(&mut rng) {
+            //     if let Some(key) = room.mob_pool.iter().choose(&mut rng) {
+            //         world.spawn_monster(&key.to_lowercase().replace(' ', "_"), room.position);
+            //     }
+            // }
         }
     }
 }

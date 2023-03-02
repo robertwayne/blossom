@@ -20,6 +20,7 @@ impl GameCommand for Who {
         let players = ctx
             .world
             .players
+            .read()
             .iter()
             .map(|p| {
                 if p.afk {

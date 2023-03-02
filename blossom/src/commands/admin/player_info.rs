@@ -1,7 +1,8 @@
 use crate::{
     command::{Command, GameCommand},
     context::Context,
-    error::Result,
+    error::{ErrorType, Result},
+    prelude::Error,
     response::Response,
     role::Role,
     world::World,
@@ -19,12 +20,16 @@ impl GameCommand for PlayerInfo {
     }
 
     fn run(ctx: Context) -> Result<Response> {
-        let player = ctx.world.get_player(ctx.id)?;
+        let binding = ctx.world.players.read();
+        let Some(player) = binding.get(&ctx.id) else {
+            return Err(Error::new(ErrorType::Internal, "Player not found."));
+        };
 
         if player.account.roles.contains(&Role::Admin) {
             match ctx.input.args.get(0) {
                 Some(name) => {
-                    if let Some(target) = ctx.world.players.iter().find(|p| p.name == *name) {
+                    if let Some(target) = ctx.world.players.read().iter().find(|p| p.name == *name)
+                    {
                         return Ok(Response::client_message(format!("{target:#?}",)));
                     }
 

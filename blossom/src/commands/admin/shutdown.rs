@@ -3,8 +3,9 @@ use std::{thread::sleep, time::Duration};
 use crate::{
     command::{Command, GameCommand},
     context::Context,
-    error::Result,
+    error::{ErrorType, Result},
     event::{Event, GameEvent},
+    prelude::Error,
     response::Response,
     role::Role,
 };
@@ -21,10 +22,19 @@ impl GameCommand for Shutdown {
     }
 
     fn run(ctx: Context) -> Result<Response> {
-        let player = ctx.world.get_player(ctx.id)?;
+        let binding = ctx.world.players.read();
+        let Some(player) = binding.get(&ctx.id) else {
+            return Err(Error::new(ErrorType::Internal, "Player not found."));
+        };
 
         if player.account.roles.contains(&Role::Admin) {
-            let players = ctx.world.players.iter().map(|p| p.id).collect::<Vec<_>>();
+            let players = ctx
+                .world
+                .players
+                .read()
+                .iter()
+                .map(|p| p.id)
+                .collect::<Vec<_>>();
 
             ctx.world.send_command(
                 player.id,
@@ -39,6 +49,7 @@ impl GameCommand for Shutdown {
             let players = ctx
                 .world
                 .players
+                .read()
                 .iter()
                 .filter(|p| p.dirty)
                 .cloned()
