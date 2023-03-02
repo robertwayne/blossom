@@ -4,7 +4,7 @@ use crate::{
     command::GameCommand,
     commands::{
         admin::{
-            help::AdminHelp, player_info::PlayerInfo, shutdown::Shutdown,
+            help::AdminHelp, player_info::PlayerInfo, room_info::RoomInfo, shutdown::Shutdown,
             system_control::SystemsControl, version::Version, world_info::WorldInfo,
         },
         afk::Afk,
@@ -59,6 +59,7 @@ impl Game {
             world.add_command(PlayerInfo::create(), PlayerInfo::run);
             world.add_command(AdminHelp::create(), AdminHelp::run);
             world.add_command(Version::create(), Version::run);
+            world.add_command(RoomInfo::create(), RoomInfo::run);
         }
 
         // Game initialization for locations is done sequentially:

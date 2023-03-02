@@ -1,4 +1,6 @@
-use crate::{context::Context, error::Result, response::Response, role::Role};
+use crate::{
+    context::Context, error::Result, quickmap::QuickMapKey, response::Response, role::Role,
+};
 
 pub trait GameCommand {
     fn create() -> Command;
