@@ -11,8 +11,8 @@ categories = ["game-engines", "game-development"]
 keywords = ["blossom", "mud"]
 
 [dependencies]
-argon2 = "0.4"
-askama = "0.11"
+argon2 = "0.5"
+askama = "0.12"
 axum = { version = "0.6", features = [
     "http1",
     "http2",

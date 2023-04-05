@@ -11,6 +11,7 @@ yarn-error.log
 package-lock.json
 Cargo.lock
 yarn.lock
+pnpm-lock.yaml
 
 # Config Files
 .env

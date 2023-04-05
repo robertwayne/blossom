@@ -45,7 +45,7 @@ underlying system design.
 
 Prerequesites:
 
-- Rust Nightly 1.69
+- Rust Nightly 1.70
 - PostgreSQL 15
 
 In addition, some _optional_ dev dependencies:
