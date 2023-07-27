@@ -73,7 +73,7 @@ dual-licensed under MIT and Apache-2.0._
 
 Blossom source code is dual-licensed under either
 
-- __[MIT License](/docs/LICENSE-MIT)__
-- __[Apache License, Version 2.0](/docs/LICENSE-APACHE)__
+- __[MIT License](/LICENSE-MIT)__
+- __[Apache License, Version 2.0](/LICENSE-APACHE)__
 
 at your option.
