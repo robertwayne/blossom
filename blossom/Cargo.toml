@@ -26,7 +26,7 @@ futures = { version = "0.3", features = ["thread-pool"] }
 globwalk = "0.8"
 iridescent = "0.2"
 mime_guess = "2"
-nectar = { version = "0.1" }
+nectar = { git = "https://github.com/robertwayne/nectar", version = "0.1" }
 # We use parking_lot purely for the poison-free API.
 parking_lot = { version = "0.12", features = ["deadlock_detection", "nightly"] }
 rand = "0.8"
@@ -43,10 +43,9 @@ rust-embed = { version = "6", features = [
 ] }
 serde = { version = "1", features = ["derive"] }
 simsearch = "0.2"
-sqlx = { version = "0.6", features = [
+sqlx = { version = "0.7", features = [
     "runtime-tokio-rustls",
     "postgres",
-    "offline",
     "ipnetwork",
     "time",
 ] }
@@ -56,7 +55,7 @@ tokio = { version = "1", default-features = false, features = [
     "macros",
     "tracing",
 ] }
-tokio-tungstenite = "0.18"
+tokio-tungstenite = "0.19"
 tokio-util = { version = "0.7", default-features = false, features = ["codec"] }
 toml = "0.7"
 tower = { version = "0.4", features = ["util"] }
