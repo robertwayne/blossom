@@ -29,9 +29,7 @@ async fn create(name: &str, password: &str, pg: &PgPool) -> Result<PartialPlayer
 
     let salt = SaltString::generate(&mut OsRng);
     let argon = Argon2::default();
-    let hash = argon
-        .hash_password(password.as_bytes(), salt.as_ref())?
-        .to_string();
+    let hash = argon.hash_password(password.as_bytes(), &salt)?.to_string();
 
     let is_first = is_first_account(pg).await?;
     let roles = if is_first { vec![Role::Admin] } else { vec![] };
